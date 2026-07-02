@@ -47,7 +47,7 @@ See [Machine-to-machine example](references/examples.md#machine-to-machine).
 For a user already authenticated in the host app — exchanges that session for MCP access instead of a second login:
 
 ```ts
-import { CrossAppAccessProvider } from '@modelcontextprotocol/client';
+import { CrossAppAccessProvider } from "@modelcontextprotocol/client";
 
 new CrossAppAccessProvider({ assertion, clientId, clientSecret });
 ```

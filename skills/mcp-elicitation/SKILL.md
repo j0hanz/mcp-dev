@@ -30,10 +30,10 @@ See [`input_required` return example](references/examples.md#input_required-retu
 - To tell a refusal from a first entry, use `inputResponse(ctx.mcpReq.inputResponses, key)` — a discriminated view (`missing` / `elicit` / `sampling` / `roots`) — and stop re-prompting on a non-accept:
 
 ```ts
-const view = inputResponse(ctx.mcpReq.inputResponses, 'confirm');
-if (view.kind === 'elicit' && view.action !== 'accept') {
+const view = inputResponse(ctx.mcpReq.inputResponses, "confirm");
+if (view.kind === "elicit" && view.action !== "accept") {
   return {
-    content: [{ type: 'text', text: 'Cancelled by the operator' }],
+    content: [{ type: "text", text: "Cancelled by the operator" }],
     isError: true,
   };
 }
@@ -51,10 +51,10 @@ See [Form elicitation example](references/examples.md#form-elicitation).
 
 ```ts
 const result = await ctx.mcpReq.elicitInput({
-  mode: 'url',
-  message: 'Sign in to link your account',
-  url: 'https://billing.example.com/connect/provider',
-  elicitationId: '12345',
+  mode: "url",
+  message: "Sign in to link your account",
+  url: "https://billing.example.com/connect/provider",
+  elicitationId: "12345",
 });
 ```
 
