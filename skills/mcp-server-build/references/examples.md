@@ -5,21 +5,21 @@
 A complete stdio server is one file:
 
 ```ts
-import { McpServer } from '@modelcontextprotocol/server';
-import { serveStdio } from '@modelcontextprotocol/server/stdio';
-import * as z from 'zod/v4';
+import { McpServer } from "@modelcontextprotocol/server";
+import { serveStdio } from "@modelcontextprotocol/server/stdio";
+import * as z from "zod/v4";
 
 serveStdio(() => {
-  const server = new McpServer({ name: 'weather', version: '1.0.0' });
+  const server = new McpServer({ name: "weather", version: "1.0.0" });
 
   server.registerTool(
-    'get-forecast',
+    "get-forecast",
     {
-      description: 'Get the weather forecast for a city',
+      description: "Get the weather forecast for a city",
       inputSchema: z.object({ city: z.string() }),
     },
     async ({ city }) => ({
-      content: [{ type: 'text', text: `Sunny in ${city} all week.` }],
+      content: [{ type: "text", text: `Sunny in ${city} all week.` }],
     }),
   );
 
@@ -31,19 +31,23 @@ serveStdio(() => {
 
 ```ts
 server.registerTool(
-  'search',
+  "search",
   {
-    title: 'Search catalog', // display name (optional)
-    description: 'Search the product catalog',
+    title: "Search catalog", // display name (optional)
+    description: "Search the product catalog",
     inputSchema: z.object({
-      query: z.string().describe('Substring to match'), // .describe() → JSON Schema description
+      query: z.string().describe("Substring to match"), // .describe() → JSON Schema description
       limit: z.number().int().max(50).optional(),
     }),
     outputSchema: z.object({ names: z.array(z.string()) }), // optional, enables structuredContent
-    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true },
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+    },
   },
   async ({ query, limit }, ctx) => ({
-    content: [{ type: 'text', text: names.join('\n') }], // human/model-readable blocks
+    content: [{ type: "text", text: names.join("\n") }], // human/model-readable blocks
     structuredContent: { names }, // validated against outputSchema
   }),
 );
@@ -52,17 +56,19 @@ server.registerTool(
 ## Resource Registration
 
 ```ts
-import { ResourceTemplate } from '@modelcontextprotocol/server';
+import { ResourceTemplate } from "@modelcontextprotocol/server";
 
 server.registerResource(
-  'user-profile',
-  new ResourceTemplate('users://{userId}/profile', {
+  "user-profile",
+  new ResourceTemplate("users://{userId}/profile", {
     list: undefined, // required key; undefined = not enumerable
     complete: { userId: async (v) => lookupIds(v) }, // per-variable autocompletion
   }),
-  { description: 'Profile data for one user', mimeType: 'application/json' },
+  { description: "Profile data for one user", mimeType: "application/json" },
   async (uri, { userId }) => ({
-    contents: [{ uri: uri.href, text: JSON.stringify({ userId, plan: 'pro' }) }],
+    contents: [
+      { uri: uri.href, text: JSON.stringify({ userId, plan: "pro" }) },
+    ],
   }),
 );
 ```
@@ -71,16 +77,22 @@ server.registerResource(
 
 ```ts
 server.registerPrompt(
-  'review-code',
+  "review-code",
   {
-    title: 'Code Review',
-    description: 'Review code for best practices',
-    argsSchema: z.object({ code: z.string().describe('The code to review') }),
+    title: "Code Review",
+    description: "Review code for best practices",
+    argsSchema: z.object({ code: z.string().describe("The code to review") }),
   },
   ({ code }) => ({
     messages: [
-      { role: 'user', content: { type: 'text', text: `Review this code:\n\n${code}` } },
-      { role: 'assistant', content: { type: 'text', text: 'The one-line cause:' } }, // seeds the reply
+      {
+        role: "user",
+        content: { type: "text", text: `Review this code:\n\n${code}` },
+      },
+      {
+        role: "assistant",
+        content: { type: "text", text: "The one-line cause:" },
+      }, // seeds the reply
     ],
   }),
 );
@@ -91,10 +103,10 @@ server.registerPrompt(
 One MCP endpoint many clients share, over Streamable HTTP:
 
 ```ts
-import { createMcpHandler, McpServer } from '@modelcontextprotocol/server';
+import { createMcpHandler, McpServer } from "@modelcontextprotocol/server";
 
 const handler = createMcpHandler(({ era, authInfo, requestInfo }) => {
-  const server = new McpServer({ name: 'notes', version: '1.0.0' });
+  const server = new McpServer({ name: "notes", version: "1.0.0" });
   // register tools…
   return server;
 });
@@ -103,7 +115,15 @@ const handler = createMcpHandler(({ era, authInfo, requestInfo }) => {
 export default handler;
 
 // Plain node:http
-import { createServer } from 'node:http';
-import { toNodeHandler } from '@modelcontextprotocol/node';
+import { createServer } from "node:http";
+import { toNodeHandler } from "@modelcontextprotocol/node";
 createServer(toNodeHandler(handler)).listen(3000);
+
+// Already inside a Node request handler and want handler.fetch() directly: toWebRequest is the inverse of toNodeHandler
+import { toWebRequest } from "@modelcontextprotocol/node";
+createServer(async (req, res) => {
+  const response = await handler.fetch(toWebRequest(req));
+  res.writeHead(response.status, Object.fromEntries(response.headers));
+  res.end(await response.text());
+}).listen(3000);
 ```
