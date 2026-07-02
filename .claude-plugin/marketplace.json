@@ -17,11 +17,7 @@
       },
       "homepage": "https://github.com/j0hanz/mcp-dev",
       "repository": "https://github.com/j0hanz/mcp-dev",
-      "keywords": [
-        "mcp",
-        "model-context-protocol",
-        "typescript-sdk"
-      ],
+      "keywords": ["mcp", "model-context-protocol", "typescript-sdk"],
       "category": "development"
     }
   ]
