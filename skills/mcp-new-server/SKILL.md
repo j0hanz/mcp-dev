@@ -15,7 +15,8 @@ Build a TypeScript SDK v2 MCP server. Load knowledge skills using the Skill tool
 3. **HTTP Auth (If HTTP):** Load `mcp-auth-oauth`. Secure endpoints before writing handlers. Skip if using stdio.
 4. **Complex Tools (If interactive/long):** Load `mcp-interaction-patterns`. Wire user prompts, progress tracking, and cancellation. Skip if not needed.
 5. **Test (Mandatory):** Load `mcp-testing-debugging`. Write and pass `InMemoryTransport` tests covering every tool.
-6. **Verify:** Complete only when all tests pass and the server starts cleanly.
+6. **Distribute (If publishing):** Load `mcp-distribute` if the Decision Record calls for npm distribution. Skip if local-only.
+7. **Verify:** Complete only when all tests pass and the server starts cleanly.
 
 ## Strict Rules
 

@@ -21,7 +21,7 @@ disable-model-invocation: true
 - `/mcp-audit`: Read-only production readiness audit
 
 **Knowledge Skills:**
-`mcp-interview`, `mcp-server-build`, `mcp-client-build`, `mcp-auth-oauth`, `mcp-interaction-patterns`, `mcp-testing-debugging`, `mcp-advanced-protocol`, `mcp-migrate-v1-to-v2`
+`mcp-interview`, `mcp-server-build`, `mcp-client-build`, `mcp-auth-oauth`, `mcp-interaction-patterns`, `mcp-testing-debugging`, `mcp-advanced-protocol`, `mcp-migrate-v1-to-v2`, `mcp-distribute`
 
 ## Routing Table
 
@@ -36,6 +36,7 @@ disable-model-invocation: true
 | **Test / Debug**         | `mcp-testing-debugging`                                                                                                 |
 | **Interaction Patterns** | `mcp-interaction-patterns`                                                                                              |
 | **Protocol / Transport** | `mcp-advanced-protocol`                                                                                                 |
+| **Package / Publish**    | `mcp-distribute`                                                                                                        |
 
 ## Strict Rules
 
