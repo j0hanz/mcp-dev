@@ -1,14 +1,13 @@
 ---
 name: mcp
-description: Single entry point for all MCP TypeScript SDK v2 work. Run /mcp with no argument to see the available jobs, or /mcp <job> — e.g. "new server", "new client", "audit", "migrate", "publish" — to load the right knowledge skills in the right order for that job.
+description: Entry point for MCP SDK v2. Run `/mcp` for menu or `/mcp <job>` to load knowledge skills in sequence.
 user-invocable: true
 disable-model-invocation: true
 ---
 
 # MCP Entry Point
 
-**No argument:** show the Routing table as a menu and ask which job to run.
-**Argument:** match it to a Routing row and follow that row. Load each knowledge skill with the Skill tool exactly at the step that names it — never upfront, never twice in one session.
+Run `/mcp` for menu, `/mcp <job>` to follow Routing table. Load skills ONLY at their named step (never upfront or twice).
 
 ## Routing
 
@@ -25,24 +24,15 @@ disable-model-invocation: true
 | Low-level protocol / custom transports | Load `mcp-advanced-protocol`                                         |
 | Package / publish / register with host | Load `mcp-server-build`, then read its `references/distribution.md`  |
 
-## Build server
+## Build Workflow (Server or Client)
 
 1. **Clarify** — load `mcp-interview`; obtain the Decision Record (`docs/mcp-decisions.md`) before scaffolding.
-2. **Scaffold** — load `mcp-server-build`; registrations, schemas, transport wiring.
-3. **Auth** _(HTTP only — skip on stdio)_ — load `mcp-auth` before writing handlers.
-4. **Interaction** _(only if tools run long or need user input)_ — load `mcp-elicitation`; wire prompts, progress, cancellation.
-5. **Test** — load `mcp-test`; write and pass in-process transport tests covering every tool.
-6. **Distribute** _(only if the Decision Record says npm)_ — read `mcp-server-build`'s `references/distribution.md`.
-7. **Verify** — done only when all tests pass and the server starts cleanly.
-
-## Build client
-
-1. **Clarify** — load `mcp-interview`; obtain the Decision Record before scaffolding.
-2. **Scaffold** — load `mcp-client-build`; client construction, transport, connection, tool calls, list-changed handling.
-3. **Auth** _(only if the target server is protected)_ — load `mcp-auth`; wire the client-side provider.
-4. **Callbacks** _(only if the server elicits, samples, or reports progress)_ — load `mcp-elicitation`.
-5. **Test** — load `mcp-test`; test against an in-process fake server.
-6. **Verify** — done only when tests pass and the client connects, lists, and calls against the real target.
+2. **Scaffold** — load `mcp-server-build` or `mcp-client-build` for schemas, transport wiring, and construction.
+3. **Auth** _(HTTP servers or protected clients)_ — load `mcp-auth` to wire providers/handlers.
+4. **Interaction / Callbacks** _(for long-running tools, prompts, elicitation)_ — load `mcp-elicitation`.
+5. **Test** — load `mcp-test`; write in-process transport tests.
+6. **Distribute** _(server npm only)_ — read `mcp-server-build`'s `references/distribution.md`.
+7. **Verify** — requires passing tests and successful end-to-end execution.
 
 ## Audit
 
@@ -62,5 +52,4 @@ Report one ranked list; state any skipped steps (e.g. no HTTP code). Categories:
 ## Rules
 
 - Never skip Clarify or Test in a build workflow — no scaffolding without a Decision Record.
-- Never load a skill before the step that names it; never reload one already loaded this session.
 - SDK specifics live in the knowledge skills, never in this file.
