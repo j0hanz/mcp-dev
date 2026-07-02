@@ -1,6 +1,6 @@
 ---
 name: mcp-auth
-description: This skill should be used when the user asks to "add auth to an MCP server", "protect an MCP endpoint", "verify bearer tokens", "set up OAuth for MCP", "authenticate an MCP client", "machine-to-machine MCP auth", or mentions requireBearerAuth, OAuthClientProvider, AuthInfo, ClientCredentialsProvider, PrivateKeyJwtProvider, or mcpAuthMetadataRouter from the MCP TypeScript SDK v2.
+description: Use when an MCP server or endpoint needs protection or an MCP client needs credentials — bearer-token verification, OAuth flows, or machine-to-machine auth in the TypeScript SDK v2.
 user-invocable: false
 ---
 
@@ -8,7 +8,11 @@ user-invocable: false
 
 Covers `2.0.0-beta.2` server- and client-side OAuth. Official reference: https://ts.sdk.modelcontextprotocol.io/v2/
 
-**The server only verifies tokens; it never issues them.** Token issuance is a separate authorization server — the MCP server is a resource server that checks what it's handed.
+```
+client authProvider -> token -> request -> requireBearerAuth -> verifyAccessToken -> AuthInfo -> handler
+```
+
+**The server only verifies tokens; it never issues them.** Token issuance belongs to a separate authorization server — the MCP server is a resource server that checks what it's handed.
 
 ## 1. Server side — protecting the endpoint
 
@@ -61,3 +65,4 @@ See [Cross-app access example](references/examples.md#cross-app-access).
 
 - `mcp-server-build` — building and wiring the server this protects.
 - `mcp-client-build` — building the client that authenticates against it.
+- `mcp-test` — in-process testing and the full error-code tables.

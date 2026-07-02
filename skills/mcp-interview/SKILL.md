@@ -1,6 +1,6 @@
 ---
 name: mcp-interview
-description: This skill should be used when planning a new MCP server or client before any code exists — when the user asks to "plan an MCP server", "clarify MCP requirements", "decide stdio vs HTTP", "lock MCP design decisions", "spec out MCP tools", or when an /mcp build workflow reaches its Clarify step. Locks hard-to-reverse decisions one gated question at a time and writes a Decision Record to docs/mcp-decisions.md.
+description: Use when planning a new MCP server or client before any code exists and design decisions (transport, auth, tool surface) are still open. Also the Clarify step of the /mcp build workflow.
 user-invocable: false
 ---
 
@@ -8,6 +8,10 @@ user-invocable: false
 
 **Goal:** Make and record all MCP design decisions before writing any code.
 **Rule:** ONLY make decisions. NEVER write, change, or save code.
+
+```
+Search -> ask triggered questions (one at a time) -> record 9 decisions -> save + show docs/mcp-decisions.md
+```
 
 ## Rules
 
@@ -37,7 +41,7 @@ user-invocable: false
 2. **Check** the Decision Table to see which questions trigger.
 3. **Ask** triggered questions one at a time.
 4. **Record** all 9 decisions. Mark each as `(asked)` or `(default)`.
-5. **Save** the record in `docs/mcp-decisions.md`. If the file exists, add today's date and the new decisions to the bottom. Do not delete old choices.
+5. **Save** to `docs/mcp-decisions.md`; if it exists, append a dated record below the old ones — never delete old choices.
 6. **Show** the final record.
 
 ## Record Format Example
@@ -49,6 +53,10 @@ user-invocable: false
 2. Transport: stdio. (default)
 3. Auth: none — stdio transport. (default)
 ```
+
+## Related skills
+
+- `mcp-server-build` / `mcp-client-build` — scaffold from the finished record.
 
 ## Final Warnings
 

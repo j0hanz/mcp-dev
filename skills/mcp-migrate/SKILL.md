@@ -1,12 +1,16 @@
 ---
 name: mcp-migrate
-description: This skill should be used when the user asks to "migrate an MCP server from v1 to v2", "upgrade @modelcontextprotocol/sdk", "run the MCP codemod", "fix missing SSEServerTransport", "adopt the 2026 MCP protocol", or mentions v1-to-v2 migration, McpError renames, RequestHandlerExtra, or protocol eras in the MCP TypeScript SDK.
+description: Use when migrating MCP TypeScript SDK v1 code to the v2 packages, or when v1 APIs like SSEServerTransport, McpError, or RequestHandlerExtra stop resolving after an upgrade.
 user-invocable: false
 ---
 
 # Migrating MCP SDK v1 to v2
 
 Upgrades a project from `@modelcontextprotocol/sdk` v1 to the split v2 packages (`2.0.0-beta.2`). Requires Node.js ≥ 20. Official reference: https://ts.sdk.modelcontextprotocol.io/v2/
+
+```
+codemod -> fix markers -> renames -> removed APIs -> deprecations -> manual follow-ups -> tsc + tests
+```
 
 ## Step 1: Run the codemod
 

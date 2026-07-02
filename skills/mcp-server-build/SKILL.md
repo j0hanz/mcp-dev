@@ -1,12 +1,16 @@
 ---
 name: mcp-server-build
-description: This skill should be used when the user asks to "register a tool", "add an MCP resource", "add an MCP prompt", "expose tools to a model", "serve MCP over stdio", "serve MCP over HTTP", "publish an MCP server", "package an MCP server for npm", "run an MCP server with npx", "register an MCP server with a host", or mentions McpServer, registerTool, registerResource, registerPrompt, serveStdio, or createMcpHandler from the MCP TypeScript SDK v2 (@modelcontextprotocol/server). For planning a brand-new server, use `mcp-interview` first.
+description: Use when building, serving, or publishing an MCP server with the TypeScript SDK v2 (@modelcontextprotocol/server) — registering tools, resources, or prompts, wiring stdio or HTTP transport, or packaging for npm. For planning a brand-new server, use mcp-interview first.
 user-invocable: false
 ---
 
 # Building MCP Servers (TypeScript SDK v2)
 
 Covers `@modelcontextprotocol/server` `2.0.0-beta.2` (beta — API may shift before stable), protocol revision `2026-07-28`, which also serves all 2024/2025 revisions. Requires Node.js ≥ 20; also runs on Bun, Deno, browsers, and Cloudflare Workers. Official reference: https://ts.sdk.modelcontextprotocol.io/v2/
+
+```
+McpServer -> register (tools | resources | prompts) -> serve (stdio | HTTP) -> test -> distribute
+```
 
 ## Quick start
 
@@ -105,15 +109,14 @@ The factory runs once per HTTP request; a fresh instance serves every call → s
 
 **Security:** the handler trusts its caller — it validates no `Host`/`Origin` header and verifies no token. Mount those in front (framework adapters arm DNS-rebinding defense by default; auth is pass-through via `handler.fetch(request, { authInfo })`).
 
-## Additional resources
-
-### Reference files
+## Reference files
 
 - **`references/serving-and-scaling.md`** — `createMcpHandler` options, framework adapters (Express/Hono/Fastify), Host/Origin security, sessions, resumability, notifications and multi-node event buses, cache hints, legacy-client support.
 - **`references/distribution.md`** — read when the server is built and tested and needs to ship: npm `bin` packaging for npx, host registration (Claude Code / VS Code / Cursor), HTTP deployment, versioning rules.
 
-### Related skills
+## Related skills
 
+- `mcp-interview` — plan a brand-new server before scaffolding
 - `mcp-auth` — protecting the endpoint with bearer auth
 - `mcp-elicitation` — elicitation, `input_required`, progress, cancellation
 - `mcp-advanced-protocol` — low-level `Server`, custom methods, custom transports

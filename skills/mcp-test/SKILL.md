@@ -1,12 +1,16 @@
 ---
 name: mcp-test
-description: This skill should be used when the user asks to "test an MCP server", "write tests for MCP tools", "use the MCP inspector", "debug an MCP connection", "look up an MCP error code", or mentions InMemoryTransport, ProtocolError codes, SdkError codes, or failures like "Unexpected token is not valid JSON" in the MCP TypeScript SDK v2.
+description: Use when an MCP server or client needs tests or is misbehaving — connection failures, opaque ProtocolError/SdkError codes, or inspector sessions in the TypeScript SDK v2.
 user-invocable: false
 ---
 
 # Testing & Debugging MCP (TypeScript SDK v2)
 
 Covers testing and error diagnosis for `2.0.0-beta.2`. Official reference: https://ts.sdk.modelcontextprotocol.io/v2/
+
+```
+in-process tests -> manual probe (inspector | curl) -> match error channel -> look up code
+```
 
 ## 1. Test in-process (no network, no child process)
 
@@ -45,9 +49,12 @@ See [In-process test harness example](references/examples.md#in-process-test-har
 - A tool handler can't emit a protocol error: every throw inside one becomes `isError: true`, except `UrlElicitationRequiredError` (`-32042`), which propagates.
 - Match errors by `.code`, not `instanceof` — instances can come from a different copy of the package across a workspace boundary. `ProtocolError.fromError(code, message, data)` reconstructs a typed error across bundle boundaries.
 
-## 5. Reference
+## 5. Reference files
 
 - `references/error-codes.md` — full `ProtocolErrorCode` / `SdkErrorCode` tables.
+
+## 6. Related skills
+
 - `mcp-server-build` — server-side error-handling rules.
 - `mcp-client-build` — client-side error-handling rules.
 - `mcp-migrate` — renamed errors and codes after upgrading.

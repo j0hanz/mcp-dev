@@ -1,12 +1,16 @@
 ---
 name: mcp-advanced-protocol
-description: This skill should be used when the user asks to "use the low-level MCP Server", "add a custom MCP method", "write a custom transport", "validate raw MCP messages", "build an MCP gateway or proxy", or mentions setRequestHandler, extension capabilities, ReadBuffer, @modelcontextprotocol/core, wire schemas, fromJsonSchema, or DiscoverResult from the MCP TypeScript SDK v2.
+description: Use when MCP work needs to drop below McpServer — custom protocol methods, custom transports, raw wire messages, or an MCP gateway/proxy on the low-level Server from the TypeScript SDK v2.
 user-invocable: false
 ---
 
 # MCP Advanced Protocol (TypeScript SDK v2)
 
 Covers the low-level parts of `@modelcontextprotocol/server` `2.0.0-beta.2` that `McpServer` hides. Official reference: https://ts.sdk.modelcontextprotocol.io/v2/
+
+```
+McpServer (default) -> low-level Server -> custom methods -> custom transports -> gateway/proxy
+```
 
 **Default to `McpServer`.** Drop to the low-level `Server` (`mcp.server.setRequestHandler(...)`) only when you need to route methods the high-level API doesn't model.
 
@@ -52,8 +56,11 @@ Implement `Transport`: three methods (`start`, `send`, `close`) and three option
 
 See [Custom transports example](references/examples.md#custom-transports).
 
-## 5. Further reading
+## 5. Reference files
 
 - `references/wire-schemas-and-gateways.md` — raw wire schemas from `@modelcontextprotocol/core`, and gateway/worker-fleet patterns using `DiscoverResult`.
+
+## 6. Related skills
+
 - `mcp-server-build` / `mcp-client-build` — reach for these first; this skill is the escape hatch.
 - `mcp-test` — protocol vs. SDK error code reference.

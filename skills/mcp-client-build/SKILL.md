@@ -1,12 +1,16 @@
 ---
 name: mcp-client-build
-description: This skill should be used when the user asks to "connect to an MCP server", "call an MCP tool", "list MCP tools", "read an MCP resource", "get an MCP prompt", "subscribe to MCP resource updates", "cache MCP responses", or "add middleware to an MCP client", or mentions Client, StreamableHTTPClientTransport, StdioClientTransport, callTool, versionNegotiation, listChanged, responseCacheStore, or withOAuth from the MCP TypeScript SDK v2 (@modelcontextprotocol/client). For planning a brand-new client, use `mcp-interview` first.
+description: Use when building an MCP client with the TypeScript SDK v2 (@modelcontextprotocol/client) — connecting to servers, calling tools, reading resources or prompts, subscriptions, caching, or middleware. For planning a brand-new client, use mcp-interview first.
 user-invocable: false
 ---
 
 # Building MCP Clients (TypeScript SDK v2)
 
 Covers `@modelcontextprotocol/client` `2.0.0-beta.2` (beta — API may shift before stable). Requires Node.js ≥ 20. Official reference: https://ts.sdk.modelcontextprotocol.io/v2/
+
+```
+Client + transport -> connect -> call | read | subscribe -> handle server requests -> terminate + close
+```
 
 ## 1. Connect and disconnect
 
@@ -65,10 +69,14 @@ const client = new Client(
 
 If the server elicits input or reports progress, register the handlers once at client construction — load the `mcp-elicitation` skill for the handler patterns.
 
-## 6. Further reading
+## 6. Reference files
 
 - `references/examples.md` — connect, call, subscribe, and middleware examples.
 - `references/subscriptions-caching-middleware.md` — `subscriptions/listen`, response caching, `fetch` middleware, and deprecated `roots`.
+
+## 7. Related skills
+
+- `mcp-interview` — plan a brand-new client before wiring one.
 - `mcp-auth` — authenticating the connection.
 - `mcp-elicitation` — elicitation and `input_required` handling in depth.
 - `mcp-advanced-protocol` — raw wire schemas and gateway patterns.

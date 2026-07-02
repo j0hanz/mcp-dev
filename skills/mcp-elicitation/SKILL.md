@@ -1,6 +1,6 @@
 ---
 name: mcp-elicitation
-description: This skill should be used when the user asks to "ask the user from a tool", "elicit input mid-call", "confirm before running a tool", "report progress from an MCP server", "cancel an MCP request", or mentions elicitInput, elicitation, input_required, inputRequired, requestState, progressToken, or sampling in the MCP TypeScript SDK v2.
+description: Use when an MCP tool call needs mid-call interaction with the user — eliciting input, confirming before acting, reporting progress, cancellation, or sampling in the TypeScript SDK v2.
 user-invocable: false
 ---
 
@@ -8,9 +8,13 @@ user-invocable: false
 
 Covers mid-call communication between server and user: asking for input, reporting progress, and cancellation.
 
+```
+handler -> return inputRequired(...) -> client asks the user -> handler re-runs -> acceptedContent(answer)
+```
+
 ## Legacy vs. modern
 
-The SDK negotiates which era a connection speaks and adapts automatically — write handlers against the modern surface (`input_required`); legacy (2025-era) connections are served transparently (the `inputRequired.legacyShim` server option, default `true`, pushes real `elicitation/create` requests and re-enters the handler).
+Write handlers against the modern surface (`input_required`); the SDK negotiates the era per connection and serves legacy (2025-era) clients transparently — `inputRequired.legacyShim` (a server option, default `true`) pushes real `elicitation/create` requests and re-enters the handler.
 
 | Need            | Legacy (2025)                    | Modern (2026)                        |
 | --------------- | -------------------------------- | ------------------------------------ |
@@ -87,7 +91,10 @@ See [Client-side interaction example](references/examples.md#client-side-interac
 
 Sampling (`requestSampling`) and MCP logging (`ctx.mcpReq.log`) are deprecated (SEP-2577) — call the LLM provider directly, and log to stderr or OpenTelemetry instead. See `references/advanced-interaction-patterns.md`.
 
-## Further reading
+## Reference files
 
 - `references/advanced-interaction-patterns.md` — `requestState` for cross-round data, and the sampling/logging deprecation.
+
+## Related skills
+
 - `mcp-server-build` / `mcp-client-build` — where these handlers get registered.
