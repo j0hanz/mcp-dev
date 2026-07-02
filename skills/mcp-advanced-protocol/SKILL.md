@@ -14,8 +14,8 @@ Covers the low-level parts of `@modelcontextprotocol/server` `2.0.0-beta.2` that
 
 `Server` is the raw protocol engine — nothing is automatic:
 
-- You supply the JSON Schema for every tool yourself; there's no Zod-to-JSON-Schema derivation.
-- You validate incoming arguments yourself before using them.
+- Callers supply the JSON Schema for every tool; there's no Zod-to-JSON-Schema derivation.
+- Incoming arguments aren't validated automatically — validate them before use.
 - An uncaught throw becomes a JSON-RPC **protocol error**, not an `isError` result — the model doesn't get a retry hint, the caller's code does.
 - Capabilities aren't inferred from registrations; declare `listChanged` etc. explicitly or list-change notifications throw.
 
@@ -29,7 +29,7 @@ See [Low-level Server example](references/examples.md#low-level-server).
 
 ```ts
 mcp.server.registerCapabilities({
-  extensions: { 'com.example/feature-flags': { flags: ['dark-mode'] } },
+  extensions: { "com.example/feature-flags": { flags: ["dark-mode"] } },
 });
 ```
 

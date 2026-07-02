@@ -1,12 +1,12 @@
 ---
 name: mcp-client-build
-description: This skill should be used when the user asks to "connect to an MCP server", "call an MCP tool", "list MCP tools", "read an MCP resource", "get an MCP prompt", or mentions Client, StreamableHTTPClientTransport, StdioClientTransport, callTool, versionNegotiation, or listChanged from the MCP TypeScript SDK v2 (@modelcontextprotocol/client). For planning a brand-new client, use `mcp-interview` first.
+description: This skill should be used when the user asks to "connect to an MCP server", "call an MCP tool", "list MCP tools", "read an MCP resource", "get an MCP prompt", "subscribe to MCP resource updates", "cache MCP responses", or "add middleware to an MCP client", or mentions Client, StreamableHTTPClientTransport, StdioClientTransport, callTool, versionNegotiation, listChanged, responseCacheStore, or withOAuth from the MCP TypeScript SDK v2 (@modelcontextprotocol/client). For planning a brand-new client, use `mcp-interview` first.
 user-invocable: false
 ---
 
 # Building MCP Clients (TypeScript SDK v2)
 
-Covers `@modelcontextprotocol/client` `2.0.0-beta.2`. Requires Node.js ≥ 20. Official reference: https://ts.sdk.modelcontextprotocol.io/v2/
+Covers `@modelcontextprotocol/client` `2.0.0-beta.2` (beta — API may shift before stable). Requires Node.js ≥ 20. Official reference: https://ts.sdk.modelcontextprotocol.io/v2/
 
 ## 1. Connect and disconnect
 

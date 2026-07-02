@@ -14,8 +14,8 @@ Run `/mcp` for menu, `/mcp <job>` to follow Routing table. Load skills ONLY at t
 | Job                                    | Do                                                                   |
 | :------------------------------------- | :------------------------------------------------------------------- |
 | Plan / clarify requirements            | Load `mcp-interview`, then continue with the matching build workflow |
-| Build a new server                     | [Build server](#build-server)                                        |
-| Build a new client                     | [Build client](#build-client)                                        |
+| Build a new server                     | [Build Workflow](#build-workflow-server-or-client)                   |
+| Build a new client                     | [Build Workflow](#build-workflow-server-or-client)                   |
 | Audit existing MCP code                | [Audit](#audit)                                                      |
 | Migrate SDK v1 → v2                    | Load `mcp-migrate-v1-to-v2`, then `mcp-test`                         |
 | Auth / tokens / OAuth                  | Load `mcp-auth`                                                      |

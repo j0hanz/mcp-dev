@@ -12,7 +12,7 @@ Covers `2.0.0-beta.2` server- and client-side OAuth. Official reference: https:/
 
 ## 1. Server side — protecting the endpoint
 
-`requireBearerAuth` wraps the handler; you supply one function, `verifyAccessToken(token) => AuthInfo`.
+`requireBearerAuth` wraps the handler around one supplied function, `verifyAccessToken(token) => AuthInfo`.
 
 See [Server-side example](references/examples.md#server-side---protecting-the-endpoint).
 
@@ -44,13 +44,9 @@ See [Machine-to-machine example](references/examples.md#machine-to-machine).
 
 ### C. Cross-app access
 
-For a user already authenticated in the host app — exchanges that session for MCP access instead of a second login:
+For a user already authenticated in the host app — exchanges that session for MCP access instead of a second login.
 
-```ts
-import { CrossAppAccessProvider } from "@modelcontextprotocol/client";
-
-new CrossAppAccessProvider({ assertion, clientId, clientSecret });
-```
+See [Cross-app access example](references/examples.md#cross-app-access).
 
 ## 3. Error reference
 

@@ -87,19 +87,11 @@ For elicitation, `input_required`, progress reporting, and cancellation patterns
 
 ## Errors — two channels, picked by audience
 
-See [Errors API Reference](references/errors.md) for detailed error channels (Tool vs Protocol errors) and examples.
-
-A tool handler **cannot** emit a protocol error — every throw (even a thrown `ProtocolError`) becomes `isError: true`. The one exception: `UrlElicitationRequiredError` propagates (`-32042`). Full code tables live in the `mcp-test` skill.
+See [Errors API Reference](references/errors.md) for detailed error channels (Tool vs Protocol errors), the tool-handler protocol-error exception, and examples.
 
 ## Serving on stdio
 
-For servers a host launches as a local child process — `serveStdio(factory, options?)` owns the transport:
-
-```ts
-const handle = serveStdio(() => buildServer());
-console.error("listening on stdio"); // stderr — NEVER console.log
-process.on("SIGINT", () => void handle.close());
-```
+For servers a host launches as a local child process — `serveStdio(factory, options?)` owns the transport. See [Stdio Serving Example](references/examples.md#stdio-serving).
 
 - **stdout is the JSON-RPC channel.** One `console.log` corrupts the stream and the host drops the connection.
 - `legacy` option: `'serve'` (default — a 2025-era opening pins the connection to a legacy instance) or `'reject'`.

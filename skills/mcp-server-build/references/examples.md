@@ -129,6 +129,14 @@ argsSchema: z.object({
 });
 ```
 
+## Stdio Serving
+
+```ts
+const handle = serveStdio(() => buildServer());
+console.error("listening on stdio"); // stderr — NEVER console.log
+process.on("SIGINT", () => void handle.close());
+```
+
 ## HTTP Serving
 
 One MCP endpoint many clients share, over Streamable HTTP:
