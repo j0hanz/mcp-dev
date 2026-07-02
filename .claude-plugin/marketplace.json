@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "mcp-dev",
-  "description": "Skills for building, testing, auditing, and migrating MCP servers and clients with the TypeScript SDK v2.",
+  "description": "MCP development skills for TypeScript SDK v2",
   "owner": {
     "name": "j0hanz",
     "email": "l.johansson93@outlook.com"
@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "mcp-dev",
-      "description": "Skills for building, testing, auditing, and migrating MCP servers and clients with the TypeScript SDK v2.",
+      "description": "MCP development skills for building, testing, auditing, distributing, and migrating MCP servers and clients with the TypeScript SDK v2.",
       "source": "./",
       "version": "1.0.0",
       "author": {
