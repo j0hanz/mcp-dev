@@ -4,8 +4,8 @@
 
 ```ts
 const handler = createMcpHandler(factory, {
-  responseMode: 'auto', // 'auto' | 'json' | 'sse'
-  legacy: 'stateless', // 'stateless' (default) | 'reject'
+  responseMode: "auto", // 'auto' | 'json' | 'sse'
+  legacy: "stateless", // 'stateless' (default) | 'reject'
   bus: new InMemoryServerEventBus(),
 });
 // handler: { fetch(request, ctx?), close(), notify, bus }
@@ -28,49 +28,7 @@ All four are thin layers over `createMcpHandler`; each app factory pre-applies J
 
 Hono mounts differently because it runs on `WebStandardStreamableHTTPServerTransport` and calls `handler.fetch()` directly; Express and Fastify run on `NodeStreamableHTTPServerTransport` and go through `toNodeHandler` to adapt Node's `req`/`res`.
 
-Complete Express example:
-
-```ts
-import { createMcpExpressApp } from '@modelcontextprotocol/express';
-import { toNodeHandler } from '@modelcontextprotocol/node';
-import { createMcpHandler } from '@modelcontextprotocol/server';
-
-const handler = createMcpHandler(buildServer);
-const app = createMcpExpressApp(); // express() + express.json() + Host/Origin checks
-const node = toNodeHandler(handler);
-app.all('/mcp', (req, res) => void node(req, res, req.body)); // pass parsed body — avoids re-reading the stream
-app.listen(3000);
-```
-
-Fastify example:
-
-```ts
-import { createMcpFastifyApp } from '@modelcontextprotocol/fastify';
-import { toNodeHandler } from '@modelcontextprotocol/node';
-
-const app = createMcpFastifyApp(); // fastify() + Host/Origin checks
-const node = toNodeHandler(handler);
-app.all('/mcp', (req, reply) => node(req.raw, reply.raw, req.body));
-app.listen({ port: 3000 });
-```
-
-Hono example:
-
-```ts
-import { createMcpHonoApp } from '@modelcontextprotocol/hono';
-
-const app = createMcpHonoApp(); // Hono() + Host/Origin checks
-app.all('/mcp', (c) => handler.fetch(c.req.raw, { parsedBody: c.get('parsedBody') }));
-export default app;
-```
-
-Smoke test:
-
-```sh
-curl -X POST http://127.0.0.1:3000/mcp -H 'Content-Type: application/json' \
-  -H 'Accept: application/json, text/event-stream' \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
-```
+See [Framework Adapter Examples](examples.md#framework-adapters) for full Express, Fastify, and Hono setups (including DNS rebinding protection and smoke testing).
 
 ## Host/Origin security
 
@@ -102,7 +60,7 @@ Most servers never call these — registering, `update()`, `enable()`, `disable(
 Behind `createMcpHandler` the instance is per-request, so publish through the handler; delivery reaches every open `subscriptions/listen` stream that opted in:
 
 ```ts
-handler.notify.resourceUpdated('config://app'); // needs resources: { subscribe: true } on the instance
+handler.notify.resourceUpdated("config://app"); // needs resources: { subscribe: true } on the instance
 handler.notify.toolsChanged();
 handler.notify.promptsChanged();
 handler.notify.resourcesChanged();
@@ -116,11 +74,11 @@ Mark results with a freshness hint so clients can cache them; without a hint the
 
 ```ts
 new McpServer(
-  { name: 'catalog', version: '1.0.0' },
+  { name: "catalog", version: "1.0.0" },
   {
     cacheHints: {
-      'tools/list': { ttlMs: 60_000, cacheScope: 'public' }, // 'public' only if identical for every caller
-      'resources/read': { ttlMs: 5_000, cacheScope: 'private' }, // default scope
+      "tools/list": { ttlMs: 60_000, cacheScope: "public" }, // 'public' only if identical for every caller
+      "resources/read": { ttlMs: 5_000, cacheScope: "private" }, // default scope
     },
   },
 );
@@ -138,11 +96,16 @@ A legacy client speaks a 2025-era revision (`initialize` handshake, no `_meta` e
 - Keep an existing sessionful 2025 deployment by routing in front of a strict handler:
 
 ```ts
-import { isLegacyRequest, legacyStatelessFallback } from '@modelcontextprotocol/server';
+import {
+  isLegacyRequest,
+  legacyStatelessFallback,
+} from "@modelcontextprotocol/server";
 
 const legacy = legacyStatelessFallback(buildServer); // or existing sessionful wiring
 async function serve(request: Request) {
-  return (await isLegacyRequest(request)) ? legacy(request) : strict.fetch(request);
+  return (await isLegacyRequest(request))
+    ? legacy(request)
+    : strict.fetch(request);
 }
 ```
 

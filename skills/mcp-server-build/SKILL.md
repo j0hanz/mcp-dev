@@ -8,10 +8,6 @@ user-invocable: false
 
 Covers `@modelcontextprotocol/server` `2.0.0-beta.2` (beta — API may shift before stable), protocol revision `2026-07-28`, which also serves all 2024/2025 revisions. Requires Node.js ≥ 20; also runs on Bun, Deno, browsers, and Cloudflare Workers. Official reference: https://ts.sdk.modelcontextprotocol.io/v2/
 
-## Before scaffolding
-
-New server and no `docs/mcp-decisions.md` yet? Load `mcp-interview` first — this skill implements decisions, it doesn't make them.
-
 ## Quick start
 
 See [Quick Start Example](references/examples.md#quick-start) for a complete stdio server implementation.
@@ -27,18 +23,7 @@ The SDK derives the JSON Schema the model sees from the one Zod schema, validate
 
 ## Constructor
 
-```ts
-const server = new McpServer(
-  { name: 'catalog', version: '1.0.0' }, // Implementation info
-  {
-    // ServerOptions (all optional)
-    capabilities: { logging: {}, resources: { subscribe: true } },
-    instructions: 'Call list-trips before book-trip.',
-    enforceStrictCapabilities: true, // check client capabilities before server-initiated requests
-    cacheHints: { 'tools/list': { ttlMs: 60_000, cacheScope: 'public' } },
-  },
-);
-```
+See [Constructor Options Example](references/examples.md#constructor-options).
 
 `McpServer` auto-advertises capabilities as items are registered. Every `McpServer` owns its protocol layer as `server.server` — the per-method escape hatch (see the `mcp-advanced-protocol` skill).
 
@@ -57,8 +42,8 @@ See [Tool Registration Example](references/examples.md#tool-registration).
 The registration handle mutates live and notifies clients automatically (`notifications/tools/list_changed`):
 
 ```ts
-const handle = server.registerTool('run-report', { description: '…' }, handler);
-handle.update({ description: 'Run and email the weekly report' });
+const handle = server.registerTool("run-report", { description: "…" }, handler);
+handle.update({ description: "Run and email the weekly report" });
 handle.disable(); // hidden from tools/list
 handle.enable();
 handle.remove();
@@ -68,20 +53,7 @@ handle.remove();
 
 `registerResource(name, uriOrTemplate, config, readCallback)` exposes read-only data addressed by URI:
 
-```ts
-server.registerResource(
-  'config',
-  'config://app',
-  {
-    title: 'Application Config',
-    description: 'App configuration',
-    mimeType: 'text/plain',
-  },
-  async (uri) => ({
-    contents: [{ uri: uri.href, text: 'log_level=info\nregion=eu-west-1' }],
-  }),
-);
-```
+See [Resource Registration Example](references/examples.md#resource-registration).
 
 Each item in `contents` echoes the `uri` and carries `text` **or** a base64 `blob`, with its own `mimeType`.
 
@@ -103,64 +75,19 @@ See [Prompt Registration Example](references/examples.md#prompt-registration).
 
 ## Argument completion
 
-Wrap a prompt argument with `completable(schema, callback)`; the callback suggests values as the user types:
-
-```ts
-import { completable } from '@modelcontextprotocol/server';
-
-argsSchema: z.object({
-  repo: completable(z.string(), async (value) =>
-    (await listRepos()).filter((r) => r.startsWith(value)),
-  ),
-  branch: completable(z.string(), async (value, context) => {
-    const repo = context?.arguments?.repo; // other already-filled args; context is optional — never throw
-    return repo ? branchesFor(repo).filter((b) => b.startsWith(value)) : [];
-  }),
-});
-```
+Wrap a prompt argument with `completable(schema, callback)`. See [Argument Completion Example](references/examples.md#argument-completion).
 
 Return the full match list; the SDK caps `values` at 100 and fills `total` / `hasMore`. The first `completable` registers the handler and advertises the `completions` capability automatically. Resource-template variables complete via the template's `complete` map, not `completable`.
 
 ## Handler context (`ctx`)
 
-Every handler receives a context as its second argument:
-
-| Member                                         | Purpose                                                                                |
-| ---------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `ctx.mcpReq.signal`                            | `AbortSignal` — aborts on client cancel/disconnect; check in loops, forward to `fetch` |
-| `ctx.mcpReq.id` / `ctx.mcpReq._meta`           | JSON-RPC request id / request `_meta` (e.g. `progressToken`)                           |
-| `ctx.mcpReq.notify(n)` / `ctx.mcpReq.send(r)`  | Send a notification / request tied to this request                                     |
-| `ctx.mcpReq.elicitInput(params)`               | Ask the user mid-call (2025-era; throws on 2026-era)                                   |
-| `ctx.mcpReq.inputResponses` / `requestState()` | 2026-era multi-round-trip surfaces                                                     |
-| `ctx.mcpReq.envelope`                          | Per-request client identity & capabilities (2026-era; legacy: `getClientVersion()`)    |
-| `ctx.sessionId`                                | Session id when the transport has one                                                  |
-| `ctx.http?.authInfo` / `ctx.http?.req`         | Verified `AuthInfo` / inbound `Request` (HTTP only — `undefined` on stdio)             |
+Every handler receives a context as its second argument. See [Context API Reference](references/context.md) for the full table of properties (`ctx.mcpReq`, `ctx.http`, etc.).
 
 For elicitation, `input_required`, progress reporting, and cancellation patterns, load the `mcp-elicitation` skill.
 
 ## Errors — two channels, picked by audience
 
-| Channel            | Shape                                     | Audience                                      | Produced by                                                 |
-| ------------------ | ----------------------------------------- | --------------------------------------------- | ----------------------------------------------------------- |
-| **Tool error**     | Result with `isError: true`               | The **model** — reads the message and retries | Tool handlers: return it or `throw` anything                |
-| **Protocol error** | JSON-RPC error `{ code, message, data? }` | The **caller's code**                         | Resource/prompt/completion callbacks: `throw ProtocolError` |
-
-```ts
-// Tool error — put the recovery hint in the text:
-return {
-  content: [{ type: 'text', text: `No note "${id}". Known ids: ${ids.join(', ')}` }],
-  isError: true,
-};
-
-// Resource/prompt/completion callbacks:
-import {
-  ProtocolError,
-  ProtocolErrorCode,
-  ResourceNotFoundError,
-} from '@modelcontextprotocol/server';
-throw new ProtocolError(ProtocolErrorCode.InvalidParams, `Note ids are lowercase, got "${id}"`);
-throw new ResourceNotFoundError(uri.href); // -32602 with data: { uri }
-```
+See [Errors API Reference](references/errors.md) for detailed error channels (Tool vs Protocol errors) and examples.
 
 A tool handler **cannot** emit a protocol error — every throw (even a thrown `ProtocolError`) becomes `isError: true`. The one exception: `UrlElicitationRequiredError` propagates (`-32042`). Full code tables live in the `mcp-test` skill.
 
@@ -170,8 +97,8 @@ For servers a host launches as a local child process — `serveStdio(factory, op
 
 ```ts
 const handle = serveStdio(() => buildServer());
-console.error('listening on stdio'); // stderr — NEVER console.log
-process.on('SIGINT', () => void handle.close());
+console.error("listening on stdio"); // stderr — NEVER console.log
+process.on("SIGINT", () => void handle.close());
 ```
 
 - **stdout is the JSON-RPC channel.** One `console.log` corrupts the stream and the host drops the connection.
