@@ -1,3 +1,11 @@
+---
+description: >-
+  Reference implementation for client connection setup, calling tools/resources, subscriptions, and client-side middleware.
+metadata:
+  tags: [examples, client, connection, middleware]
+  source: internal
+---
+
 # MCP Client Build Examples
 
 ## Constructor & connect

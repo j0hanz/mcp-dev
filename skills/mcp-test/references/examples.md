@@ -1,3 +1,11 @@
+---
+description: >-
+  Code examples showing linked in-process transports and child-process stdio harnesses for automated testing.
+metadata:
+  tags: [examples, testing, in-process, mock]
+  source: internal
+---
+
 # Testing & Debugging Examples
 
 ## In-process test harness

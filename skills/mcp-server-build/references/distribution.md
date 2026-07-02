@@ -1,3 +1,11 @@
+---
+description: >-
+  Guide to packaging MCP servers for npm/npx, host registration (Cursor, VS Code, Claude), and production deployment.
+metadata:
+  tags: [distribution, packaging, deployment, hosting]
+  source: internal
+---
+
 # Distributing MCP Servers
 
 Ship a finished, tested server (build it with `SKILL.md`; test it with the `mcp-test` skill first).

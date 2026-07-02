@@ -2,6 +2,9 @@
 name: mcp-client-build
 description: Use when building an MCP client with the TypeScript SDK v2 (@modelcontextprotocol/client) — connecting to servers, calling tools, reading resources or prompts, subscriptions, caching, or middleware. For planning a brand-new client, use mcp-interview first.
 user-invocable: false
+metadata:
+  category: technique
+  triggers: mcp client, client connection, register capabilities, call tools, read resources, progress handler
 ---
 
 # Building MCP Clients (TypeScript SDK v2)
@@ -12,15 +15,20 @@ Covers `@modelcontextprotocol/client` `2.0.0-beta.2` (beta — API may shift bef
 Client + transport -> connect -> call | read | subscribe -> handle server requests -> terminate + close
 ```
 
-## 1. Connect and disconnect
+## When to Use
 
-See [Constructor & connect example](references/examples.md#constructor--connect).
+- Building or running an MCP client (connecting, calling tools, reading resources, handling prompts).
+- Setting up subscriptions, caching, or middleware on the client side.
+
+## How It Works
+
+### 1. Connect and disconnect
 
 - `connect()` performs the handshake with the server.
 - After connecting: `getServerVersion()`, `getServerCapabilities()` (only request what the server actually declared), `getInstructions()` (the server's usage guidance), `getProtocolEra()` (`'legacy'` or `'modern'`).
 - To close: `await transport.terminateSession()` first, then `await client.close()`.
 
-## 2. Transports
+### 2. Transports
 
 | Transport                       | Use                                                                                             |
 | ------------------------------- | ----------------------------------------------------------------------------------------------- |
@@ -29,9 +37,7 @@ See [Constructor & connect example](references/examples.md#constructor--connect)
 | `SSEClientTransport`            | Legacy fallback for older remote servers — try Streamable first, retry on a **fresh** `Client`. |
 | `InMemoryTransport`             | In-process testing.                                                                             |
 
-## 3. Calling tools and resources
-
-See [Calling tools and resources example](references/examples.md#calling-tools-and-resources).
+### 3. Calling tools and resources
 
 - Server-side failures come back as `{ isError: true }`, not a throw — check it before trusting `content`. A `throw` only happens if the connection itself breaks or times out.
 - `structuredContent` is `unknown` — only present when the tool declares `outputSchema`; narrow before use.
@@ -47,7 +53,7 @@ await client.callTool(params, {
 });
 ```
 
-## 4. Version negotiation
+### 4. Version negotiation
 
 Two protocol eras: legacy (2024/2025) and modern (2026-07-28). `versionNegotiation.mode` controls how the client picks:
 
@@ -57,27 +63,27 @@ Two protocol eras: legacy (2024/2025) and modern (2026-07-28). `versionNegotiati
 
 ```ts
 const client = new Client(
-  { name: "my-client", version: "1.0.0" },
-  { versionNegotiation: { mode: "auto" } },
+  { name: 'my-client', version: '1.0.0' },
+  { versionNegotiation: { mode: 'auto' } },
 );
 ```
 
 - `'auto'` probes with `server/discover`; tune with `probe: { timeoutMs, maxRetries }`. `supportedProtocolVersions` shapes the probe — removing every pre-2026 entry removes the legacy fallback.
 - Don't default a spawn-per-invocation stdio CLI to `'auto'` — a legacy stdio server stalls the probe for its full timeout.
 
-## 5. Responding to server-initiated requests
+### 5. Responding to server-initiated requests
 
 If the server elicits input or reports progress, register the handlers once at client construction — load the `mcp-elicitation` skill for the handler patterns.
 
-## 6. Reference files
+## Examples
 
-- `references/examples.md` — connect, call, subscribe, and middleware examples.
-- `references/subscriptions-caching-middleware.md` — `subscriptions/listen`, response caching, `fetch` middleware, and deprecated `roots`.
+Code implementation examples are located in:
 
-## 7. Related skills
+- Connecting, calling, subscribing, and middleware: [references/examples.md](references/examples.md)
+- Subscriptions, caching, middleware, and roots: [references/subscriptions-caching-middleware.md](references/subscriptions-caching-middleware.md)
 
-- `mcp-interview` — plan a brand-new client before wiring one.
-- `mcp-auth` — authenticating the connection.
-- `mcp-elicitation` — elicitation and `input_required` handling in depth.
-- `mcp-advanced-protocol` — raw wire schemas and gateway patterns.
-- `mcp-test` — in-process test harness and error reference.
+## Common Mistakes
+
+- Wrapping tool calls in try/catch expecting standard exceptions for server-side tool errors (check `isError: true` instead).
+- Defaulting a spawn-per-invocation stdio CLI client's version negotiation to `'auto'` (stalls the probe for the full timeout on legacy servers).
+- Exceeding the maximum pagination page limit (`listMaxPages`), causing `LIST_PAGINATION_EXCEEDED` errors.

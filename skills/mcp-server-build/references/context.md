@@ -1,3 +1,11 @@
+---
+description: >-
+  Detailed API reference and list of properties available on the handler context (ctx.mcpReq, ctx.http, etc.).
+metadata:
+  tags: [context, context-api, handler]
+  source: internal
+---
+
 # Handler context (`ctx`)
 
 Every handler receives a context as its second argument:

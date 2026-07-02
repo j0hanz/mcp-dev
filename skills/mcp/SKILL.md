@@ -4,13 +4,25 @@ description: Use when starting any MCP SDK v2 job — building, migrating, audit
 user-invocable: true
 argument-hint: plan | build | audit | migrate | auth | test | elicit | protocol | publish
 disable-model-invocation: true
+metadata:
+  category: technique
+  triggers: mcp sdk v2, building server, migrating server, auditing mcp, debugging client, mcp workflow
 ---
 
 # MCP Entry Point
 
+Entry point and router for MCP SDK v2 skills.
+
+## When to Use
+
+- Starting any MCP SDK v2 task (building, migrating, auditing, or debugging).
+- The correct `mcp-*` skill to load is unclear.
+
+## How It Works
+
 No argument: offer the Job column as a menu. `/mcp <job>`: follow its Routing row. Load each skill ONLY at its named step — never upfront, never twice.
 
-## Routing
+### Routing
 
 | Job                                    | Do                                                             |
 | :------------------------------------- | :------------------------------------------------------------- |
@@ -24,7 +36,7 @@ No argument: offer the Job column as a menu. `/mcp <job>`: follow its Routing ro
 | Low-level protocol / custom transports | Load `mcp-advanced-protocol`                                   |
 | Package / publish / register with host | Load `mcp-server-build`, then its `references/distribution.md` |
 
-## Build Workflow (Server or Client)
+### Build Workflow (Server or Client)
 
 ```
 Clarify -> Scaffold -> [Auth] -> [Interaction] -> Test -> [Distribute] -> Verify
@@ -40,7 +52,7 @@ Clarify -> Scaffold -> [Auth] -> [Interaction] -> Test -> [Distribute] -> Verify
 6. **Distribute** _(server npm only)_ — read `mcp-server-build`'s `references/distribution.md`.
 7. **Verify** — done only when tests pass and an end-to-end run succeeds.
 
-## Audit
+### Audit
 
 ```
 Locate -> Version -> Design -> [Security] -> [Interactions] -> Tests -> Intent -> Report
@@ -59,7 +71,15 @@ READ-ONLY: report findings; fix nothing unless asked. Audit against each loaded 
 Report one ranked list; name every skipped step (e.g. no HTTP code). Categories: **Blockers** (broken or unsafe for production), **Should Fix** (breaks a design rule), **Nice to Have**. Each finding:
 `- [file:line] | [What is wrong] | [Skill that fixes it]`
 
-## Rules
+## Examples
 
-- Never skip Clarify or Test — no scaffolding without a Decision Record.
-- SDK specifics live in the knowledge skills, never in this file.
+See specific sub-skills for code implementation examples:
+
+- Server Configuration: see the `mcp-server-build` skill.
+- Client Connection: see the `mcp-client-build` skill.
+
+## Common Mistakes
+
+- Loading sub-skills upfront or out of order.
+- Duplicating SDK-specific rules or code in this routing/dispatcher file.
+- Violating the build workflow order (always obtain the Decision Record during Clarify step first).

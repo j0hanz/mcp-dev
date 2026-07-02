@@ -1,3 +1,11 @@
+---
+description: >-
+  Advanced guide to client caching, fetch middleware, subscription management, and roots handling.
+metadata:
+  tags: [caching, subscription, middleware, client]
+  source: internal
+---
+
 # Subscriptions, Caching, Middleware, Roots
 
 ## Subscriptions (change notifications)

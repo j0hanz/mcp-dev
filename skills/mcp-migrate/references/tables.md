@@ -1,3 +1,11 @@
+---
+description: >-
+  Comparison and reference tables for packages split, API renames, and legacy-vs-modern era compatibility.
+metadata:
+  tags: [migration-tables, renames, compatibility]
+  source: internal
+---
+
 # Migration Reference Tables
 
 ## Package split

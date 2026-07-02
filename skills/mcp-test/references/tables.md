@@ -1,3 +1,11 @@
+---
+description: >-
+  Debugging reference tables comparing common error symptoms with their respective root causes and solutions.
+metadata:
+  tags: [debugging-tables, troubleshooting, errors]
+  source: internal
+---
+
 # Error Code Reference Tables
 
 ## ProtocolErrorCode (wire codes)

@@ -2,6 +2,9 @@
 name: mcp-elicitation
 description: Use when an MCP tool call needs mid-call interaction with the user — eliciting input, confirming before acting, reporting progress, cancellation, or sampling in the TypeScript SDK v2.
 user-invocable: false
+metadata:
+  category: technique
+  triggers: input elicitation, progress reporting, client-side cancellation, user interaction, cancel tool
 ---
 
 # MCP Elicitation (TypeScript SDK v2)
@@ -12,7 +15,15 @@ Covers mid-call communication between server and user: asking for input, reporti
 handler -> return inputRequired(...) -> client asks the user -> handler re-runs -> acceptedContent(answer)
 ```
 
-## Legacy vs. modern
+## When to Use
+
+- An MCP tool call needs mid-call interaction with the user (eliciting input, confirming before acting).
+- Reporting long-running progress or checking for cancellation mid-call.
+- Implementing client-side registration for elicitation or sampling handlers.
+
+## How It Works
+
+### 1. Legacy vs. modern
 
 Write handlers against the modern surface (`input_required`); the SDK negotiates the era per connection and serves legacy (2025-era) clients transparently — `inputRequired.legacyShim` (a server option, default `true`) pushes real `elicitation/create` requests and re-enters the handler.
 
@@ -22,11 +33,9 @@ Write handlers against the modern surface (`input_required`); the SDK negotiates
 | Report progress | `ctx.mcpReq.notify(...)`         | `ctx.mcpReq.notify(...)` (unchanged) |
 | Cancel          | `ctx.mcpReq.signal`              | `ctx.mcpReq.signal` (unchanged)      |
 
-## Asking for input: `input_required` (modern)
+### 2. Asking for input: `input_required` (modern)
 
 Instead of blocking on a mid-call round trip, the handler returns `inputRequired(...)` and the whole call re-runs from the top once the user answers — with the answer available via `acceptedContent`.
-
-See [`input_required` return example](references/examples.md#input_required-return).
 
 - Check `ctx.mcpReq.inputResponses` for an answer before asking — only request what's still missing (the handler re-runs from scratch, so already-answered fields shouldn't re-prompt).
 - Build requests with `inputRequired.elicit()` (form) or `inputRequired.elicitUrl()` (redirect to a URL).
@@ -34,20 +43,18 @@ See [`input_required` return example](references/examples.md#input_required-retu
 - To tell a refusal from a first entry, use `inputResponse(ctx.mcpReq.inputResponses, key)` — a discriminated view (`missing` / `elicit` / `sampling` / `roots`) — and stop re-prompting on a non-accept:
 
 ```ts
-const view = inputResponse(ctx.mcpReq.inputResponses, "confirm");
-if (view.kind === "elicit" && view.action !== "accept") {
+const view = inputResponse(ctx.mcpReq.inputResponses, 'confirm');
+if (view.kind === 'elicit' && view.action !== 'accept') {
   return {
-    content: [{ type: "text", text: "Cancelled by the operator" }],
+    content: [{ type: 'text', text: 'Cancelled by the operator' }],
     isError: true,
   };
 }
 ```
 
-## Asking for input: elicitation (legacy)
+### 3. Asking for input: elicitation (legacy)
 
 `ctx.mcpReq.elicitInput()` blocks the handler until the client responds. **Throws on 2026-era connections** — new code should use `input_required` instead.
-
-See [Form elicitation example](references/examples.md#form-elicitation).
 
 - Requires the client's `elicitation` capability for the mode used; without it, `elicitInput` throws before the wire and surfaces as an `isError` result.
 - `mode: 'form'` — never request secrets (passwords, payment details) through a form.
@@ -55,20 +62,18 @@ See [Form elicitation example](references/examples.md#form-elicitation).
 
 ```ts
 const result = await ctx.mcpReq.elicitInput({
-  mode: "url",
-  message: "Sign in to link your account",
-  url: "https://billing.example.com/connect/provider",
-  elicitationId: "12345",
+  mode: 'url',
+  message: 'Sign in to link your account',
+  url: 'https://billing.example.com/connect/provider',
+  elicitationId: '12345',
 });
 ```
 
-## Progress
+### 4. Progress
 
 Call `ctx.mcpReq.notify(...)` with a `notifications/progress` message keyed on `progressToken`. `progress` must strictly increase across calls for the same token.
 
-See [Progress notifications example](references/examples.md#progress-notifications).
-
-## Cancellation
+### 5. Cancellation
 
 Check `ctx.mcpReq.signal.aborted` inside any loop and return promptly; forward the signal to `fetch`/child calls so they abort too.
 
@@ -81,20 +86,24 @@ async ({ pages }, ctx) => {
 };
 ```
 
-## Client setup
+### 6. Client setup
 
 Register the `elicitation/create` handler once at client construction. Set `inputRequired: { maxRounds }` to bound how many round trips auto-fulfillment will attempt before giving up.
 
-See [Client-side interaction example](references/examples.md#client-side-interaction).
-
-## Deprecated
+### 7. Deprecated
 
 Sampling (`requestSampling`) and MCP logging (`ctx.mcpReq.log`) are deprecated (SEP-2577) — call the LLM provider directly, and log to stderr or OpenTelemetry instead. See `references/advanced-interaction-patterns.md`.
 
-## Reference files
+## Examples
 
-- `references/advanced-interaction-patterns.md` — `requestState` for cross-round data, and the sampling/logging deprecation.
+Code implementation examples are located in:
 
-## Related skills
+- `input_required` return, form elicitation, progress, client-side: [references/examples.md](references/examples.md)
+- Cross-round state management with `requestState`: [references/advanced-interaction-patterns.md](references/advanced-interaction-patterns.md)
 
-- `mcp-server-build` / `mcp-client-build` — where these handlers get registered.
+## Common Mistakes
+
+- Using blocking `ctx.mcpReq.elicitInput()` on 2026-era connections, which will throw (use `input_required` instead).
+- Requesting secrets (passwords, payment details) via the insecure `mode: 'form'` elicitation.
+- Continuing tool execution after `ctx.mcpReq.signal.aborted` is true.
+- Relying on deprecated features like sampling (`requestSampling`) or MCP logging (`ctx.mcpReq.log`).

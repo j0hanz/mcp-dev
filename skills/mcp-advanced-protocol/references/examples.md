@@ -1,3 +1,11 @@
+---
+description: >-
+  Code examples illustrating low-level server setup, custom methods, schema validation libraries, and custom transports.
+metadata:
+  tags: [examples, protocol, custom-transports, low-level]
+  source: internal
+---
+
 # MCP Advanced Protocol Examples
 
 ## Low-level Server
@@ -34,14 +42,20 @@ server.setRequestHandler('tools/call', async (request) => {
 ## Custom methods and extension capabilities
 
 ```ts
-const SearchParams = z.object({ query: z.string(), limit: z.number().int().default(10) });
+const SearchParams = z.object({
+  query: z.string(),
+  limit: z.number().int().default(10),
+});
 const SearchResult = z.object({ items: z.array(z.string()) });
 
 mcp.server.setRequestHandler(
   'acme/search',
   { params: SearchParams, result: SearchResult },
   async ({ query, limit }, ctx) => {
-    await ctx.mcpReq.notify({ method: 'acme/searchProgress', params: { stage: 'start', pct: 0 } });
+    await ctx.mcpReq.notify({
+      method: 'acme/searchProgress',
+      params: { stage: 'start', pct: 0 },
+    });
     return { items: Array.from({ length: limit }, (_, i) => `${query}-${i}`) };
   },
 );

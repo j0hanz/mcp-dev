@@ -2,9 +2,22 @@
 name: mcp-interview
 description: Use when planning a new MCP server or client before any code exists and design decisions (transport, auth, tool surface) are still open. Also the Clarify step of the /mcp build workflow.
 user-invocable: false
+metadata:
+  category: technique
+  triggers: architectural choices, mcp transport, hosting, capability discovery, state management, auth requirements
 ---
 
 # MCP Interview
+
+Make and record all MCP design decisions before writing any code.
+
+## When to Use
+
+- Planning a brand-new MCP server or client before any implementation code exists.
+- Working on the "Clarify" step of the `/mcp build` workflow.
+- Designing transport, auth, tool surface, or distribution strategy.
+
+## How It Works
 
 **Goal:** Make and record all MCP design decisions before writing any code.
 **Rule:** ONLY make decisions. NEVER write, change, or save code.
@@ -13,7 +26,7 @@ user-invocable: false
 Search -> ask triggered questions (one at a time) -> record 9 decisions -> save + show docs/mcp-decisions.md
 ```
 
-## Rules
+### Rules
 
 - **Search First:** Check project files for `@modelcontextprotocol/` code to guide your choices. Skip if no files exist.
 - **Follow Triggers:** Only ask a question if its "Trigger" happens. Otherwise, use the "Safe Default" silently.
@@ -21,7 +34,7 @@ Search -> ask triggered questions (one at a time) -> record 9 decisions -> save 
 - **Two Choices Only:** Always offer exactly two choices: (1) your top pick, (2) the next best pick. Never offer "Other".
 - **No Vague Answers:** If the user is unclear, ask again. If they say "you choose," pick your top choice and record it.
 
-## Decision Table
+### Decision Table
 
 | #   | Decision       | Safe Default                         | Trigger to Ask                                         | Two Choices (Pick 1 / Pick 2)                        |
 | :-- | :------------- | :----------------------------------- | :----------------------------------------------------- | :--------------------------------------------------- |
@@ -35,7 +48,7 @@ Search -> ask triggered questions (one at a time) -> record 9 decisions -> save 
 | 8   | Distribution   | Local project                        | User wants to publish or share                         | npm package / Keep local                             |
 | 9   | Testing        | One test per tool                    | NEVER ask (always record this)                         | —                                                    |
 
-## Steps
+### Steps
 
 1. **Search** the project files.
 2. **Check** the Decision Table to see which questions trigger.
@@ -44,7 +57,9 @@ Search -> ask triggered questions (one at a time) -> record 9 decisions -> save 
 5. **Save** to `docs/mcp-decisions.md`; if it exists, append a dated record below the old ones — never delete old choices.
 6. **Show** the final record.
 
-## Record Format Example
+## Examples
+
+### Record Format Example
 
 ```markdown
 # MCP Decision Record — YYYY-MM-DD
@@ -54,12 +69,8 @@ Search -> ask triggered questions (one at a time) -> record 9 decisions -> save 
 3. Auth: none — stdio transport. (default)
 ```
 
-## Related skills
+## Common Mistakes
 
-- `mcp-server-build` / `mcp-client-build` — scaffold from the finished record.
-
-## Final Warnings
-
-- **NEVER** write or edit code.
-- **NEVER** ask a question if its trigger did not happen.
-- **NEVER** leave any of the 9 decisions blank or unclear.
+- Writing or editing implementation code during the interview/Clarify phase.
+- Asking a question from the Decision Table if its trigger condition did not happen.
+- Leaving any of the 9 decisions blank or undocumented in `docs/mcp-decisions.md`.

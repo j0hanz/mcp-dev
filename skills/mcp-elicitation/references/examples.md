@@ -1,3 +1,11 @@
+---
+description: >-
+  Implementation code for input_required forms, legacy elicitation, progress notifications, and client-side interaction setup.
+metadata:
+  tags: [examples, input-elicitation, progress]
+  source: internal
+---
+
 # MCP Interaction Patterns Examples
 
 ## Form Elicitation
@@ -100,9 +108,7 @@ client.setRequestHandler('elicitation/create', async (request) => {
   // anything else is a form (old requests omit mode — never branch on mode === 'form')
   return {
     action: 'accept',
-    content: {
-      /* what the user entered */
-    },
+    content: {/* what the user entered */},
   };
 });
 ```
@@ -125,9 +131,7 @@ const server = new McpServer(
 // inside a handler:
 return inputRequired({
   inputRequests: {
-    scope: inputRequired.elicit({
-      /* … */
-    }),
+    scope: inputRequired.elicit({/* … */}),
   },
   requestState: await stateCodec.mint({ step: 'confirmed' }),
 });

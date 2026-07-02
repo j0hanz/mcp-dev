@@ -1,3 +1,11 @@
+---
+description: >-
+  Reference for cross-round state management using requestState and the deprecation of sampling and logging.
+metadata:
+  tags: [request-state, sampling, logging]
+  source: internal
+---
+
 # Cross-Round State & Deprecated Interaction Surfaces
 
 ## Cross-round state — `requestState`

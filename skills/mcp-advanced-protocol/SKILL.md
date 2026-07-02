@@ -2,6 +2,9 @@
 name: mcp-advanced-protocol
 description: Use when MCP work needs to drop below McpServer — custom protocol methods, custom transports, raw wire messages, or an MCP gateway/proxy on the low-level Server from the TypeScript SDK v2.
 user-invocable: false
+metadata:
+  category: technique
+  triggers: custom protocol methods, custom transports, raw wire messages, mcp gateway, mcp proxy, low-level server
 ---
 
 # MCP Advanced Protocol (TypeScript SDK v2)
@@ -14,7 +17,14 @@ McpServer (default) -> low-level Server -> custom methods -> custom transports -
 
 **Default to `McpServer`.** Drop to the low-level `Server` (`mcp.server.setRequestHandler(...)`) only when you need to route methods the high-level API doesn't model.
 
-## 1. The low-level `Server`
+## When to Use
+
+- MCP work needs to drop below `McpServer` to the low-level `Server`.
+- Implementing custom protocol methods, custom transports, raw wire messages, or an MCP gateway/proxy.
+
+## How It Works
+
+### 1. The low-level `Server`
 
 `Server` is the raw protocol engine — nothing is automatic:
 
@@ -23,9 +33,7 @@ McpServer (default) -> low-level Server -> custom methods -> custom transports -
 - An uncaught throw becomes a JSON-RPC **protocol error**, not an `isError` result — the model doesn't get a retry hint, the caller's code does.
 - Capabilities aren't inferred from registrations; declare `listChanged` etc. explicitly or list-change notifications throw.
 
-See [Low-level Server example](references/examples.md#low-level-server).
-
-## 2. Custom methods & extension capabilities
+### 2. Custom methods & extension capabilities
 
 - Namespace custom methods (`acme/search`, never bare `search`) to avoid colliding with future protocol methods.
 - Custom methods need explicit `params`/`result` schemas on both sides; built-in protocol methods already have theirs and don't take one.
@@ -33,19 +41,15 @@ See [Low-level Server example](references/examples.md#low-level-server).
 
 ```ts
 mcp.server.registerCapabilities({
-  extensions: { "com.example/feature-flags": { flags: ["dark-mode"] } },
+  extensions: { 'com.example/feature-flags': { flags: ['dark-mode'] } },
 });
 ```
 
-See [Custom methods example](references/examples.md#custom-methods-and-extension-capabilities).
-
-## 3. Schema libraries and validators
+### 3. Schema libraries and validators
 
 Any Standard Schema (Zod v4, ArkType, Valibot via `toStandardJsonSchema`) works as-is for `inputSchema`/`outputSchema`. Plain JSON Schema needs `fromJsonSchema<T>()` to type the handler's args — the old bare-object form (`inputSchema: { name: z.string() }`) is gone. The SDK auto-selects a JSON Schema validator (AJV on Node, a CF-Workers-safe validator elsewhere); pin one explicitly via `ServerOptions.jsonSchemaValidator` — implementations ship at `@modelcontextprotocol/server/validators/ajv` and `…/validators/cf-worker`.
 
-See [Schema libraries example](references/examples.md#schema-libraries-and-validators).
-
-## 4. Custom transports
+### 4. Custom transports
 
 Implement `Transport`: three methods (`start`, `send`, `close`) and three optional callbacks (`onmessage`, `onerror`, `onclose`).
 
@@ -54,13 +58,15 @@ Implement `Transport`: three methods (`start`, `send`, `close`) and three option
 - A failed `send()` should `throw`; reserve `onerror` for out-of-band failures (the socket dropped, not one specific send failing).
 - Set `hasPerRequestStream = true` if the transport carries exactly one request per stream — it enables clean per-request cancellation.
 
-See [Custom transports example](references/examples.md#custom-transports).
+## Examples
 
-## 5. Reference files
+Detailed implementation examples are documented in supporting reference files:
 
-- `references/wire-schemas-and-gateways.md` — raw wire schemas from `@modelcontextprotocol/core`, and gateway/worker-fleet patterns using `DiscoverResult`.
+- Low-level Server, Custom methods, schemas, and transports: [references/examples.md](references/examples.md)
+- Raw wire schemas and gateway patterns: [references/wire-schemas-and-gateways.md](references/wire-schemas-and-gateways.md)
 
-## 6. Related skills
+## Common Mistakes
 
-- `mcp-server-build` / `mcp-client-build` — reach for these first; this skill is the escape hatch.
-- `mcp-test` — protocol vs. SDK error code reference.
+- Dropping to the low-level `Server` when `McpServer` would suffice.
+- Calling `start()` on custom transports manually (pass to `connect()` instead).
+- Throwing errors from tool handlers expecting protocol-level errors (they become `isError: true`).

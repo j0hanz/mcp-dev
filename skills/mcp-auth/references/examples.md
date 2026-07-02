@@ -1,3 +1,11 @@
+---
+description: >-
+  Examples illustrating server-side bearer auth, end-user OAuth, client credentials, and cross-app session authorization.
+metadata:
+  tags: [examples, oauth, authentication, bearer-auth]
+  source: internal
+---
+
 # MCP Authorization Examples
 
 ## Server side - protecting the endpoint
@@ -8,10 +16,10 @@ import {
   getOAuthProtectedResourceMetadataUrl,
   mcpAuthMetadataRouter,
   requireBearerAuth,
-} from "@modelcontextprotocol/express";
-import type { AuthInfo } from "@modelcontextprotocol/server";
+} from '@modelcontextprotocol/express';
+import type { AuthInfo } from '@modelcontextprotocol/server';
 
-const mcpServerUrl = new URL("https://api.example.com/mcp");
+const mcpServerUrl = new URL('https://api.example.com/mcp');
 
 async function verifyAccessToken(token: string): Promise<AuthInfo> {
   // the one function to supply
@@ -26,14 +34,12 @@ async function verifyAccessToken(token: string): Promise<AuthInfo> {
 
 const auth = requireBearerAuth({
   verifier: { verifyAccessToken },
-  requiredScopes: ["mcp"],
+  requiredScopes: ['mcp'],
   resourceMetadataUrl: getOAuthProtectedResourceMetadataUrl(mcpServerUrl),
 });
 
-app.all("/mcp", auth, (req, res) => void node(req, res, req.body));
-app.use(
-  mcpAuthMetadataRouter({ oauthMetadata, resourceServerUrl: mcpServerUrl }),
-);
+app.all('/mcp', auth, (req, res) => void node(req, res, req.body));
+app.use(mcpAuthMetadataRouter({ oauthMetadata, resourceServerUrl: mcpServerUrl }));
 ```
 
 ## End-user OAuth
@@ -43,7 +49,7 @@ import {
   Client,
   StreamableHTTPClientTransport,
   UnauthorizedError,
-} from "@modelcontextprotocol/client";
+} from '@modelcontextprotocol/client';
 
 const transport = new StreamableHTTPClientTransport(url, {
   authProvider: provider,
@@ -58,21 +64,15 @@ try {
 
 // In the redirect callback:
 const params = new URL(callbackUrl).searchParams;
-if (params.get("state") !== provider.lastState)
-  throw new Error("state mismatch"); // SDK does NOT check state
+if (params.get('state') !== provider.lastState) throw new Error('state mismatch'); // SDK does NOT check state
 await transport.finishAuth(params); // validates RFC 9207 `iss`, exchanges the code, saves tokens via the provider
-await client.connect(
-  new StreamableHTTPClientTransport(url, { authProvider: provider }),
-); // FRESH transport
+await client.connect(new StreamableHTTPClientTransport(url, { authProvider: provider })); // FRESH transport
 ```
 
 ## Machine-to-machine
 
 ```ts
-import {
-  ClientCredentialsProvider,
-  PrivateKeyJwtProvider,
-} from "@modelcontextprotocol/client";
+import { ClientCredentialsProvider, PrivateKeyJwtProvider } from '@modelcontextprotocol/client';
 
 // client_credentials with a shared secret; refreshes + retries once on 401
 new ClientCredentialsProvider({ clientId, clientSecret, expectedIssuer });
@@ -81,7 +81,7 @@ new ClientCredentialsProvider({ clientId, clientSecret, expectedIssuer });
 new PrivateKeyJwtProvider({
   clientId,
   privateKey /* PEM | Uint8Array | JWK */,
-  algorithm: "RS256",
+  algorithm: 'RS256',
   jwtLifetimeSeconds: 300,
   claims: {},
 });
@@ -96,7 +96,7 @@ const authProvider = {
 ## Cross-app access
 
 ```ts
-import { CrossAppAccessProvider } from "@modelcontextprotocol/client";
+import { CrossAppAccessProvider } from '@modelcontextprotocol/client';
 
 new CrossAppAccessProvider({ assertion, clientId, clientSecret });
 ```

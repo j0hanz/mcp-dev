@@ -1,3 +1,11 @@
+---
+description: >-
+  Detailed reference for raw wire schemas from @modelcontextprotocol/core and gateway/worker-fleet patterns using DiscoverResult.
+metadata:
+  tags: [wire-schemas, gateway, routing]
+  source: internal
+---
+
 # Wire Schemas & Gateway Patterns
 
 ## Wire schemas (`@modelcontextprotocol/core`)
@@ -36,7 +44,9 @@ const persisted = JSON.stringify(bootstrap.getDiscoverResult()); // plain JSON: 
 
 // … workers adopt it — nothing on the wire:
 const worker = new Client({ name: 'worker', version: '1.0.0' });
-await worker.connect(new StreamableHTTPClientTransport(url), { prior: JSON.parse(persisted) });
+await worker.connect(new StreamableHTTPClientTransport(url), {
+  prior: JSON.parse(persisted),
+});
 ```
 
 - `await client.discover()` re-probes on a live connection; a default-mode connect never probes (`getDiscoverResult()` is `undefined`).

@@ -1,3 +1,11 @@
+---
+description: >-
+  Reference table of standard ProtocolErrorCode and SdkErrorCode definitions and descriptions.
+metadata:
+  tags: [error-codes, codes, debugging]
+  source: internal
+---
+
 # Error Code Reference — classes, ProtocolErrorCode, SdkErrorCode
 
 ## Error classes
