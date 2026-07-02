@@ -1,6 +1,6 @@
 ---
 name: mcp-auth-oauth
-description: This skill should be used when the user asks to "add auth to an MCP server", "protect an MCP endpoint", "verify bearer tokens", "set up OAuth for MCP", "authenticate an MCP client", "machine-to-machine MCP auth", or mentions requireBearerAuth, OAuthClientProvider, AuthInfo, ClientCredentialsProvider, or mcpAuthMetadataRouter from the MCP TypeScript SDK v2.
+description: This skill should be used when the user asks to "add auth to an MCP server", "protect an MCP endpoint", "verify bearer tokens", "set up OAuth for MCP", "authenticate an MCP client", "machine-to-machine MCP auth", or mentions requireBearerAuth, OAuthClientProvider, AuthInfo, ClientCredentialsProvider, PrivateKeyJwtProvider, or mcpAuthMetadataRouter from the MCP TypeScript SDK v2.
 user-invocable: false
 ---
 
@@ -20,6 +20,7 @@ See [Server-side example](references/examples.md#server-side---protecting-the-en
 - Valid token, insufficient scope → `403`.
 - `AuthInfo.expiresAt` is required — tokens without an expiry are rejected.
 - Per-tool authorization isn't a transport concern: check `ctx.http?.authInfo.scopes` inside the handler and return `isError: true` if the caller can't use that tool — replying `403` at the HTTP layer instead triggers the client's automatic scope step-up (SEP-2350).
+- `getOAuthProtectedResourceMetadataUrl(mcpServerUrl)` builds the RFC 9728 resource-metadata URL passed as `resourceMetadataUrl` to `requireBearerAuth`; `mcpAuthMetadataRouter({ oauthMetadata, resourceServerUrl })` mounts the route that serves it — used together in the example below.
 
 ## 2. Client side — using the token
 
@@ -46,7 +47,7 @@ See [Machine-to-machine example](references/examples.md#machine-to-machine).
 For a user already authenticated in the host app — exchanges that session for MCP access instead of a second login:
 
 ```ts
-import { CrossAppAccessProvider } from '@modelcontextprotocol/client';
+import { CrossAppAccessProvider } from "@modelcontextprotocol/client";
 
 new CrossAppAccessProvider({ assertion, clientId, clientSecret });
 ```
