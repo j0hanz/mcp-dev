@@ -82,7 +82,7 @@ client.setRequestHandler("elicitation/create", async (request) => {
 
 - `references/examples.md` — connect, call, subscribe, and middleware examples.
 - `references/subscriptions-caching-middleware.md` — `subscriptions/listen`, response caching, `fetch` middleware, and deprecated `roots`.
-- `mcp-auth-oauth` — authenticating the connection.
-- `mcp-interaction-patterns` — elicitation and `input_required` handling in depth.
+- `mcp-auth` — authenticating the connection.
+- `mcp-elicitation` — elicitation and `input_required` handling in depth.
 - `mcp-advanced-protocol` — raw wire schemas and gateway patterns.
-- `mcp-testing-debugging` — in-process test harness and error reference.
+- `mcp-test` — in-process test harness and error reference.

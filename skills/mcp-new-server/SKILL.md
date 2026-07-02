@@ -12,9 +12,9 @@ Build a TypeScript SDK v2 MCP server. Load knowledge skills using the Skill tool
 
 1. **Clarify:** Load `mcp-interview`. Lock scope, transport, auth, tool surface, and interaction decisions; obtain the Decision Record before scaffolding.
 2. **Scaffold:** Load `mcp-server-build`. Set up registrations, schemas, and transport wiring.
-3. **HTTP Auth (If HTTP):** Load `mcp-auth-oauth`. Secure endpoints before writing handlers. Skip if using stdio.
-4. **Complex Tools (If interactive/long):** Load `mcp-interaction-patterns`. Wire user prompts, progress tracking, and cancellation. Skip if not needed.
-5. **Test (Mandatory):** Load `mcp-testing-debugging`. Write and pass `InMemoryTransport` tests covering every tool.
+3. **HTTP Auth (If HTTP):** Load `mcp-auth`. Secure endpoints before writing handlers. Skip if using stdio.
+4. **Complex Tools (If interactive/long):** Load `mcp-elicitation`. Wire user prompts, progress tracking, and cancellation. Skip if not needed.
+5. **Test (Mandatory):** Load `mcp-test`. Write and pass `InMemoryTransport` tests covering every tool.
 6. **Distribute (If publishing):** Load `mcp-distribute` if the Decision Record calls for npm distribution. Skip if local-only.
 7. **Verify:** Complete only when all tests pass and the server starts cleanly.
 

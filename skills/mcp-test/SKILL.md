@@ -1,5 +1,5 @@
 ---
-name: mcp-testing-debugging
+name: mcp-test
 description: This skill should be used when the user asks to "test an MCP server", "write tests for MCP tools", "use the MCP inspector", "debug an MCP connection", "look up an MCP error code", or mentions InMemoryTransport, ProtocolError codes, SdkError codes, or failures like "Unexpected token is not valid JSON" in the MCP TypeScript SDK v2.
 user-invocable: false
 ---

@@ -21,20 +21,20 @@ disable-model-invocation: true
 - `/mcp-audit`: Read-only production readiness audit
 
 **Knowledge Skills:**
-`mcp-interview`, `mcp-server-build`, `mcp-client-build`, `mcp-auth-oauth`, `mcp-interaction-patterns`, `mcp-testing-debugging`, `mcp-advanced-protocol`, `mcp-migrate-v1-to-v2`, `mcp-distribute`
+`mcp-interview`, `mcp-server-build`, `mcp-client-build`, `mcp-auth`, `mcp-elicitation`, `mcp-test`, `mcp-advanced-protocol`, `mcp-migrate-v1-to-v2`, `mcp-distribute`
 
 ## Routing Table
 
 | Intent / Argument        | Required Skill Sequence                                                                                                 |
 | :----------------------- | :---------------------------------------------------------------------------------------------------------------------- |
 | **Plan / Clarify**       | `mcp-interview` → then route to the matching build workflow                                                             |
-| **Build Server**         | `mcp-server-build` → `mcp-auth-oauth` (if HTTP) → `mcp-interaction-patterns` (if interactive) → `mcp-testing-debugging` |
-| **Build Client**         | `mcp-client-build` → `mcp-auth-oauth` (if protected) → `mcp-testing-debugging`                                          |
+| **Build Server**         | `mcp-server-build` → `mcp-auth` (if HTTP) → `mcp-elicitation` (if interactive) → `mcp-test`                             |
+| **Build Client**         | `mcp-client-build` → `mcp-auth` (if protected) → `mcp-test`                                                             |
 | **Audit / Ship**         | Route to `/mcp-audit` workflow                                                                                          |
-| **Migrate v1 to v2**     | `mcp-migrate-v1-to-v2` → `mcp-testing-debugging`                                                                        |
-| **Auth / Tokens**        | `mcp-auth-oauth`                                                                                                        |
-| **Test / Debug**         | `mcp-testing-debugging`                                                                                                 |
-| **Interaction Patterns** | `mcp-interaction-patterns`                                                                                              |
+| **Migrate v1 to v2**     | `mcp-migrate-v1-to-v2` → `mcp-test`                                                                                     |
+| **Auth / Tokens**        | `mcp-auth`                                                                                                              |
+| **Test / Debug**         | `mcp-test`                                                                                                              |
+| **Interaction Patterns** | `mcp-elicitation`                                                                                                       |
 | **Protocol / Transport** | `mcp-advanced-protocol`                                                                                                 |
 | **Package / Publish**    | `mcp-distribute`                                                                                                        |
 

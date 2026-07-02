@@ -54,7 +54,7 @@ Tell users exactly how to connect your server to their apps. Copy this table int
 If your server runs over the internet (HTTP), you put it online just like a normal website.
 
 - Check the `mcp-server-build` guide to see how to do this safely.
-- Always add a login system (`mcp-auth-oauth`) before you let the public use it.
+- Always add a login system (`mcp-auth`) before you let the public use it.
 
 ## 4. Keeping Track of Versions
 

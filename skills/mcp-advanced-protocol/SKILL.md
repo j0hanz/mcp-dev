@@ -56,4 +56,4 @@ See [Custom transports example](references/examples.md#custom-transports).
 
 - `references/wire-schemas-and-gateways.md` — raw wire schemas from `@modelcontextprotocol/core`, and gateway/worker-fleet patterns using `DiscoverResult`.
 - `mcp-server-build` / `mcp-client-build` — reach for these first; this skill is the escape hatch.
-- `mcp-testing-debugging` — protocol vs. SDK error code reference.
+- `mcp-test` — protocol vs. SDK error code reference.

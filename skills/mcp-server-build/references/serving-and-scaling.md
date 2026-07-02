@@ -80,7 +80,7 @@ curl -X POST http://127.0.0.1:3000/mcp -H 'Content-Type: application/json' \
 - **Binding beyond localhost drops the default protection — name the hosts:** `createMcp*App({ host: '0.0.0.0', allowedHosts: ['api.example.com'], allowedOrigins: [...] })`. Hostnames are port-agnostic; requests without an `Origin` header always pass (non-browser MCP clients unaffected).
 - Bare fetch runtimes: use `hostHeaderValidationResponse(request, allowedHosts)` and `originValidationResponse(request, allowedOrigins)` from `@modelcontextprotocol/server` (plus `localhostAllowedHostnames()` / `localhostAllowedOrigins()` helpers).
 - Adding `/mcp` into an existing app without `createMcp*App()`: each adapter package also exports the same protection as native middleware — `hostHeaderValidation(allowedHostnames)`, `localhostHostValidation()`, `originValidation(allowedOrigins)` from `@modelcontextprotocol/express` / `@modelcontextprotocol/fastify` / `@modelcontextprotocol/hono` / `@modelcontextprotocol/node` — wire one in front of the route instead of the response-builder form above.
-- Auth is pass-through: verify the bearer token in front and pass the result — `handler.fetch(request, { authInfo })` → factory `authInfo` → handler `ctx.http.authInfo`. See the `mcp-auth-oauth` skill.
+- Auth is pass-through: verify the bearer token in front and pass the result — `handler.fetch(request, { authInfo })` → factory `authInfo` → handler `ctx.http.authInfo`. See the `mcp-auth` skill.
 
 ## Sessions, state, scaling
 

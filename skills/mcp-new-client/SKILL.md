@@ -12,9 +12,9 @@ Build an MCP client using TypeScript SDK v2. **Strict Rule:** Load skills one at
 
 1. **Clarify Scope:** Load `mcp-interview`. Lock target server(s), transport, auth, and callback decisions; obtain the Decision Record before scaffolding.
 2. **Scaffold Client:** Load `mcp-client-build`. Setup `Client`, transport, connection, tool calls, and list-changed handling.
-3. **Configure Auth:** _(Skip if server is open)_. If protected, load `mcp-auth-oauth` and wire the client-side provider.
-4. **Implement Callbacks:** _(Skip if unused)_. If the server elicits input, samples, or reports progress, load `mcp-interaction-patterns` and implement callbacks.
-5. **Test Client:** Load `mcp-testing-debugging`. Test against an in-process fake server using `InMemoryTransport`. Run all tests.
+3. **Configure Auth:** _(Skip if server is open)_. If protected, load `mcp-auth` and wire the client-side provider.
+4. **Implement Callbacks:** _(Skip if unused)_. If the server elicits input, samples, or reports progress, load `mcp-elicitation` and implement callbacks.
+5. **Test Client:** Load `mcp-test`. Test against an in-process fake server using `InMemoryTransport`. Run all tests.
 6. **Verify Success:** Finish only when tests pass and the client connects, lists, and executes successfully against the real target.
 
 ## Strict Rules

@@ -1,10 +1,10 @@
 ---
-name: mcp-interaction-patterns
+name: mcp-elicitation
 description: This skill should be used when the user asks to "ask the user from a tool", "elicit input mid-call", "confirm before running a tool", "report progress from an MCP server", "cancel an MCP request", or mentions elicitInput, elicitation, input_required, inputRequired, requestState, progressToken, or sampling in the MCP TypeScript SDK v2.
 user-invocable: false
 ---
 
-# MCP Interaction Patterns (TypeScript SDK v2)
+# MCP Elicitation (TypeScript SDK v2)
 
 Covers mid-call communication between server and user: asking for input, reporting progress, and cancellation.
 

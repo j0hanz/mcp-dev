@@ -52,7 +52,7 @@ See [Tool Registration Example](references/examples.md#tool-registration).
 - Arguments failing `inputSchema` return an `isError: true` result **before the handler runs** — the model reads the message and retries.
 - `structuredContent` is validated against `outputSchema` before leaving the server (skipped on `isError` results).
 - Omit `inputSchema` for no-argument tools. `annotations` are client hints only; they never change execution.
-- A tool that needs the caller's identity reads `ctx.http?.authInfo` (see the `mcp-auth-oauth` skill).
+- A tool that needs the caller's identity reads `ctx.http?.authInfo` (see the `mcp-auth` skill).
 
 The registration handle mutates live and notifies clients automatically (`notifications/tools/list_changed`):
 
@@ -136,7 +136,7 @@ Every handler receives a context as its second argument:
 | `ctx.sessionId`                                | Session id when the transport has one                                                  |
 | `ctx.http?.authInfo` / `ctx.http?.req`         | Verified `AuthInfo` / inbound `Request` (HTTP only — `undefined` on stdio)             |
 
-For elicitation, `input_required`, progress reporting, and cancellation patterns, load the `mcp-interaction-patterns` skill.
+For elicitation, `input_required`, progress reporting, and cancellation patterns, load the `mcp-elicitation` skill.
 
 ## Errors — two channels, picked by audience
 
@@ -167,7 +167,7 @@ throw new ProtocolError(
 throw new ResourceNotFoundError(uri.href); // -32602 with data: { uri }
 ```
 
-A tool handler **cannot** emit a protocol error — every throw (even a thrown `ProtocolError`) becomes `isError: true`. The one exception: `UrlElicitationRequiredError` propagates (`-32042`). Full code tables live in the `mcp-testing-debugging` skill.
+A tool handler **cannot** emit a protocol error — every throw (even a thrown `ProtocolError`) becomes `isError: true`. The one exception: `UrlElicitationRequiredError` propagates (`-32042`). Full code tables live in the `mcp-test` skill.
 
 ## Serving on stdio
 
@@ -200,7 +200,7 @@ The factory runs once per HTTP request; a fresh instance serves every call → s
 
 ### Related skills
 
-- `mcp-auth-oauth` — protecting the endpoint with bearer auth
-- `mcp-interaction-patterns` — elicitation, `input_required`, progress, cancellation
+- `mcp-auth` — protecting the endpoint with bearer auth
+- `mcp-elicitation` — elicitation, `input_required`, progress, cancellation
 - `mcp-advanced-protocol` — low-level `Server`, custom methods, custom transports
-- `mcp-testing-debugging` — in-process test harness and error reference
+- `mcp-test` — in-process test harness and error reference

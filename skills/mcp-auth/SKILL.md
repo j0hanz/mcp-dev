@@ -1,5 +1,5 @@
 ---
-name: mcp-auth-oauth
+name: mcp-auth
 description: This skill should be used when the user asks to "add auth to an MCP server", "protect an MCP endpoint", "verify bearer tokens", "set up OAuth for MCP", "authenticate an MCP client", "machine-to-machine MCP auth", or mentions requireBearerAuth, OAuthClientProvider, AuthInfo, ClientCredentialsProvider, PrivateKeyJwtProvider, or mcpAuthMetadataRouter from the MCP TypeScript SDK v2.
 user-invocable: false
 ---

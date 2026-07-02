@@ -49,4 +49,4 @@ See [`references/tables.md`](references/tables.md#adopting-the-2026-07-28-era) f
 ## Related skills
 
 - `mcp-server-build` / `mcp-client-build` — the v2 APIs these steps migrate onto.
-- `mcp-testing-debugging` — diagnosing errors that surface after the upgrade.
+- `mcp-test` — diagnosing errors that surface after the upgrade.
