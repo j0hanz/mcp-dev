@@ -6,43 +6,41 @@ user-invocable: false
 
 # MCP Interview
 
-**Goal:** Lock every hard-to-reverse MCP design decision before any code is scaffolded, and record all of them — asked or defaulted — so nothing is left assumed.
-**Rule:** Decisions only. Never scaffold, implement, or commit.
+**Goal:** Make and record all MCP design decisions before writing any code.
+**Rule:** ONLY make decisions. NEVER write, change, or save code.
 
-## Strict Execution Rules
+## Rules
 
-- **Search First:** Grep/Read the repo for existing `@modelcontextprotocol/` code, configs, and conventions. Ground every recommendation in findings. Skip if no repository exists.
-- **Gated:** Ask a question only when its Trigger fires. Otherwise record the Safe Default silently. Silence is never ambiguity — every row ends up in the record.
-- **One at a Time:** Exactly one `AskUserQuestion` per question, in table order. Await the answer before the next.
-- **Strictly Two Options:** (1) your recommended answer, grounded in the repo scan; (2) the most likely alternative. Never add a third "Other" — the tool provides one.
-- **No Shrugging:** Re-ask vague answers with sharper options. If the user defers to your judgment, take the recommendation and record it as decided.
+- **Search First:** Check project files for `@modelcontextprotocol/` code to guide your choices. Skip if no files exist.
+- **Follow Triggers:** Only ask a question if its "Trigger" happens. Otherwise, use the "Safe Default" silently.
+- **One by One:** Ask one question at a time. Wait for the answer before moving on.
+- **Two Choices Only:** Always offer exactly two choices: (1) your top pick, (2) the next best pick. Never offer "Other".
+- **No Vague Answers:** If the user is unclear, ask again. If they say "you choose," pick your top choice and record it.
 
-## Decision Map
+## Decision Table
 
-| #   | Decision       | Safe default                                                | Trigger to ask                                     | Ask as (recommended / alternative)                                               |
-| :-- | :------------- | :---------------------------------------------------------- | :------------------------------------------------- | :------------------------------------------------------------------------------- |
-| 1   | Scope          | server                                                      | request ambiguous about direction                  | expose capabilities as a server / consume another server as a client             |
-| 2   | Transport      | stdio                                                       | remote access, multi-user, or deployment mentioned | stdio (local, no auth needed) / streamable HTTP (remote, needs auth)             |
-| 3   | Auth           | none (stdio)                                                | transport = HTTP                                   | OAuth bearer tokens with scopes / machine-to-machine client credentials          |
-| 4   | Tool surface   | few narrow single-purpose tools                             | >3 candidate tools, or one "do everything" verb    | N narrow tools with tight schemas / fewer broad tools with mode parameters       |
-| 5   | Input schemas  | zod schema on every tool input                              | never — always recorded                            | —                                                                                |
-| 6   | Interaction    | plain request-response                                      | long-running work or mid-call user input implied   | elicitation + progress + cancellation / fail fast with `isError`, caller retries |
-| 7   | Error strategy | `isError` results; protocol errors only for protocol faults | never — always recorded                            | —                                                                                |
-| 8   | Distribution   | local project, run from source                              | publishing or sharing mentioned                    | npm package with a `bin` entry / keep local to this repo                         |
-| 9   | Testing bar    | `InMemoryTransport` test per tool                           | never — always recorded                            | —                                                                                |
+| #   | Decision       | Safe Default                         | Trigger to Ask                                         | Two Choices (Pick 1 / Pick 2)                        |
+| :-- | :------------- | :----------------------------------- | :----------------------------------------------------- | :--------------------------------------------------- |
+| 1   | Scope          | server                               | Request is not clear about direction                   | Server (shares tools) / Client (uses tools)          |
+| 2   | Transport      | stdio                                | User mentions remote access, multi-user, or deployment | stdio (local, no login) / HTTP (remote, needs login) |
+| 3   | Auth           | none (stdio)                         | Transport is HTTP                                      | OAuth tokens / Machine-to-machine login              |
+| 4   | Tool surface   | Few simple tools                     | User wants >3 tools or one "do everything" tool        | Many simple tools / Few big tools with settings      |
+| 5   | Input schemas  | Zod schema on every tool             | NEVER ask (always record this)                         | —                                                    |
+| 6   | Interaction    | Plain request-response               | User mentions long tasks or needing user input         | Progress & cancel / Fail fast & retry                |
+| 7   | Error strategy | Protocol errors only for real faults | NEVER ask (always record this)                         | —                                                    |
+| 8   | Distribution   | Local project                        | User wants to publish or share                         | npm package / Keep local                             |
+| 9   | Testing        | One test per tool                    | NEVER ask (always record this)                         | —                                                    |
 
-## Flow
+## Steps
 
-1. Scan the repo (Search First).
-2. Evaluate each row's trigger against the request and the scan findings.
-3. Ask the fired questions one at a time, in table order.
-4. Record all nine decisions, each marked `asked` or `default`.
-5. Write the Decision Record to `docs/mcp-decisions.md` in the target project. If the file already exists, append a new dated section instead of overwriting — interview only the rows whose triggers newly fire, and carry prior decisions forward unchanged.
-6. Hand the record back to the calling workflow, or present it in chat if invoked directly.
+1. **Search** the project files.
+2. **Check** the Decision Table to see which questions trigger.
+3. **Ask** triggered questions one at a time.
+4. **Record** all 9 decisions. Mark each as `(asked)` or `(default)`.
+5. **Save** the record in `docs/mcp-decisions.md`. If the file exists, add today's date and the new decisions to the bottom. Do not delete old choices.
+6. **Show** the final record.
 
-## Decision Record Format
-
-One definitive implementation instruction per line — no open questions may remain:
+## Record Format Example
 
 ```markdown
 # MCP Decision Record — YYYY-MM-DD
@@ -50,11 +48,10 @@ One definitive implementation instruction per line — no open questions may rem
 1. Scope: server exposing 4 tools. (asked)
 2. Transport: stdio. (default)
 3. Auth: none — stdio transport. (default)
-   ...
 ```
 
-## Strict Rules
+## Final Warnings
 
-- **Never** scaffold or edit code — hand off to `/mcp-new-server` or `/mcp-new-client`.
-- **Never** ask a question whose trigger did not fire.
-- **Never** finish with an unrecorded row or an ambiguous decision.
+- **NEVER** write or edit code.
+- **NEVER** ask a question if its trigger did not happen.
+- **NEVER** leave any of the 9 decisions blank or unclear.
