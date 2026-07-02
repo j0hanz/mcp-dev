@@ -1,12 +1,16 @@
 ---
 name: mcp-server-build
-description: This skill should be used when the user asks to "build an MCP server", "create an MCP server", "register a tool", "add an MCP resource", "add an MCP prompt", "expose tools to a model", "serve MCP over stdio", "serve MCP over HTTP", or mentions McpServer, registerTool, registerResource, registerPrompt, serveStdio, or createMcpHandler from the MCP TypeScript SDK v2 (@modelcontextprotocol/server).
+description: This skill should be used when the user asks to "register a tool", "add an MCP resource", "add an MCP prompt", "expose tools to a model", "serve MCP over stdio", "serve MCP over HTTP", or mentions McpServer, registerTool, registerResource, registerPrompt, serveStdio, or createMcpHandler from the MCP TypeScript SDK v2 (@modelcontextprotocol/server). For planning a brand-new server, use `mcp-interview` first.
 user-invocable: false
 ---
 
 # Building MCP Servers (TypeScript SDK v2)
 
 Covers `@modelcontextprotocol/server` `2.0.0-beta.2` (beta — API may shift before stable), protocol revision `2026-07-28`, which also serves all 2024/2025 revisions. Requires Node.js ≥ 20; also runs on Bun, Deno, browsers, and Cloudflare Workers. Official reference: https://ts.sdk.modelcontextprotocol.io/v2/
+
+## Before scaffolding
+
+New server and no `docs/mcp-decisions.md` yet? Load `mcp-interview` first — this skill implements decisions, it doesn't make them.
 
 ## Quick start
 

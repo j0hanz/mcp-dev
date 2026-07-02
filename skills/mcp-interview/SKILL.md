@@ -37,7 +37,7 @@ user-invocable: false
 2. Evaluate each row's trigger against the request and the scan findings.
 3. Ask the fired questions one at a time, in table order.
 4. Record all nine decisions, each marked `asked` or `default`.
-5. Write the Decision Record to `docs/mcp-decisions.md` in the target project.
+5. Write the Decision Record to `docs/mcp-decisions.md` in the target project. If the file already exists, append a new dated section instead of overwriting — interview only the rows whose triggers newly fire, and carry prior decisions forward unchanged.
 6. Hand the record back to the calling workflow, or present it in chat if invoked directly.
 
 ## Decision Record Format

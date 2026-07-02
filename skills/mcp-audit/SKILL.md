@@ -18,7 +18,7 @@ disable-model-invocation: true
 4. **Check Security:** Load `mcp-auth-oauth`. Verify HTTP endpoints use bearer-token validation, scopes, and metadata. _(Missing auth is a Blocker)._
 5. **Check Interactions:** If tools ask for input, show progress, or run long, load `mcp-interaction-patterns`. Check cancellation and state handling.
 6. **Check Tests:** Load `mcp-testing-debugging`. Check `InMemoryTransport` test coverage and correct error codes.
-7. **Check Intent:** If `docs/mcp-decisions.md` exists, compare the code against each recorded decision (transport, auth, tool surface, interaction, testing bar). Report mismatches as Should Fix. Skip silently if the file does not exist.
+7. **Check Intent:** If `docs/mcp-decisions.md` exists, compare the code against each recorded decision (transport, auth, tool surface, interaction, testing bar). Report mismatches as Should Fix. If it does not exist, report a Nice to Have finding recommending `mcp-interview` to document the choices already made in code.
 
 ## Output Format
 
