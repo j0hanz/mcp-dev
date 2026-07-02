@@ -24,6 +24,8 @@ Knowledge skills load automatically when the work touches their territory — no
 
 `mcp-interview`, `mcp-server-build`, `mcp-client-build`, `mcp-auth`, `mcp-elicitation`, `mcp-test`, `mcp-advanced-protocol`, `mcp-migrate`
 
+A SessionStart hook (`hooks/session-start.sh`) injects the `/mcp` routing table into context at session start and after `/clear` or compaction (~4KB), so MCP work routes to the right skill without typing `/mcp`. Requires bash (on Windows: Git Bash); if bash is missing the hook is skipped and the plugin still works.
+
 ## Maintenance
 
 The SDK version (`2.0.0-beta.2`) is stated in each skill. When bumping it, update every `skills/*/SKILL.md`.
