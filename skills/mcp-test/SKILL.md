@@ -20,6 +20,9 @@ in-process tests -> manual probe (inspector | curl) -> match error channel -> lo
 - Writing tests for MCP servers or clients in TypeScript/JavaScript.
 - Troubleshooting connection failures, unexpected errors, or ProtocolError/SdkError exceptions.
 - Running inspector sessions or manual HTTP/stdio probes.
+- If the codebase utilizes deprecated APIs, or fails due to mismatched SDK versions (v1 vs v2), load the `/mcp-migrate` skill.
+- If debugging a server that needs proper configuration (e.g. logging to `stderr` instead of `stdout` or handling custom schemas), refer to the `/mcp-server-build` skill.
+- If testing a client connection, refer to the `/mcp-client-build` skill.
 
 ## How It Works
 

@@ -59,6 +59,7 @@ See [`references/tables.md`](references/tables.md#adopting-the-2026-07-28-era) f
 5. Replace unsolicited `list_changed` polling with a `subscriptions/listen` stream.
 6. CJS→ESM / Node 20 pre-flight — the codemod doesn't convert module systems; do this by hand first.
 7. Header reads — `ctx.http?.req?.headers` bracket access becomes `.get()` calls (sending plain-record headers still works unchanged).
+8. **Testing & Verification** — Once manual follow-ups are complete, load the `/mcp-test` skill to write tests and diagnose integration or negotiation errors.
 
 ## Examples
 

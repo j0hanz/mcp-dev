@@ -21,6 +21,7 @@ McpServer (default) -> low-level Server -> custom methods -> custom transports -
 
 - MCP work needs to drop below `McpServer` to the low-level `Server`.
 - Implementing custom protocol methods, custom transports, raw wire messages, or an MCP gateway/proxy.
+- Before using this low-level skill, ensure you have set up a standard server with the `/mcp-server-build` skill or client with the `/mcp-client-build` skill.
 
 ## How It Works
 

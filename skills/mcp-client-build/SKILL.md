@@ -1,6 +1,6 @@
 ---
 name: mcp-client-build
-description: Use when building an MCP client with the TypeScript SDK v2 (@modelcontextprotocol/client) — connecting to servers, calling tools, reading resources or prompts, subscriptions, caching, or middleware. For planning a brand-new client, use mcp-interview first.
+description: Use when building an MCP client with the TypeScript SDK v2 (@modelcontextprotocol/client) — connecting to servers, calling tools, reading resources or prompts, subscriptions, caching, or middleware. For planning a brand-new client, use /mcp-interview first.
 user-invocable: false
 metadata:
   category: technique
@@ -19,6 +19,7 @@ Client + transport -> connect -> call | read | subscribe -> handle server reques
 
 - Building or running an MCP client (connecting, calling tools, reading resources, handling prompts).
 - Setting up subscriptions, caching, or middleware on the client side.
+- To write tests or troubleshoot client connection/negotiation issues, load the `/mcp-test` skill.
 
 ## How It Works
 
@@ -73,7 +74,7 @@ const client = new Client(
 
 ### 5. Responding to server-initiated requests
 
-If the server elicits input or reports progress, register the handlers once at client construction — load the `mcp-elicitation` skill for the handler patterns.
+If the server elicits input or reports progress, register the handlers once at client construction — load the `/mcp-elicitation` skill for the handler patterns.
 
 ## Examples
 

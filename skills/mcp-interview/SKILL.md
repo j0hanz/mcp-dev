@@ -56,6 +56,7 @@ Search -> ask triggered questions (one at a time) -> record 9 decisions -> save 
 4. **Record** all 9 decisions. Mark each as `(asked)` or `(default)`.
 5. **Save** to `docs/mcp-decisions.md`; if it exists, append a dated record below the old ones — never delete old choices.
 6. **Show** the final record.
+7. **Next Step** — load the `/mcp-server-build` (if building a server) or `/mcp-client-build` (if building a client) skill to begin implementation.
 
 ## Examples
 

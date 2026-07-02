@@ -21,6 +21,7 @@ client authProvider -> token -> request -> requireBearerAuth -> verifyAccessToke
 
 - Protecting an MCP server or endpoint with bearer tokens.
 - Configuring credentials, OAuth flows, or machine-to-machine auth on the client.
+- This skill is typically loaded as part of the server configuration flow (see `/mcp-server-build`) or client connection setup (see `/mcp-client-build`).
 
 ## How It Works
 

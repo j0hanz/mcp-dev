@@ -20,6 +20,7 @@ handler -> return inputRequired(...) -> client asks the user -> handler re-runs 
 - An MCP tool call needs mid-call interaction with the user (eliciting input, confirming before acting).
 - Reporting long-running progress or checking for cancellation mid-call.
 - Implementing client-side registration for elicitation or sampling handlers.
+- This skill is typically loaded as part of the interaction workflow from `/mcp-server-build` or `/mcp-client-build`.
 
 ## How It Works
 

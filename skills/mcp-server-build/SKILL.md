@@ -1,6 +1,6 @@
 ---
 name: mcp-server-build
-description: Use when building, serving, or publishing an MCP server with the TypeScript SDK v2 (@modelcontextprotocol/server) — registering tools, resources, or prompts, wiring stdio or HTTP transport, or packaging for npm. For planning a brand-new server, use mcp-interview first.
+description: Use when building, serving, or publishing an MCP server with the TypeScript SDK v2 (@modelcontextprotocol/server) — registering tools, resources, or prompts, wiring stdio or HTTP transport, or packaging for npm. For planning a brand-new server, use /mcp-interview first.
 user-invocable: false
 metadata:
   category: technique
@@ -21,6 +21,7 @@ McpServer -> register (tools | resources | prompts) -> serve (stdio | HTTP) -> t
 - Registering tools, resources, prompts, or argument completion.
 - Wiring a server to stdio or HTTP transports (Express, Hono, Fastify, Cloudflare Workers, Deno, Bun).
 - Preparing an MCP server for deployment or distribution (npm package, npx).
+- To write tests or troubleshoot protocol/connection issues, load the `/mcp-test` skill.
 
 ## How It Works
 
@@ -39,7 +40,7 @@ The SDK derives the JSON Schema the model sees from the one Zod schema, validate
 
 ### Constructor
 
-`McpServer` auto-advertises capabilities as items are registered. Every `McpServer` owns its protocol layer as `server.server` — the per-method escape hatch (see the `mcp-advanced-protocol` skill).
+`McpServer` auto-advertises capabilities as items are registered. Every `McpServer` owns its protocol layer as `server.server` — the per-method escape hatch (see the `/mcp-advanced-protocol` skill).
 
 ### Tools
 
@@ -49,7 +50,7 @@ The SDK derives the JSON Schema the model sees from the one Zod schema, validate
 - Arguments failing `inputSchema` return an `isError: true` result **before the handler runs** — the model reads the message and retries.
 - `structuredContent` is validated against `outputSchema` before leaving the server (skipped on `isError` results).
 - Omit `inputSchema` for no-argument tools. `annotations` are client hints only; they never change execution.
-- A tool that needs the caller's identity reads `ctx.http?.authInfo` (see the `mcp-auth` skill).
+- A tool that needs the caller's identity reads `ctx.http?.authInfo` (see the `/mcp-auth` skill).
 
 The registration handle mutates live and notifies clients automatically (`notifications/tools/list_changed`):
 
@@ -89,7 +90,7 @@ Return the full match list; the SDK caps `values` at 100 and fills `total` / `ha
 
 Every handler receives a context as its second argument. See [Context API Reference](references/context.md) for the full table of properties (`ctx.mcpReq`, `ctx.http`, etc.).
 
-For elicitation, `input_required`, progress reporting, and cancellation patterns, load the `mcp-elicitation` skill.
+For elicitation, `input_required`, progress reporting, and cancellation patterns, load the `/mcp-elicitation` skill.
 
 ### Errors — two channels, picked by audience
 
