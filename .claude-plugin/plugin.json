@@ -2,7 +2,7 @@
   "name": "mcp-dev",
   "displayName": "MCP Dev",
   "description": "Skills for building, testing, auditing, and migrating MCP servers and clients with the TypeScript SDK v2.",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "license": "MIT",
   "author": {
     "name": "j0hanz",
