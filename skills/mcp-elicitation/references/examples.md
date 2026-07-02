@@ -98,7 +98,12 @@ const client = new Client(
 client.setRequestHandler('elicitation/create', async (request) => {
   if (request.params.mode === 'url') return { action: 'accept' }; // after opening the URL
   // anything else is a form (old requests omit mode — never branch on mode === 'form')
-  return { action: 'accept', content: {/* what the user entered */} };
+  return {
+    action: 'accept',
+    content: {
+      /* what the user entered */
+    },
+  };
 });
 ```
 
@@ -119,7 +124,11 @@ const server = new McpServer(
 
 // inside a handler:
 return inputRequired({
-  inputRequests: { scope: inputRequired.elicit({/* … */}) },
+  inputRequests: {
+    scope: inputRequired.elicit({
+      /* … */
+    }),
+  },
   requestState: await stateCodec.mint({ step: 'confirmed' }),
 });
 ```
