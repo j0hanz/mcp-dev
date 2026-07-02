@@ -11,17 +11,18 @@ A Claude Code plugin: skills for building, testing, auditing, distributing, and 
 
 ## Usage
 
-`/mcp` lists everything; `/mcp <job>` routes to the right skills for that job.
+`/mcp` is the single command: with no argument it lists the available jobs; `/mcp <job>` routes to the right skills in the right order.
 
-| Command           | What it does                                                          |
+| Job               | Example                                                               |
 | ----------------- | --------------------------------------------------------------------- |
-| `/mcp-new-server` | Build a server end to end (interview → scaffold → auth → test → ship) |
-| `/mcp-new-client` | Build a client end to end                                             |
-| `/mcp-audit`      | Read-only production-readiness audit of existing MCP code             |
+| `/mcp new server` | Build a server end to end (interview → scaffold → auth → test → ship) |
+| `/mcp new client` | Build a client end to end                                             |
+| `/mcp audit`      | Read-only production-readiness audit of existing MCP code             |
+| `/mcp migrate`    | Upgrade SDK v1 code to v2                                             |
 
-Knowledge skills load automatically when the work touches their territory:
+Knowledge skills load automatically when the work touches their territory — no command needed:
 
-`mcp-interview`, `mcp-server-build`, `mcp-client-build`, `mcp-auth`, `mcp-elicitation`, `mcp-test`, `mcp-advanced-protocol`, `mcp-migrate-v1-to-v2`, `mcp-distribute`
+`mcp-interview`, `mcp-server-build`, `mcp-client-build`, `mcp-auth`, `mcp-elicitation`, `mcp-test`, `mcp-advanced-protocol`, `mcp-migrate-v1-to-v2`
 
 ## Maintenance
 

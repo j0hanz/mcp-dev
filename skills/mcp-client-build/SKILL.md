@@ -57,8 +57,8 @@ Two protocol eras: legacy (2024/2025) and modern (2026-07-28). `versionNegotiati
 
 ```ts
 const client = new Client(
-  { name: "my-client", version: "1.0.0" },
-  { versionNegotiation: { mode: "auto" } },
+  { name: 'my-client', version: '1.0.0' },
+  { versionNegotiation: { mode: 'auto' } },
 );
 ```
 
@@ -67,16 +67,7 @@ const client = new Client(
 
 ## 5. Responding to server-initiated requests
 
-Register the elicitation handler once, at construction:
-
-```ts
-client.setRequestHandler("elicitation/create", async (request) => {
-  if (request.params.mode === "url") {
-    return { action: "accept" }; // after opening the URL for the user
-  }
-  return { action: "accept", content: { city: "Lisbon" } }; // form response
-});
-```
+If the server elicits input or reports progress, register the handlers once at client construction — load the `mcp-elicitation` skill for the handler patterns.
 
 ## 6. Further reading
 

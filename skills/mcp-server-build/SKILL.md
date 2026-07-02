@@ -1,6 +1,6 @@
 ---
 name: mcp-server-build
-description: This skill should be used when the user asks to "register a tool", "add an MCP resource", "add an MCP prompt", "expose tools to a model", "serve MCP over stdio", "serve MCP over HTTP", or mentions McpServer, registerTool, registerResource, registerPrompt, serveStdio, or createMcpHandler from the MCP TypeScript SDK v2 (@modelcontextprotocol/server). For planning a brand-new server, use `mcp-interview` first.
+description: This skill should be used when the user asks to "register a tool", "add an MCP resource", "add an MCP prompt", "expose tools to a model", "serve MCP over stdio", "serve MCP over HTTP", "publish an MCP server", "package an MCP server for npm", "run an MCP server with npx", "register an MCP server with a host", or mentions McpServer, registerTool, registerResource, registerPrompt, serveStdio, or createMcpHandler from the MCP TypeScript SDK v2 (@modelcontextprotocol/server). For planning a brand-new server, use `mcp-interview` first.
 user-invocable: false
 ---
 
@@ -29,13 +29,13 @@ The SDK derives the JSON Schema the model sees from the one Zod schema, validate
 
 ```ts
 const server = new McpServer(
-  { name: "catalog", version: "1.0.0" }, // Implementation info
+  { name: 'catalog', version: '1.0.0' }, // Implementation info
   {
     // ServerOptions (all optional)
     capabilities: { logging: {}, resources: { subscribe: true } },
-    instructions: "Call list-trips before book-trip.",
+    instructions: 'Call list-trips before book-trip.',
     enforceStrictCapabilities: true, // check client capabilities before server-initiated requests
-    cacheHints: { "tools/list": { ttlMs: 60_000, cacheScope: "public" } },
+    cacheHints: { 'tools/list': { ttlMs: 60_000, cacheScope: 'public' } },
   },
 );
 ```
@@ -57,8 +57,8 @@ See [Tool Registration Example](references/examples.md#tool-registration).
 The registration handle mutates live and notifies clients automatically (`notifications/tools/list_changed`):
 
 ```ts
-const handle = server.registerTool("run-report", { description: "…" }, handler);
-handle.update({ description: "Run and email the weekly report" });
+const handle = server.registerTool('run-report', { description: '…' }, handler);
+handle.update({ description: 'Run and email the weekly report' });
 handle.disable(); // hidden from tools/list
 handle.enable();
 handle.remove();
@@ -70,15 +70,15 @@ handle.remove();
 
 ```ts
 server.registerResource(
-  "config",
-  "config://app",
+  'config',
+  'config://app',
   {
-    title: "Application Config",
-    description: "App configuration",
-    mimeType: "text/plain",
+    title: 'Application Config',
+    description: 'App configuration',
+    mimeType: 'text/plain',
   },
   async (uri) => ({
-    contents: [{ uri: uri.href, text: "log_level=info\nregion=eu-west-1" }],
+    contents: [{ uri: uri.href, text: 'log_level=info\nregion=eu-west-1' }],
   }),
 );
 ```
@@ -106,7 +106,7 @@ See [Prompt Registration Example](references/examples.md#prompt-registration).
 Wrap a prompt argument with `completable(schema, callback)`; the callback suggests values as the user types:
 
 ```ts
-import { completable } from "@modelcontextprotocol/server";
+import { completable } from '@modelcontextprotocol/server';
 
 argsSchema: z.object({
   repo: completable(z.string(), async (value) =>
@@ -148,9 +148,7 @@ For elicitation, `input_required`, progress reporting, and cancellation patterns
 ```ts
 // Tool error — put the recovery hint in the text:
 return {
-  content: [
-    { type: "text", text: `No note "${id}". Known ids: ${ids.join(", ")}` },
-  ],
+  content: [{ type: 'text', text: `No note "${id}". Known ids: ${ids.join(', ')}` }],
   isError: true,
 };
 
@@ -159,11 +157,8 @@ import {
   ProtocolError,
   ProtocolErrorCode,
   ResourceNotFoundError,
-} from "@modelcontextprotocol/server";
-throw new ProtocolError(
-  ProtocolErrorCode.InvalidParams,
-  `Note ids are lowercase, got "${id}"`,
-);
+} from '@modelcontextprotocol/server';
+throw new ProtocolError(ProtocolErrorCode.InvalidParams, `Note ids are lowercase, got "${id}"`);
 throw new ResourceNotFoundError(uri.href); // -32602 with data: { uri }
 ```
 
@@ -175,13 +170,12 @@ For servers a host launches as a local child process — `serveStdio(factory, op
 
 ```ts
 const handle = serveStdio(() => buildServer());
-console.error("listening on stdio"); // stderr — NEVER console.log
-process.on("SIGINT", () => void handle.close());
+console.error('listening on stdio'); // stderr — NEVER console.log
+process.on('SIGINT', () => void handle.close());
 ```
 
 - **stdout is the JSON-RPC channel.** One `console.log` corrupts the stream and the host drops the connection.
 - `legacy` option: `'serve'` (default — a 2025-era opening pins the connection to a legacy instance) or `'reject'`.
-- Exercise without a host: `npx @modelcontextprotocol/inspector npx tsx src/index.ts`.
 - Host registration (VS Code `.vscode/mcp.json`, `claude mcp add weather -- npx tsx src/index.ts`, Cursor `.cursor/mcp.json`) all take the same `command` + `args`.
 
 ## Serving over HTTP
@@ -197,6 +191,7 @@ The factory runs once per HTTP request; a fresh instance serves every call → s
 ### Reference files
 
 - **`references/serving-and-scaling.md`** — `createMcpHandler` options, framework adapters (Express/Hono/Fastify), Host/Origin security, sessions, resumability, notifications and multi-node event buses, cache hints, legacy-client support.
+- **`references/distribution.md`** — read when the server is built and tested and needs to ship: npm `bin` packaging for npx, host registration (Claude Code / VS Code / Cursor), HTTP deployment, versioning rules.
 
 ### Related skills
 

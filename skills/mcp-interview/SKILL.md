@@ -1,6 +1,6 @@
 ---
 name: mcp-interview
-description: This skill should be used when planning a new MCP server or client before any code exists — when the user asks to "plan an MCP server", "clarify MCP requirements", "decide stdio vs HTTP", "lock MCP design decisions", "spec out MCP tools", or when the mcp-new-server or mcp-new-client workflow reaches its Clarify step. Locks hard-to-reverse decisions one gated question at a time and writes a Decision Record to docs/mcp-decisions.md.
+description: This skill should be used when planning a new MCP server or client before any code exists — when the user asks to "plan an MCP server", "clarify MCP requirements", "decide stdio vs HTTP", "lock MCP design decisions", "spec out MCP tools", or when an /mcp build workflow reaches its Clarify step. Locks hard-to-reverse decisions one gated question at a time and writes a Decision Record to docs/mcp-decisions.md.
 user-invocable: false
 ---
 
