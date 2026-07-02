@@ -29,7 +29,7 @@ See [Low-level Server example](references/examples.md#low-level-server).
 
 ```ts
 mcp.server.registerCapabilities({
-  extensions: { "com.example/feature-flags": { flags: ["dark-mode"] } },
+  extensions: { 'com.example/feature-flags': { flags: ['dark-mode'] } },
 });
 ```
 
@@ -37,7 +37,7 @@ See [Custom methods example](references/examples.md#custom-methods-and-extension
 
 ## 3. Schema libraries and validators
 
-Any Standard Schema (Zod v4, ArkType, Valibot via `toStandardJsonSchema`) works as-is for `inputSchema`/`outputSchema`. Plain JSON Schema needs `fromJsonSchema<T>()` to type the handler's args — the old bare-object form (`inputSchema: { name: z.string() }`) is gone. The SDK auto-selects a JSON Schema validator (AJV on Node, a CF-Workers-safe validator elsewhere); pin one explicitly if you need a specific implementation.
+Any Standard Schema (Zod v4, ArkType, Valibot via `toStandardJsonSchema`) works as-is for `inputSchema`/`outputSchema`. Plain JSON Schema needs `fromJsonSchema<T>()` to type the handler's args — the old bare-object form (`inputSchema: { name: z.string() }`) is gone. The SDK auto-selects a JSON Schema validator (AJV on Node, a CF-Workers-safe validator elsewhere); pin one explicitly via `ServerOptions.jsonSchemaValidator` — implementations ship at `@modelcontextprotocol/server/validators/ajv` and `…/validators/cf-worker`.
 
 See [Schema libraries example](references/examples.md#schema-libraries-and-validators).
 

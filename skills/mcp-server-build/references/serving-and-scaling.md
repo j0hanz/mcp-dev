@@ -4,9 +4,9 @@
 
 ```ts
 const handler = createMcpHandler(factory, {
-  responseMode: 'auto',   // 'auto' | 'json' | 'sse'
-  legacy: 'stateless',    // 'stateless' (default) | 'reject'
-  bus: new InMemoryServerEventBus()
+  responseMode: 'auto', // 'auto' | 'json' | 'sse'
+  legacy: 'stateless', // 'stateless' (default) | 'reject'
+  bus: new InMemoryServerEventBus(),
 });
 // handler: { fetch(request, ctx?), close(), notify, bus }
 ```
@@ -19,12 +19,12 @@ const handler = createMcpHandler(factory, {
 
 All four are thin layers over `createMcpHandler`; each app factory pre-applies JSON body parsing (where needed) and DNS-rebinding protection.
 
-| | Install | Mount |
-|---|---|---|
-| **Express** | `@modelcontextprotocol/express` + `@modelcontextprotocol/node` + `express` | `app.all('/mcp', (req, res) => void node(req, res, req.body))` |
-| **Hono** | `@modelcontextprotocol/hono` + `hono` | `app.all('/mcp', (c) => handler.fetch(c.req.raw, { parsedBody: c.get('parsedBody') }))` |
-| **Fastify** | `@modelcontextprotocol/fastify` + `@modelcontextprotocol/node` + `fastify` | `app.all('/mcp', (req, reply) => node(req.raw, reply.raw, req.body))` |
-| **Web-standard** | `@modelcontextprotocol/server` only | `export default handler` |
+|                  | Install                                                                    | Mount                                                                                   |
+| ---------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| **Express**      | `@modelcontextprotocol/express` + `@modelcontextprotocol/node` + `express` | `app.all('/mcp', (req, res) => void node(req, res, req.body))`                          |
+| **Hono**         | `@modelcontextprotocol/hono` + `hono`                                      | `app.all('/mcp', (c) => handler.fetch(c.req.raw, { parsedBody: c.get('parsedBody') }))` |
+| **Fastify**      | `@modelcontextprotocol/fastify` + `@modelcontextprotocol/node` + `fastify` | `app.all('/mcp', (req, reply) => node(req.raw, reply.raw, req.body))`                   |
+| **Web-standard** | `@modelcontextprotocol/server` only                                        | `export default handler`                                                                |
 
 Complete Express example:
 
@@ -34,9 +34,9 @@ import { toNodeHandler } from '@modelcontextprotocol/node';
 import { createMcpHandler } from '@modelcontextprotocol/server';
 
 const handler = createMcpHandler(buildServer);
-const app = createMcpExpressApp();               // express() + express.json() + Host/Origin checks
+const app = createMcpExpressApp(); // express() + express.json() + Host/Origin checks
 const node = toNodeHandler(handler);
-app.all('/mcp', (req, res) => void node(req, res, req.body));  // pass parsed body — avoids re-reading the stream
+app.all('/mcp', (req, res) => void node(req, res, req.body)); // pass parsed body — avoids re-reading the stream
 app.listen(3000);
 ```
 
@@ -67,7 +67,7 @@ curl -X POST http://127.0.0.1:3000/mcp -H 'Content-Type: application/json' \
 One-way server→client messages; change notifications invalidate what clients cached.
 
 ```ts
-server.sendToolListChanged();       // notifications/tools/list_changed
+server.sendToolListChanged(); // notifications/tools/list_changed
 server.sendPromptListChanged();
 server.sendResourceListChanged();
 ```
@@ -77,7 +77,7 @@ Most servers never call these — registering, `update()`, `enable()`, `disable(
 Behind `createMcpHandler` the instance is per-request, so publish through the handler; delivery reaches every open `subscriptions/listen` stream that opted in:
 
 ```ts
-handler.notify.resourceUpdated('config://app');   // needs resources: { subscribe: true } on the instance
+handler.notify.resourceUpdated('config://app'); // needs resources: { subscribe: true } on the instance
 handler.notify.toolsChanged();
 handler.notify.promptsChanged();
 handler.notify.resourcesChanged();
@@ -90,12 +90,15 @@ On stdio, `serveStdio` routes the instance's own `send*` calls onto its open sub
 Mark results with a freshness hint so clients can cache them; without a hint the SDK emits `ttlMs: 0` and nothing is ever served from cache:
 
 ```ts
-new McpServer({ name: 'catalog', version: '1.0.0' }, {
-  cacheHints: {
-    'tools/list':     { ttlMs: 60_000, cacheScope: 'public' },   // 'public' only if identical for every caller
-    'resources/read': { ttlMs: 5_000,  cacheScope: 'private' }   // default scope
-  }
-});
+new McpServer(
+  { name: 'catalog', version: '1.0.0' },
+  {
+    cacheHints: {
+      'tools/list': { ttlMs: 60_000, cacheScope: 'public' }, // 'public' only if identical for every caller
+      'resources/read': { ttlMs: 5_000, cacheScope: 'private' }, // default scope
+    },
+  },
+);
 // registerResource also takes a per-resource cacheHint that wins field-by-field.
 ```
 
@@ -112,10 +115,10 @@ A legacy client speaks a 2025-era revision (`initialize` handshake, no `_meta` e
 ```ts
 import { isLegacyRequest, legacyStatelessFallback } from '@modelcontextprotocol/server';
 
-const legacy = legacyStatelessFallback(buildServer);   // or existing sessionful wiring
+const legacy = legacyStatelessFallback(buildServer); // or existing sessionful wiring
 async function serve(request: Request) {
   return (await isLegacyRequest(request)) ? legacy(request) : strict.fetch(request);
 }
 ```
 
-- **SSE:** the v2 server never serves HTTP+SSE — migrate to Streamable HTTP. A frozen v1 copy ships as `@modelcontextprotocol/server-legacy/sse` (deprecated). v2 *clients* keep `SSEClientTransport`, so they still reach old SSE servers.
+- **SSE:** the v2 server never serves HTTP+SSE — migrate to Streamable HTTP. A frozen v1 copy ships as `@modelcontextprotocol/server-legacy/sse` (deprecated). v2 _clients_ keep `SSEClientTransport`, so they still reach old SSE servers.

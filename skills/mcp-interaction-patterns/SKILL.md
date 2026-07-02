@@ -10,13 +10,13 @@ Covers mid-call communication between server and user: asking for input, reporti
 
 ## Legacy vs. modern
 
-The SDK negotiates which era a connection speaks and adapts automatically — write handlers against the modern surface (`input_required`); legacy (2025-era) connections are served transparently.
+The SDK negotiates which era a connection speaks and adapts automatically — write handlers against the modern surface (`input_required`); legacy (2025-era) connections are served transparently (the `inputRequired.legacyShim` server option, default `true`, pushes real `elicitation/create` requests and re-enters the handler).
 
-| Need           | Legacy (2025)                     | Modern (2026)                        |
-| --------------- | ---------------------------------- | -------------------------------------- |
-| Ask the user     | `await ctx.mcpReq.elicitInput()`   | `return inputRequired(...)`            |
-| Report progress  | `ctx.mcpReq.notify(...)`           | `ctx.mcpReq.notify(...)` (unchanged)   |
-| Cancel            | `ctx.mcpReq.signal`                | `ctx.mcpReq.signal` (unchanged)        |
+| Need            | Legacy (2025)                    | Modern (2026)                        |
+| --------------- | -------------------------------- | ------------------------------------ |
+| Ask the user    | `await ctx.mcpReq.elicitInput()` | `return inputRequired(...)`          |
+| Report progress | `ctx.mcpReq.notify(...)`         | `ctx.mcpReq.notify(...)` (unchanged) |
+| Cancel          | `ctx.mcpReq.signal`              | `ctx.mcpReq.signal` (unchanged)      |
 
 ## Asking for input: `input_required` (modern)
 
@@ -26,7 +26,18 @@ See [`input_required` return example](references/examples.md#input_required-retu
 
 - Check `ctx.mcpReq.inputResponses` for an answer before asking — only request what's still missing (the handler re-runs from scratch, so already-answered fields shouldn't re-prompt).
 - Build requests with `inputRequired.elicit()` (form) or `inputRequired.elicitUrl()` (redirect to a URL).
-- Read answers with `acceptedContent(ctx.mcpReq.inputResponses, key, schema)`.
+- Read answers with `acceptedContent(ctx.mcpReq.inputResponses, key, schema)` — it returns `undefined` for missing, declined, and cancelled alike.
+- To tell a refusal from a first entry, use `inputResponse(ctx.mcpReq.inputResponses, key)` — a discriminated view (`missing` / `elicit` / `sampling` / `roots`) — and stop re-prompting on a non-accept:
+
+```ts
+const view = inputResponse(ctx.mcpReq.inputResponses, 'confirm');
+if (view.kind === 'elicit' && view.action !== 'accept') {
+  return {
+    content: [{ type: 'text', text: 'Cancelled by the operator' }],
+    isError: true,
+  };
+}
+```
 
 ## Asking for input: elicitation (legacy)
 
@@ -34,15 +45,16 @@ See [`input_required` return example](references/examples.md#input_required-retu
 
 See [Form elicitation example](references/examples.md#form-elicitation).
 
+- Requires the client's `elicitation` capability for the mode used; without it, `elicitInput` throws before the wire and surfaces as an `isError` result.
 - `mode: 'form'` — never request secrets (passwords, payment details) through a form.
 - `mode: 'url'` — send the user to a page outside the chat (e.g. an OAuth login).
 
 ```ts
 const result = await ctx.mcpReq.elicitInput({
-  mode: "url",
-  message: "Sign in to link your account",
-  url: "https://billing.example.com/connect/provider",
-  elicitationId: "12345",
+  mode: 'url',
+  message: 'Sign in to link your account',
+  url: 'https://billing.example.com/connect/provider',
+  elicitationId: '12345',
 });
 ```
 

@@ -19,7 +19,7 @@ See [Server-side example](references/examples.md#server-side---protecting-the-en
 - Missing or invalid token → `401`, prompting the client to (re-)authorize.
 - Valid token, insufficient scope → `403`.
 - `AuthInfo.expiresAt` is required — tokens without an expiry are rejected.
-- Per-tool authorization isn't a transport concern: check `ctx.http?.authInfo.scopes` inside the handler and return `isError: true` if the caller can't use that tool.
+- Per-tool authorization isn't a transport concern: check `ctx.http?.authInfo.scopes` inside the handler and return `isError: true` if the caller can't use that tool — replying `403` at the HTTP layer instead triggers the client's automatic scope step-up (SEP-2350).
 
 ## 2. Client side — using the token
 
@@ -32,7 +32,8 @@ For a human completing a browser login. The SDK runs discovery, registers/looks 
 See [End-user OAuth example](references/examples.md#end-user-oauth).
 
 - Tokens persist through the provider so re-auth isn't needed every connection.
-- `finishAuth` validates the RFC 9207 `iss` on the callback; a mismatched authorization server aborts the exchange rather than accepting a token from the wrong issuer.
+- `finishAuth` validates the RFC 9207 `iss` on the callback; a mismatched authorization server aborts the exchange rather than accepting a token from the wrong issuer. Never render the callback's `error`/`error_description` — they arrive on an untrusted redirect.
+- Dynamic client registrations are keyed by issuer (SEP-2352) so a `client_id` from one authorization server is never sent to another; RFC 8707 resource binding is automatic (override `validateResourceURL` to pin or omit the `resource` parameter).
 
 ### B. Machine-to-machine (client_credentials)
 
@@ -45,19 +46,19 @@ See [Machine-to-machine example](references/examples.md#machine-to-machine).
 For a user already authenticated in the host app — exchanges that session for MCP access instead of a second login:
 
 ```ts
-import { CrossAppAccessProvider } from "@modelcontextprotocol/client";
+import { CrossAppAccessProvider } from '@modelcontextprotocol/client';
 
 new CrossAppAccessProvider({ assertion, clientId, clientSecret });
 ```
 
 ## 3. Error reference
 
-| Error                               | Raised to | Meaning                                                    |
-| ------------------------------------ | --------- | ------------------------------------------------------------ |
-| `UnauthorizedError`                  | Client    | Token missing or expired — re-run the auth flow.             |
-| `IssuerMismatchError`                | Client    | Callback or metadata came from the wrong issuer.             |
-| `AuthorizationServerMismatchError`   | Client    | Credential is pinned to a different authorization server.    |
-| `OAuthError`                         | Server    | Token verifier rejected the token.                           |
+| Error                              | Raised to | Meaning                                                   |
+| ---------------------------------- | --------- | --------------------------------------------------------- |
+| `UnauthorizedError`                | Client    | Token missing or expired — re-run the auth flow.          |
+| `IssuerMismatchError`              | Client    | Callback or metadata came from the wrong issuer.          |
+| `AuthorizationServerMismatchError` | Client    | Credential is pinned to a different authorization server. |
+| `OAuthError`                       | Server    | Token verifier rejected the token.                        |
 
 ## 4. Related skills
 

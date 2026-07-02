@@ -18,12 +18,12 @@ See [Constructor & connect example](references/examples.md#constructor--connect)
 
 ## 2. Transports
 
-| Transport                        | Use                                                                                    |
-| ---------------------------------- | ----------------------------------------------------------------------------------------- |
-| `StreamableHTTPClientTransport`    | Remote servers over HTTP (default choice).                                                |
-| `StdioClientTransport`             | A local server as a child process — the transport spawns it; never start it yourself.     |
-| `SSEClientTransport`               | Legacy fallback for older remote servers.                                                 |
-| `InMemoryTransport`                | In-process testing.                                                                       |
+| Transport                       | Use                                                                                             |
+| ------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `StreamableHTTPClientTransport` | Remote servers over HTTP (default choice).                                                      |
+| `StdioClientTransport`          | A local server as a child process — the transport spawns it; never start it yourself.           |
+| `SSEClientTransport`            | Legacy fallback for older remote servers — try Streamable first, retry on a **fresh** `Client`. |
+| `InMemoryTransport`             | In-process testing.                                                                             |
 
 ## 3. Calling tools and resources
 
@@ -31,13 +31,15 @@ See [Calling tools and resources example](references/examples.md#calling-tools-a
 
 - Server-side failures come back as `{ isError: true }`, not a throw — check it before trusting `content`. A `throw` only happens if the connection itself breaks or times out.
 - `structuredContent` is `unknown` — only present when the tool declares `outputSchema`; narrow before use.
-- List calls (`listTools`, etc.) auto-paginate up to `listMaxPages` (default 64).
-- Per-call options: `onprogress` for progress updates, `maxTotalTimeout` to bound total time.
+- List calls (`listTools`, etc.) auto-paginate up to `listMaxPages` (default 64; `0` removes the cap) — exceeding it rejects with `SdkError(LIST_PAGINATION_EXCEEDED)`. Pass `{ cursor }` to fetch exactly one raw page; explicit-cursor calls are never capped.
+- Per-call options: `onprogress` for progress updates, `maxTotalTimeout` to bound total time, `signal` to cancel.
 
 ```ts
 await client.callTool(params, {
   onprogress: (update) => console.log(update),
+  resetTimeoutOnProgress: true,
   maxTotalTimeout: 600000,
+  signal: controller.signal, // abort → the server handler's ctx.mcpReq.signal aborts
 });
 ```
 
@@ -51,21 +53,24 @@ Two protocol eras: legacy (2024/2025) and modern (2026-07-28). `versionNegotiati
 
 ```ts
 const client = new Client(
-  { name: "my-client", version: "1.0.0" },
-  { versionNegotiation: { mode: "auto" } },
+  { name: 'my-client', version: '1.0.0' },
+  { versionNegotiation: { mode: 'auto' } },
 );
 ```
+
+- `'auto'` probes with `server/discover`; tune with `probe: { timeoutMs, maxRetries }`. `supportedProtocolVersions` shapes the probe — removing every pre-2026 entry removes the legacy fallback.
+- Don't default a spawn-per-invocation stdio CLI to `'auto'` — a legacy stdio server stalls the probe for its full timeout.
 
 ## 5. Responding to server-initiated requests
 
 Register the elicitation handler once, at construction:
 
 ```ts
-client.setRequestHandler("elicitation/create", async (request) => {
-  if (request.params.mode === "url") {
-    return { action: "accept" }; // after opening the URL for the user
+client.setRequestHandler('elicitation/create', async (request) => {
+  if (request.params.mode === 'url') {
+    return { action: 'accept' }; // after opening the URL for the user
   }
-  return { action: "accept", content: { city: "Lisbon" } }; // form response
+  return { action: 'accept', content: { city: 'Lisbon' } }; // form response
 });
 ```
 

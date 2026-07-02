@@ -7,14 +7,17 @@ import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/cli
 
 const client = new Client(
   { name: 'my-client', version: '1.0.0' },
-  {                                        // ClientOptions (all optional)
+  {
+    // ClientOptions (all optional)
     capabilities: { elicitation: { form: {}, url: {} }, sampling: {} },
     versionNegotiation: { mode: 'auto' },
     listChanged: { tools: { onChanged } },
     inputRequired: { maxRounds: 10, autoFulfill: true },
     listMaxPages: 64,
-    responseCacheStore, cachePartition, defaultCacheTtlMs
-  }
+    responseCacheStore,
+    cachePartition,
+    defaultCacheTtlMs,
+  },
 );
 
 await client.connect(new StreamableHTTPClientTransport(new URL('http://localhost:3000/mcp')));
@@ -38,8 +41,8 @@ const prompt = await client.getPrompt({ name: 'summarize-order', arguments: { id
 // prompt.messages — ready to send to a model
 
 const { completion } = await client.complete({
-  ref: { type: 'ref/prompt', name: 'summarize-order' },   // or { type: 'ref/resource', uri: 'repo://{repo}/readme' }
-  argument: { name: 'tone', value: 'f' }
+  ref: { type: 'ref/prompt', name: 'summarize-order' }, // or { type: 'ref/resource', uri: 'repo://{repo}/readme' }
+  argument: { name: 'tone', value: 'f' },
 });
 ```
 
@@ -49,25 +52,30 @@ const { completion } = await client.complete({
 client.setNotificationHandler('notifications/tools/list_changed', async () => {
   const { tools } = await client.listTools();
 });
-client.setNotificationHandler('notifications/resources/updated', async n => {
+client.setNotificationHandler('notifications/resources/updated', async (n) => {
   const { contents } = await client.readResource({ uri: n.params.uri });
 });
 
 const subscription = await client.listen({
-  toolsListChanged: true,                      // + promptsListChanged, resourcesListChanged
-  resourceSubscriptions: ['config://app']      // per-resource updates
+  toolsListChanged: true, // + promptsListChanged, resourcesListChanged
+  resourceSubscriptions: ['config://app'], // per-resource updates
 });
-subscription.honoredFilter;   // the capability-gated subset the server granted
+subscription.honoredFilter; // the capability-gated subset the server granted
 
 await subscription.close();
-const reason = await subscription.closed;      // resolves once, never rejects:
+const reason = await subscription.closed; // resolves once, never rejects:
 // 'local' (you closed) | 'graceful' (server ended) | 'remote' (dropped) — re-listen only on 'remote'
 ```
 
 ## HTTP Middleware
 
 ```ts
-import { applyMiddlewares, createMiddleware, withLogging, withOAuth } from '@modelcontextprotocol/client';
+import {
+  applyMiddlewares,
+  createMiddleware,
+  withLogging,
+  withOAuth,
+} from '@modelcontextprotocol/client';
 
 const tagRequests = createMiddleware(async (next, input, init) => {
   const headers = new Headers(init?.headers);
@@ -76,6 +84,6 @@ const tagRequests = createMiddleware(async (next, input, init) => {
 });
 
 const transport = new StreamableHTTPClientTransport(url, {
-  fetch: applyMiddlewares(tagRequests, withLogging({ statusLevel: 400 }))(fetch)
+  fetch: applyMiddlewares(tagRequests, withLogging({ statusLevel: 400 }))(fetch),
 });
 ```

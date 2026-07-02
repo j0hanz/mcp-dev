@@ -25,13 +25,13 @@ The SDK derives the JSON Schema the model sees from the one Zod schema, validate
 
 ```ts
 const server = new McpServer(
-  { name: "catalog", version: "1.0.0" }, // Implementation info
+  { name: 'catalog', version: '1.0.0' }, // Implementation info
   {
     // ServerOptions (all optional)
     capabilities: { logging: {}, resources: { subscribe: true } },
-    instructions: "Call list-trips before book-trip.",
+    instructions: 'Call list-trips before book-trip.',
     enforceStrictCapabilities: true, // check client capabilities before server-initiated requests
-    cacheHints: { "tools/list": { ttlMs: 60_000, cacheScope: "public" } },
+    cacheHints: { 'tools/list': { ttlMs: 60_000, cacheScope: 'public' } },
   },
 );
 ```
@@ -53,8 +53,8 @@ See [Tool Registration Example](references/examples.md#tool-registration).
 The registration handle mutates live and notifies clients automatically (`notifications/tools/list_changed`):
 
 ```ts
-const handle = server.registerTool("run-report", { description: "…" }, handler);
-handle.update({ description: "Run and email the weekly report" });
+const handle = server.registerTool('run-report', { description: '…' }, handler);
+handle.update({ description: 'Run and email the weekly report' });
 handle.disable(); // hidden from tools/list
 handle.enable();
 handle.remove();
@@ -66,15 +66,15 @@ handle.remove();
 
 ```ts
 server.registerResource(
-  "config",
-  "config://app",
+  'config',
+  'config://app',
   {
-    title: "Application Config",
-    description: "App configuration",
-    mimeType: "text/plain",
+    title: 'Application Config',
+    description: 'App configuration',
+    mimeType: 'text/plain',
   },
   async (uri) => ({
-    contents: [{ uri: uri.href, text: "log_level=info\nregion=eu-west-1" }],
+    contents: [{ uri: uri.href, text: 'log_level=info\nregion=eu-west-1' }],
   }),
 );
 ```
@@ -102,7 +102,7 @@ See [Prompt Registration Example](references/examples.md#prompt-registration).
 Wrap a prompt argument with `completable(schema, callback)`; the callback suggests values as the user types:
 
 ```ts
-import { completable } from "@modelcontextprotocol/server";
+import { completable } from '@modelcontextprotocol/server';
 
 argsSchema: z.object({
   repo: completable(z.string(), async (value) =>
@@ -128,6 +128,7 @@ Every handler receives a context as its second argument:
 | `ctx.mcpReq.notify(n)` / `ctx.mcpReq.send(r)`  | Send a notification / request tied to this request                                     |
 | `ctx.mcpReq.elicitInput(params)`               | Ask the user mid-call (2025-era; throws on 2026-era)                                   |
 | `ctx.mcpReq.inputResponses` / `requestState()` | 2026-era multi-round-trip surfaces                                                     |
+| `ctx.mcpReq.envelope`                          | Per-request client identity & capabilities (2026-era; legacy: `getClientVersion()`)    |
 | `ctx.sessionId`                                | Session id when the transport has one                                                  |
 | `ctx.http?.authInfo` / `ctx.http?.req`         | Verified `AuthInfo` / inbound `Request` (HTTP only — `undefined` on stdio)             |
 
@@ -143,9 +144,7 @@ For elicitation, `input_required`, progress reporting, and cancellation patterns
 ```ts
 // Tool error — put the recovery hint in the text:
 return {
-  content: [
-    { type: "text", text: `No note "${id}". Known ids: ${ids.join(", ")}` },
-  ],
+  content: [{ type: 'text', text: `No note "${id}". Known ids: ${ids.join(', ')}` }],
   isError: true,
 };
 
@@ -154,11 +153,8 @@ import {
   ProtocolError,
   ProtocolErrorCode,
   ResourceNotFoundError,
-} from "@modelcontextprotocol/server";
-throw new ProtocolError(
-  ProtocolErrorCode.InvalidParams,
-  `Note ids are lowercase, got "${id}"`,
-);
+} from '@modelcontextprotocol/server';
+throw new ProtocolError(ProtocolErrorCode.InvalidParams, `Note ids are lowercase, got "${id}"`);
 throw new ResourceNotFoundError(uri.href); // -32602 with data: { uri }
 ```
 
@@ -170,8 +166,8 @@ For servers a host launches as a local child process — `serveStdio(factory, op
 
 ```ts
 const handle = serveStdio(() => buildServer());
-console.error("listening on stdio"); // stderr — NEVER console.log
-process.on("SIGINT", () => void handle.close());
+console.error('listening on stdio'); // stderr — NEVER console.log
+process.on('SIGINT', () => void handle.close());
 ```
 
 - **stdout is the JSON-RPC channel.** One `console.log` corrupts the stream and the host drops the connection.

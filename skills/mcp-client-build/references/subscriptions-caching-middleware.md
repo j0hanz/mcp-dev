@@ -9,9 +9,18 @@ See [Subscriptions and Listen example](examples.md#subscriptions-and-listen).
 **Managed mode** — the `listChanged` client option opens the stream after `connect()` from the intersection of the config and the server's capabilities, re-fetches on each change, and exposes the handle as `client.autoOpenedSubscription`:
 
 ```ts
-new Client({ name: 'watcher', version: '1.0.0' }, {
-  listChanged: { tools: { onChanged: (error, tools) => { /* … */ } } }
-});
+new Client(
+  { name: 'watcher', version: '1.0.0' },
+  {
+    listChanged: {
+      tools: {
+        onChanged: (error, tools) => {
+          /* … */
+        },
+      },
+    },
+  },
+);
 ```
 
 > `listChanged` registers its own notification handlers during `connect()`; a later manual `setNotificationHandler` for the same type silently replaces it.
@@ -23,8 +32,8 @@ new Client({ name: 'watcher', version: '1.0.0' }, {
 Two halves: the server marks results with a freshness hint (SEP-2549); the client's response cache serves them locally while fresh. Cacheable verbs: `listTools`, `listPrompts`, `listResources`, `listResourceTemplates`, `readResource`.
 
 ```ts
-await client.listTools();                                    // network, cached for ttlMs
-await client.listTools();                                    // served from cache
+await client.listTools(); // network, cached for ttlMs
+await client.listTools(); // served from cache
 await client.listTools(undefined, { cacheMode: 'refresh' }); // always refetch + re-store
 await client.readResource({ uri }, { cacheMode: 'bypass' }); // no cache read or write
 ```
@@ -41,24 +50,26 @@ Wrap the transport's `fetch` to see every HTTP request out and every `Response` 
 
 See [HTTP Middleware example](examples.md#http-middleware).
 
-- **Order:** the *last* middleware passed is outermost (sees the request first, the response last); the *first* sits closest to the network — put retries there.
+- **Order:** the _last_ middleware passed is outermost (sees the request first, the response last); the _first_ sits closest to the network — put retries there.
 - `withLogging({ statusLevel?, includeRequestHeaders?, includeResponseHeaders?, logger? })` — pass a `logger` in stdio processes to keep lines off stdout.
 - `withOAuth(provider, serverUrl)` — the OAuth flow as a layer (adds `Authorization`, re-auths + retries once on 401) for stacks that already own `fetch`; otherwise prefer the transport's `authProvider`.
 - Always return the `Response`; read a `response.clone()` if the body is needed.
 
-## Roots *(deprecated — SEP-2577)*
+## Roots _(deprecated — SEP-2577)_
 
 `file://` boundaries the client hands the server. **Migrate:** pass paths through tool arguments, resource URIs, or server configuration. Through the deprecation window (≥ 12 months on 2025-era connections):
 
 ```ts
-const client = new Client({ name: 'ws', version: '1.0.0' },
-  { capabilities: { roots: { listChanged: true } } });      // declare BEFORE registering the handler
+const client = new Client(
+  { name: 'ws', version: '1.0.0' },
+  { capabilities: { roots: { listChanged: true } } },
+); // declare BEFORE registering the handler
 
 client.setRequestHandler('roots/list', async () => ({
-  roots: [{ uri: 'file:///home/user/projects/my-app', name: 'My App' }]   // every uri starts with file://
+  roots: [{ uri: 'file:///home/user/projects/my-app', name: 'My App' }], // every uri starts with file://
 }));
 
-await client.sendRootsListChanged();   // server re-requests roots/list
+await client.sendRootsListChanged(); // server re-requests roots/list
 ```
 
 Roots are advisory, not an access grant — the SDK never enforces them.

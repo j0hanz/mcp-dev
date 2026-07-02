@@ -11,7 +11,7 @@ Upgrades a project from `@modelcontextprotocol/sdk` v1 to the split v2 packages 
 ## Step 1: Run the codemod
 
 ```sh
-npx @modelcontextprotocol/codemod@beta v1-to-v2 .
+npx @modelcontextprotocol/codemod@beta v1-to-v2 .   # run at the package root, not ./src
 grep -rn '@mcp-codemod-error' .
 tsc --noEmit && <formatter> && <tests>
 ```

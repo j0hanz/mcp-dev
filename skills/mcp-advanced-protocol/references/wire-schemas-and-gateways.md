@@ -5,13 +5,17 @@
 For code that holds **raw JSON** (gateways, proxies, log pipelines) — `McpServer`/`Client` users never need it. Exports the exact Zod constants the SDK validates against, nothing else (`zod` is its only dependency; install separately):
 
 ```ts
-import { CallToolResultSchema, JSONRPCMessageSchema, CallToolRequestSchema,
-         OAuthMetadataSchema } from '@modelcontextprotocol/core';
+import {
+  CallToolResultSchema,
+  JSONRPCMessageSchema,
+  CallToolRequestSchema,
+  OAuthMetadataSchema,
+} from '@modelcontextprotocol/core';
 
-const parsed = CallToolResultSchema.safeParse(upstreamBody);       // typed on success
-const message = JSONRPCMessageSchema.parse(JSON.parse(frame));     // narrows to request | notification | result | error
+const parsed = CallToolResultSchema.safeParse(upstreamBody); // typed on success
+const message = JSONRPCMessageSchema.parse(JSON.parse(frame)); // narrows to request | notification | result | error
 if ('method' in message && message.method === 'tools/call') {
-  const call = CallToolRequestSchema.parse(message);               // call.params.name: string
+  const call = CallToolRequestSchema.parse(message); // call.params.name: string
 }
 ```
 
@@ -23,9 +27,12 @@ Probe a server once; every other client connects with **zero round trips** (2026
 
 ```ts
 // Bootstrap probes once …
-const bootstrap = new Client({ name: 'gateway', version: '1.0.0' }, { versionNegotiation: { mode: 'auto' } });
+const bootstrap = new Client(
+  { name: 'gateway', version: '1.0.0' },
+  { versionNegotiation: { mode: 'auto' } },
+);
 await bootstrap.connect(new StreamableHTTPClientTransport(url));
-const persisted = JSON.stringify(bootstrap.getDiscoverResult());   // plain JSON: versions, capabilities, serverInfo, instructions
+const persisted = JSON.stringify(bootstrap.getDiscoverResult()); // plain JSON: versions, capabilities, serverInfo, instructions
 
 // … workers adopt it — nothing on the wire:
 const worker = new Client({ name: 'worker', version: '1.0.0' });

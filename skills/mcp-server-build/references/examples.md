@@ -16,11 +16,11 @@ serveStdio(() => {
     'get-forecast',
     {
       description: 'Get the weather forecast for a city',
-      inputSchema: z.object({ city: z.string() })
+      inputSchema: z.object({ city: z.string() }),
     },
     async ({ city }) => ({
-      content: [{ type: 'text', text: `Sunny in ${city} all week.` }]
-    })
+      content: [{ type: 'text', text: `Sunny in ${city} all week.` }],
+    }),
   );
 
   return server;
@@ -33,19 +33,19 @@ serveStdio(() => {
 server.registerTool(
   'search',
   {
-    title: 'Search catalog',                       // display name (optional)
+    title: 'Search catalog', // display name (optional)
     description: 'Search the product catalog',
     inputSchema: z.object({
-      query: z.string().describe('Substring to match'),   // .describe() → JSON Schema description
-      limit: z.number().int().max(50).optional()
+      query: z.string().describe('Substring to match'), // .describe() → JSON Schema description
+      limit: z.number().int().max(50).optional(),
     }),
-    outputSchema: z.object({ names: z.array(z.string()) }),  // optional, enables structuredContent
-    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true }
+    outputSchema: z.object({ names: z.array(z.string()) }), // optional, enables structuredContent
+    annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true },
   },
   async ({ query, limit }, ctx) => ({
-    content: [{ type: 'text', text: names.join('\n') }],   // human/model-readable blocks
-    structuredContent: { names }                            // validated against outputSchema
-  })
+    content: [{ type: 'text', text: names.join('\n') }], // human/model-readable blocks
+    structuredContent: { names }, // validated against outputSchema
+  }),
 );
 ```
 
@@ -57,13 +57,13 @@ import { ResourceTemplate } from '@modelcontextprotocol/server';
 server.registerResource(
   'user-profile',
   new ResourceTemplate('users://{userId}/profile', {
-    list: undefined,                                 // required key; undefined = not enumerable
-    complete: { userId: async v => lookupIds(v) }    // per-variable autocompletion
+    list: undefined, // required key; undefined = not enumerable
+    complete: { userId: async (v) => lookupIds(v) }, // per-variable autocompletion
   }),
   { description: 'Profile data for one user', mimeType: 'application/json' },
   async (uri, { userId }) => ({
-    contents: [{ uri: uri.href, text: JSON.stringify({ userId, plan: 'pro' }) }]
-  })
+    contents: [{ uri: uri.href, text: JSON.stringify({ userId, plan: 'pro' }) }],
+  }),
 );
 ```
 
@@ -75,14 +75,14 @@ server.registerPrompt(
   {
     title: 'Code Review',
     description: 'Review code for best practices',
-    argsSchema: z.object({ code: z.string().describe('The code to review') })
+    argsSchema: z.object({ code: z.string().describe('The code to review') }),
   },
   ({ code }) => ({
     messages: [
       { role: 'user', content: { type: 'text', text: `Review this code:\n\n${code}` } },
-      { role: 'assistant', content: { type: 'text', text: 'The one-line cause:' } }  // seeds the reply
-    ]
-  })
+      { role: 'assistant', content: { type: 'text', text: 'The one-line cause:' } }, // seeds the reply
+    ],
+  }),
 );
 ```
 
