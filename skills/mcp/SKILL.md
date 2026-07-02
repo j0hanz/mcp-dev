@@ -3,7 +3,6 @@ name: mcp
 description: Use when starting any MCP SDK v2 job — building, migrating, auditing, or debugging a server or client — and the right mcp-* skill or order is unclear.
 user-invocable: true
 argument-hint: plan | build | audit | migrate | auth | test | elicit | protocol | publish
-disable-model-invocation: true
 metadata:
   category: technique
   triggers: mcp sdk v2, building server, migrating server, auditing mcp, debugging client, mcp workflow
