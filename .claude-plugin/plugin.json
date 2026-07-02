@@ -6,5 +6,12 @@
   "author": {
     "name": "j0hanz",
     "email": "l.johansson93@outlook.com"
-  }
+  },
+  "homepage": "https://github.com/j0hanz/mcp-dev",
+  "repository": "https://github.com/j0hanz/mcp-dev",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "typescript-sdk"
+  ]
 }

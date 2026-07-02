@@ -1,0 +1,28 @@
+{
+  "name": "mcp-dev",
+  "description": "Skills for building, testing, auditing, and migrating MCP servers and clients with the TypeScript SDK v2.",
+  "owner": {
+    "name": "j0hanz",
+    "email": "l.johansson93@outlook.com"
+  },
+  "plugins": [
+    {
+      "name": "mcp-dev",
+      "description": "Skills for building, testing, auditing, and migrating MCP servers and clients with the TypeScript SDK v2.",
+      "source": "./",
+      "version": "0.1.0",
+      "author": {
+        "name": "j0hanz",
+        "email": "l.johansson93@outlook.com"
+      },
+      "homepage": "https://github.com/j0hanz/mcp-dev",
+      "repository": "https://github.com/j0hanz/mcp-dev",
+      "keywords": [
+        "mcp",
+        "model-context-protocol",
+        "typescript-sdk"
+      ],
+      "category": "development"
+    }
+  ]
+}
