@@ -4,8 +4,8 @@
 
 ```ts
 const handler = createMcpHandler(factory, {
-  responseMode: 'auto', // 'auto' | 'json' | 'sse'
-  legacy: 'stateless', // 'stateless' (default) | 'reject'
+  responseMode: "auto", // 'auto' | 'json' | 'sse'
+  legacy: "stateless", // 'stateless' (default) | 'reject'
   bus: new InMemoryServerEventBus(),
 });
 // handler: { fetch(request, ctx?), close(), notify, bus }
@@ -26,18 +26,44 @@ All four are thin layers over `createMcpHandler`; each app factory pre-applies J
 | **Fastify**      | `@modelcontextprotocol/fastify` + `@modelcontextprotocol/node` + `fastify` | `app.all('/mcp', (req, reply) => node(req.raw, reply.raw, req.body))`                   |
 | **Web-standard** | `@modelcontextprotocol/server` only                                        | `export default handler`                                                                |
 
+Hono mounts differently because it runs on `WebStandardStreamableHTTPServerTransport` and calls `handler.fetch()` directly; Express and Fastify run on `NodeStreamableHTTPServerTransport` and go through `toNodeHandler` to adapt Node's `req`/`res`.
+
 Complete Express example:
 
 ```ts
-import { createMcpExpressApp } from '@modelcontextprotocol/express';
-import { toNodeHandler } from '@modelcontextprotocol/node';
-import { createMcpHandler } from '@modelcontextprotocol/server';
+import { createMcpExpressApp } from "@modelcontextprotocol/express";
+import { toNodeHandler } from "@modelcontextprotocol/node";
+import { createMcpHandler } from "@modelcontextprotocol/server";
 
 const handler = createMcpHandler(buildServer);
 const app = createMcpExpressApp(); // express() + express.json() + Host/Origin checks
 const node = toNodeHandler(handler);
-app.all('/mcp', (req, res) => void node(req, res, req.body)); // pass parsed body — avoids re-reading the stream
+app.all("/mcp", (req, res) => void node(req, res, req.body)); // pass parsed body — avoids re-reading the stream
 app.listen(3000);
+```
+
+Fastify example:
+
+```ts
+import { createMcpFastifyApp } from "@modelcontextprotocol/fastify";
+import { toNodeHandler } from "@modelcontextprotocol/node";
+
+const app = createMcpFastifyApp(); // fastify() + Host/Origin checks
+const node = toNodeHandler(handler);
+app.all("/mcp", (req, reply) => node(req.raw, reply.raw, req.body));
+app.listen({ port: 3000 });
+```
+
+Hono example:
+
+```ts
+import { createMcpHonoApp } from "@modelcontextprotocol/hono";
+
+const app = createMcpHonoApp(); // Hono() + Host/Origin checks
+app.all("/mcp", (c) =>
+  handler.fetch(c.req.raw, { parsedBody: c.get("parsedBody") }),
+);
+export default app;
 ```
 
 Smoke test:
@@ -53,6 +79,7 @@ curl -X POST http://127.0.0.1:3000/mcp -H 'Content-Type: application/json' \
 - Framework app factories arm Host/Origin validation by default on localhost binds (DNS-rebinding defense).
 - **Binding beyond localhost drops the default protection — name the hosts:** `createMcp*App({ host: '0.0.0.0', allowedHosts: ['api.example.com'], allowedOrigins: [...] })`. Hostnames are port-agnostic; requests without an `Origin` header always pass (non-browser MCP clients unaffected).
 - Bare fetch runtimes: use `hostHeaderValidationResponse(request, allowedHosts)` and `originValidationResponse(request, allowedOrigins)` from `@modelcontextprotocol/server` (plus `localhostAllowedHostnames()` / `localhostAllowedOrigins()` helpers).
+- Adding `/mcp` into an existing app without `createMcp*App()`: each adapter package also exports the same protection as native middleware — `hostHeaderValidation(allowedHostnames)`, `localhostHostValidation()`, `originValidation(allowedOrigins)` from `@modelcontextprotocol/express` / `@modelcontextprotocol/fastify` / `@modelcontextprotocol/hono` / `@modelcontextprotocol/node` — wire one in front of the route instead of the response-builder form above.
 - Auth is pass-through: verify the bearer token in front and pass the result — `handler.fetch(request, { authInfo })` → factory `authInfo` → handler `ctx.http.authInfo`. See the `mcp-auth-oauth` skill.
 
 ## Sessions, state, scaling
@@ -77,7 +104,7 @@ Most servers never call these — registering, `update()`, `enable()`, `disable(
 Behind `createMcpHandler` the instance is per-request, so publish through the handler; delivery reaches every open `subscriptions/listen` stream that opted in:
 
 ```ts
-handler.notify.resourceUpdated('config://app'); // needs resources: { subscribe: true } on the instance
+handler.notify.resourceUpdated("config://app"); // needs resources: { subscribe: true } on the instance
 handler.notify.toolsChanged();
 handler.notify.promptsChanged();
 handler.notify.resourcesChanged();
@@ -91,11 +118,11 @@ Mark results with a freshness hint so clients can cache them; without a hint the
 
 ```ts
 new McpServer(
-  { name: 'catalog', version: '1.0.0' },
+  { name: "catalog", version: "1.0.0" },
   {
     cacheHints: {
-      'tools/list': { ttlMs: 60_000, cacheScope: 'public' }, // 'public' only if identical for every caller
-      'resources/read': { ttlMs: 5_000, cacheScope: 'private' }, // default scope
+      "tools/list": { ttlMs: 60_000, cacheScope: "public" }, // 'public' only if identical for every caller
+      "resources/read": { ttlMs: 5_000, cacheScope: "private" }, // default scope
     },
   },
 );
@@ -113,11 +140,16 @@ A legacy client speaks a 2025-era revision (`initialize` handshake, no `_meta` e
 - Keep an existing sessionful 2025 deployment by routing in front of a strict handler:
 
 ```ts
-import { isLegacyRequest, legacyStatelessFallback } from '@modelcontextprotocol/server';
+import {
+  isLegacyRequest,
+  legacyStatelessFallback,
+} from "@modelcontextprotocol/server";
 
 const legacy = legacyStatelessFallback(buildServer); // or existing sessionful wiring
 async function serve(request: Request) {
-  return (await isLegacyRequest(request)) ? legacy(request) : strict.fetch(request);
+  return (await isLegacyRequest(request))
+    ? legacy(request)
+    : strict.fetch(request);
 }
 ```
 
