@@ -6,14 +6,15 @@ user-invocable: false
 
 # Distributing MCP Servers (TypeScript SDK v2)
 
-Covers packaging and shipping a finished server. Build it first with the `mcp-server-build` skill.
+This guide explains how to share your finished server with other people. You must build your server first using the `mcp-server-build` guide.
 
-## stdio servers — npm package with a `bin` entry
+## 1. Command-Line (stdio) Servers
 
-The host launches the server as a child process, so distribution means putting an executable on the user's machine — npm + `npx` is the standard channel.
+People will run your server using a command called `npx`. To make this work, you must pack it as an `npm` package.
+
+**Required `package.json` setup:**
 
 ```jsonc
-// package.json
 {
   "name": "example-mcp",
   "version": "0.1.0",
@@ -25,36 +26,42 @@ The host launches the server as a child process, so distribution means putting a
 }
 ```
 
-- The entry file's first line must be `#!/usr/bin/env node` — npm wires `bin` through it.
-- **Pin the SDK exactly** (`"@modelcontextprotocol/server": "2.0.0-beta.2"`, no `^`) while v2 is in beta — the API may shift between betas.
-- Stdout discipline travels with the package: any dependency that logs to stdout corrupts the wire (see `mcp-server-build`).
-- Smoke-test the packed artifact before publishing:
+**Important Rules:**
+
+- **First line of code:** Your main file (`index.js`) must start exactly with `#!/usr/bin/env node`.
+- **Lock the version:** Use an exact version for the SDK (like `"2.0.0-beta.2"`, without the `^` symbol) so your server does not break when things update.
+- **Do not print regular text:** Never use `console.log`. Printing text breaks the connection.
+- **Test before sharing:** Pack and test your server on your own computer first:
 
 ```sh
 npm pack
 npx @modelcontextprotocol/inspector npx -y ./example-mcp-0.1.0.tgz
+
 ```
 
-## Host registration — what goes in the README
+## 2. Instructions for Your README File
 
-| Host        | Registration                                                                                             |
-| ----------- | -------------------------------------------------------------------------------------------------------- |
-| Claude Code | `claude mcp add example -- npx -y example-mcp`                                                           |
-| VS Code     | `.vscode/mcp.json` → `{ "servers": { "example": { "command": "npx", "args": ["-y", "example-mcp"] } } }` |
-| Cursor      | `.cursor/mcp.json` — same `command` + `args` shape                                                       |
+Tell users exactly how to connect your server to their apps. Copy this table into your README file:
 
-These lines are the whole install experience — ship them in the package README.
+| App             | How to Connect                                                                                                 |
+| --------------- | -------------------------------------------------------------------------------------------------------------- |
+| **Claude Code** | Run this command: `claude mcp add example -- npx -y example-mcp`                                               |
+| **VS Code**     | Add to `.vscode/mcp.json`: `{ "servers": { "example": { "command": "npx", "args": ["-y", "example-mcp"] } } }` |
+| **Cursor**      | Add to `.cursor/mcp.json`: `{ "servers": { "example": { "command": "npx", "args": ["-y", "example-mcp"] } } }` |
 
-## HTTP servers — deploy as a web service
+## 3. Web (HTTP) Servers
 
-Nothing package-specific: the handler is a web-standard fetch handler (`export default handler` on Workers/Deno/Bun; `toNodeHandler` behind `node:http`). See `mcp-server-build` → `references/serving-and-scaling.md` for adapters, Host/Origin security, and multi-node event buses — and load `mcp-auth-oauth` before exposing anything publicly.
+If your server runs over the internet (HTTP), you put it online just like a normal website.
 
-## Versioning
+- Check the `mcp-server-build` guide to see how to do this safely.
+- Always add a login system (`mcp-auth-oauth`) before you let the public use it.
 
-- The `version` in `new McpServer({ name, version })` is what clients see via `getServerVersion()` — keep it equal to the package version.
-- Changing a tool's input schema breaks every prompt written against it — prefer additive optional fields; treat schema changes as major bumps.
+## 4. Keeping Track of Versions
 
-## Related skills
+- **Match your numbers:** Make sure the version number in your code (`new McpServer({ version: "0.1.0" })`) is exactly the same as the one in your `package.json` file.
+- **Do not break old rules:** If you change what a tool needs to work, it will break old instructions. It is better to only add _optional_ new things. If you have to make a breaking change, you must increase your main version number (like going from 1.0.0 to 2.0.0).
 
-- `mcp-server-build` — building the thing being shipped.
-- `/mcp-audit` (workflow) — production-readiness check before the first publish.
+## 5. Related Skills
+
+- `mcp-server-build` — Learn how to build the server.
+- `/mcp-audit` — A checklist to make sure your server is ready to share.
