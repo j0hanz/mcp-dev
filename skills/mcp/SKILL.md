@@ -17,7 +17,7 @@ Run `/mcp` for menu, `/mcp <job>` to follow Routing table. Load skills ONLY at t
 | Build a new server                     | [Build Workflow](#build-workflow-server-or-client)                   |
 | Build a new client                     | [Build Workflow](#build-workflow-server-or-client)                   |
 | Audit existing MCP code                | [Audit](#audit)                                                      |
-| Migrate SDK v1 → v2                    | Load `mcp-migrate-v1-to-v2`, then `mcp-test`                         |
+| Migrate SDK v1 → v2                    | Load `mcp-migrate`, then `mcp-test`                                  |
 | Auth / tokens / OAuth                  | Load `mcp-auth`                                                      |
 | Test / debug / error codes             | Load `mcp-test`                                                      |
 | Elicitation / progress / cancellation  | Load `mcp-elicitation`                                               |
@@ -39,7 +39,7 @@ Run `/mcp` for menu, `/mcp <job>` to follow Routing table. Load skills ONLY at t
 READ-ONLY: report findings; fix nothing unless asked.
 
 1. **Locate** — search for `@modelcontextprotocol/` imports; note server or client, transport, SDK version (v1 or v2).
-2. **Version** — if v1, load `mcp-migrate-v1-to-v2`; make migration the top finding, keep auditing the rest.
+2. **Version** — if v1, load `mcp-migrate`; make migration the top finding, keep auditing the rest.
 3. **Design** — load `mcp-server-build` (and `mcp-client-build` if there is client code); verify schema validation, error-channel conventions, HTTP server factories, strict stdout rules.
 4. **Security** — load `mcp-auth`; verify bearer-token validation, scopes, and metadata on every HTTP endpoint. Missing auth is a Blocker.
 5. **Interactions** — if tools ask for input, show progress, or run long, load `mcp-elicitation`; check cancellation and state handling.

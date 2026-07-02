@@ -22,7 +22,7 @@ A Claude Code plugin: skills for building, testing, auditing, distributing, and 
 
 Knowledge skills load automatically when the work touches their territory — no command needed:
 
-`mcp-interview`, `mcp-server-build`, `mcp-client-build`, `mcp-auth`, `mcp-elicitation`, `mcp-test`, `mcp-advanced-protocol`, `mcp-migrate-v1-to-v2`
+`mcp-interview`, `mcp-server-build`, `mcp-client-build`, `mcp-auth`, `mcp-elicitation`, `mcp-test`, `mcp-advanced-protocol`, `mcp-migrate`
 
 ## Maintenance
 

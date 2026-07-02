@@ -50,4 +50,4 @@ See [In-process test harness example](references/examples.md#in-process-test-har
 - `references/error-codes.md` — full `ProtocolErrorCode` / `SdkErrorCode` tables.
 - `mcp-server-build` — server-side error-handling rules.
 - `mcp-client-build` — client-side error-handling rules.
-- `mcp-migrate-v1-to-v2` — renamed errors and codes after upgrading.
+- `mcp-migrate` — renamed errors and codes after upgrading.

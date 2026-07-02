@@ -1,5 +1,5 @@
 ---
-name: mcp-migrate-v1-to-v2
+name: mcp-migrate
 description: This skill should be used when the user asks to "migrate an MCP server from v1 to v2", "upgrade @modelcontextprotocol/sdk", "run the MCP codemod", "fix missing SSEServerTransport", "adopt the 2026 MCP protocol", or mentions v1-to-v2 migration, McpError renames, RequestHandlerExtra, or protocol eras in the MCP TypeScript SDK.
 user-invocable: false
 ---
