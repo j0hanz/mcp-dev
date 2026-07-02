@@ -1,0 +1,50 @@
+---
+name: mcp-migrate-v1-to-v2
+description: This skill should be used when the user asks to "migrate an MCP server from v1 to v2", "upgrade @modelcontextprotocol/sdk", "run the MCP codemod", "fix missing SSEServerTransport", "adopt the 2026 MCP protocol", or mentions v1-to-v2 migration, McpError renames, RequestHandlerExtra, or protocol eras in the MCP TypeScript SDK.
+user-invocable: false
+---
+
+# Migrating MCP SDK v1 to v2
+
+Upgrades a project from `@modelcontextprotocol/sdk` v1 to the split v2 packages (`2.0.0-beta.2`). Requires Node.js ≥ 20. Official reference: https://ts.sdk.modelcontextprotocol.io/v2/
+
+## Step 1: Run the codemod
+
+```sh
+npx @modelcontextprotocol/codemod@beta v1-to-v2 .
+grep -rn '@mcp-codemod-error' .
+tsc --noEmit && <formatter> && <tests>
+```
+
+The codemod rewrites imports, renames, and mechanical API shifts. It leaves a `@mcp-codemod-error` marker wherever it couldn't determine the right rewrite — grep for those and fix them by hand.
+
+## Step 2: Check the new package layout and renames
+
+The single v1 package is now 9 scoped packages. See [`references/tables.md`](references/tables.md#package-split) for the full split and [`references/tables.md`](references/tables.md#key-renames) for renamed APIs (`McpError` → `ProtocolError`, `RequestHandlerExtra` → `ServerContext`/`ClientContext`, etc.).
+
+## Step 3: Removed — fix manually
+
+- `SSEServerTransport` moved to `@modelcontextprotocol/server-legacy/sse`; prefer Streamable HTTP for new code.
+- OAuth helpers moved to `@modelcontextprotocol/server-legacy/auth`.
+- `WebSocketClientTransport` and experimental tasks are gone — no replacement.
+
+## Step 4: Deprecated — migrate within the year
+
+- **Sampling** — call the LLM provider directly instead of routing through the client.
+- **Roots** — pass paths as tool arguments instead of relying on client-advertised roots.
+- **Logging** — use stderr or OpenTelemetry instead of `sendLoggingMessage`.
+
+## Step 5: Manual follow-ups the codemod can't do
+
+See [`references/tables.md`](references/tables.md#adopting-the-2026-07-28-era) for the full legacy-vs-modern axis comparison.
+
+1. Swap the server entry point: `createMcpHandler` for HTTP, `serveStdio` for stdio.
+2. Return `input_required` instead of blocking on `elicitInput` for new mid-call prompts.
+3. Persist cross-round data with `requestState`, not ad hoc session storage.
+4. Set `versionNegotiation: { mode: 'auto' }` so clients negotiate the era instead of hardcoding one.
+5. Replace unsolicited `list_changed` polling with a `subscriptions/listen` stream.
+
+## Related skills
+
+- `mcp-server-build` / `mcp-client-build` — the v2 APIs these steps migrate onto.
+- `mcp-testing-debugging` — diagnosing errors that surface after the upgrade.
