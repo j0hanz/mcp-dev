@@ -26,7 +26,7 @@ metadata:
 
 | v1                                                            | v2                                                                                                                                                                                |
 | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `server.tool()` / `.prompt()` / `.resource()`                 | `registerTool` / `registerPrompt` / `registerResource`                                                                                                                            |
+| `server.setRequestHandler(CallToolRequestSchema, ...)`        | `server.registerTool(...)` or `server.tool(...)` (on high-level `McpServer`)                                                                                                      |
 | `McpError` / `ErrorCode`                                      | `ProtocolError` / `ProtocolErrorCode` (local-only members → `SdkErrorCode`)                                                                                                       |
 | `StreamableHTTPError`                                         | `SdkHttpError` (constructor shape changed)                                                                                                                                        |
 | `RequestHandlerExtra` (`extra`)                               | `ServerContext` / `ClientContext` (`ctx`) — no type parameters                                                                                                                    |

@@ -49,5 +49,5 @@ Deploy like any web service — `references/serving-and-scaling.md` covers handl
 
 ## Versioning
 
-- `new McpServer({ version: "0.1.0" })` must match `package.json` exactly.
+- `new McpServer({ name: 'my-server', version: '0.1.0' })` must match `package.json` exactly.
 - Changing what a tool requires is a breaking change: prefer adding optional fields; otherwise bump the major version.

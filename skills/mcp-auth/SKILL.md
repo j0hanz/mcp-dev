@@ -25,6 +25,9 @@ Covers `2.0.0` server-side HTTP authentication and client-side credential config
 
 In the TypeScript SDK v2, **the server framework performs no token verification or authorization of its own**. You must implement token extraction and validation using your chosen HTTP framework (e.g., Express middleware, native fetch wrappers) _before_ passing the request to the MCP handler.
 
+> [!IMPORTANT]
+> The MCP server must act strictly as a Resource Server. Do not build authentication flows (like generating JWTs or password verification) directly within your tools. Delegate this responsibility to an external Identity Provider (IdP) and verify incoming tokens prior to passing requests to the MCP handler.
+
 1. **Verify in middleware:** Extract the Bearer token, verify it, and produce an `AuthInfo` object.
    - Missing or invalid token → respond with HTTP `401`.
    - Valid token, insufficient scope for endpoint → respond with HTTP `403`.

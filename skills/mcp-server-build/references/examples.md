@@ -30,7 +30,7 @@ A complete stdio server is one file:
 ```ts
 import { McpServer } from '@modelcontextprotocol/server';
 import { serveStdio } from '@modelcontextprotocol/server/stdio';
-import * as z from 'zod/v4';
+import { z } from 'zod';
 
 serveStdio(() => {
   const server = new McpServer({ name: 'weather', version: '1.0.0' });
@@ -69,10 +69,13 @@ server.registerTool(
       idempotentHint: true,
     },
   },
-  async ({ query, limit }, ctx) => ({
-    content: [{ type: 'text', text: names.join('\n') }], // human/model-readable blocks
-    structuredContent: { names }, // validated against outputSchema
-  }),
+  async ({ query, limit }, ctx) => {
+    const names = ['Product A', 'Product B']; // mock query result
+    return {
+      content: [{ type: 'text', text: names.join('\n') }], // human/model-readable blocks
+      structuredContent: { names }, // validated against outputSchema
+    };
+  },
 );
 ```
 
@@ -175,39 +178,61 @@ createServer(async (req, res) => {
 
 ## Framework Adapters
 
-Express example:
+All framework integrations build upon the core `createMcpHandler` instance:
+
+```ts
+import { createMcpHandler, McpServer } from '@modelcontextprotocol/server';
+import { z } from 'zod';
+
+const server = new McpServer({ name: 'my-server', version: '1.0.0' });
+// ... register tools, resources ...
+
+const handler = createMcpHandler(server);
+```
+
+### Express Integration
+
+Requires `@modelcontextprotocol/express`, `@modelcontextprotocol/node`, and `express`.
 
 ```ts
 import { createMcpExpressApp } from '@modelcontextprotocol/express';
 import { toNodeHandler } from '@modelcontextprotocol/node';
-import { createMcpHandler } from '@modelcontextprotocol/server';
 
-const handler = createMcpHandler(buildServer);
-const app = createMcpExpressApp(); // express() + express.json() + Host/Origin checks
+const app = createMcpExpressApp(); // Express app with default Host/Origin guards
 const node = toNodeHandler(handler);
-app.all('/mcp', (req, res) => void node(req, res, req.body)); // pass parsed body — avoids re-reading the stream
+
+// Pass parsed body directly to avoid re-reading request stream
+app.all('/mcp', (req, res) => void node(req, res, req.body));
 app.listen(3000);
 ```
 
-Fastify example:
+### Fastify Integration
+
+Requires `@modelcontextprotocol/fastify`, `@modelcontextprotocol/node`, and `fastify`.
 
 ```ts
 import { createMcpFastifyApp } from '@modelcontextprotocol/fastify';
 import { toNodeHandler } from '@modelcontextprotocol/node';
 
-const app = createMcpFastifyApp(); // fastify() + Host/Origin checks
+const app = createMcpFastifyApp(); // Fastify instance with Host/Origin hooks
 const node = toNodeHandler(handler);
+
 app.all('/mcp', (req, reply) => node(req.raw, reply.raw, req.body));
 app.listen({ port: 3000 });
 ```
 
-Hono example:
+### Hono Integration
+
+Requires `@modelcontextprotocol/hono` and `hono`.
 
 ```ts
 import { createMcpHonoApp } from '@modelcontextprotocol/hono';
+import type { Context } from 'hono';
 
-const app = createMcpHonoApp(); // Hono() + Host/Origin checks
-app.all('/mcp', (c) => handler.fetch(c.req.raw, { parsedBody: c.get('parsedBody') }));
+const app = createMcpHonoApp(); // Hono app with default Host/Origin checks
+
+// Always add explicit `c: Context` type annotation to avoid key narrowing compilation issues
+app.all('/mcp', (c: Context) => handler.fetch(c.req.raw, { parsedBody: c.get('parsedBody') }));
 export default app;
 ```
 

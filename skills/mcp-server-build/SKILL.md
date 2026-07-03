@@ -27,7 +27,29 @@ McpServer -> register (tools | resources | prompts) -> serve (stdio | HTTP) -> t
 
 ### Quick start
 
-See [Quick Start Example](references/examples.md#quick-start) for a complete stdio server implementation.
+Instead of just pointing to `references/examples.md`, here is a quick stdio server template for your immediate reference:
+
+```ts
+import { McpServer } from '@modelcontextprotocol/server';
+import { serveStdio } from '@modelcontextprotocol/server/stdio';
+import { z } from 'zod';
+
+const server = new McpServer({ name: 'my-server', version: '1.0.0' });
+
+server.registerTool(
+  'hello',
+  {
+    inputSchema: z.object({ name: z.string() }),
+  },
+  async ({ name }) => ({
+    content: [{ type: 'text', text: `Hello ${name}` }],
+  }),
+);
+
+await serveStdio(() => server);
+```
+
+See [Quick Start Example](references/examples.md#quick-start) for more complete variations.
 
 ### ESM & TypeScript Requirements
 
@@ -125,6 +147,7 @@ Code implementation examples are located in:
 - Quickstart, options, tools, resources, completions, stdio, and HTTP serving: [references/examples.md](references/examples.md)
 - Express, Hono, Fastify, session handling, DNS defense, multi-node scaling: [references/serving-and-scaling.md](references/serving-and-scaling.md)
 - Packaging, hosting registration, HTTP deployment: [references/distribution.md](references/distribution.md)
+- Framework Adapters and Codemod API Reference: [mcp_frameworks_v2_reference.md](file:///C:/Users/PC/.gemini/antigravity-cli/brain/50b14863-fa20-43b4-bbb2-a27d449be889/mcp_frameworks_v2_reference.md)
 
 ## Common Mistakes
 

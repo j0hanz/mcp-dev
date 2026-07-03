@@ -27,14 +27,14 @@ const handler = createMcpHandler(factory, {
 
 All four are thin layers over `createMcpHandler`; each app factory pre-applies JSON body parsing (where needed) and DNS-rebinding protection.
 
-|                  | Install                                                                    | Mount                                                                                   |
-| ---------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| **Express**      | `@modelcontextprotocol/express` + `@modelcontextprotocol/node` + `express` | `app.all('/mcp', (req, res) => void node(req, res, req.body))`                          |
-| **Hono**         | `@modelcontextprotocol/hono` + `hono`                                      | `app.all('/mcp', (c) => handler.fetch(c.req.raw, { parsedBody: c.get('parsedBody') }))` |
-| **Fastify**      | `@modelcontextprotocol/fastify` + `@modelcontextprotocol/node` + `fastify` | `app.all('/mcp', (req, reply) => node(req.raw, reply.raw, req.body))`                   |
-| **Web-standard** | `@modelcontextprotocol/server` only                                        | `export default handler`                                                                |
+|                  | Install                                                                    | Mount                                                                                            |
+| ---------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| **Express**      | `@modelcontextprotocol/express` + `@modelcontextprotocol/node` + `express` | `app.all('/mcp', (req, res) => void node(req, res, req.body))`                                   |
+| **Hono**         | `@modelcontextprotocol/hono` + `hono`                                      | `app.all('/mcp', (c: Context) => handler.fetch(c.req.raw, { parsedBody: c.get('parsedBody') }))` |
+| **Fastify**      | `@modelcontextprotocol/fastify` + `@modelcontextprotocol/node` + `fastify` | `app.all('/mcp', (req, reply) => node(req.raw, reply.raw, req.body))`                            |
+| **Web-standard** | `@modelcontextprotocol/server` only                                        | `export default handler`                                                                         |
 
-Hono mounts differently because it runs on `WebStandardStreamableHTTPServerTransport` and calls `handler.fetch()` directly; Express and Fastify run on `NodeStreamableHTTPServerTransport` and go through `toNodeHandler` to adapt Node's `req`/`res`.
+Hono mounts differently because it runs on `WebStandardStreamableHTTPServerTransport` and calls `handler.fetch()` directly; Express and Fastify run on `NodeStreamableHTTPServerTransport` and go through `toNodeHandler` to adapt Node's `req`/`res`. Always declare the explicit type annotation `c: Context` (imported from `hono`) on Hono handlers to prevent compiler key-narrowing type failures.
 
 See [Framework Adapter Examples](examples.md#framework-adapters) for full Express, Fastify, and Hono setups (including DNS rebinding protection and smoke testing).
 

@@ -29,6 +29,20 @@ in-process tests -> manual probe (inspector | curl) -> match error channel -> lo
 ### 1. Test in-process (no network, no child process)
 
 - Fastest path for an HTTP server: call `handler.fetch(request)` directly — nothing dials a real port.
+
+```ts
+import { createMcpHandler } from '@modelcontextprotocol/server';
+const handler = createMcpHandler(() => server);
+const res = await handler.fetch(
+  new Request('http://localhost/mcp', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }),
+  }),
+);
+console.log(await res.json());
+```
+
 - For direct server instance testing, use `invoke(server, message, ctx)` from `@modelcontextprotocol/server/invoke`. It connects the server to a fresh single-exchange transport and returns a `Response` directly.
 - A stdio server under test needs the real process: `new StdioClientTransport({ command: 'node', args: ['dist/server.js'] })`.
 

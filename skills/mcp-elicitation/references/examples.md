@@ -8,30 +8,9 @@ metadata:
 
 # MCP Interaction Patterns Examples
 
-## Form Elicitation
+## Modern input_required Return (Recommended)
 
-```ts
-async ({ topic }, ctx) => {
-  const result = await ctx.mcpReq.elicitInput({
-    mode: 'form',
-    message: `How was ${topic}?`,
-    requestedSchema: {
-      type: 'object',
-      properties: {
-        rating: { type: 'number', title: 'Rating (1-5)', minimum: 1, maximum: 5 },
-        comment: { type: 'string', title: 'Comment' },
-      },
-      required: ['rating'],
-    },
-  });
-  if (result.action !== 'accept') {
-    return { content: [{ type: 'text', text: `Feedback ${result.action}.` }] }; // 'decline' | 'cancel'
-  }
-  return { content: [{ type: 'text', text: `Recorded: ${JSON.stringify(result.content)}` }] };
-};
-```
-
-## input_required Return
+In the 2026-07-28 protocol, mid-call user input is handled statelessly via `input_required` responses returned by the handler, rather than blocking the execution thread.
 
 ```ts
 import {
@@ -67,6 +46,33 @@ server.registerTool(
     return { content: [{ type: 'text', text: `Deployed to ${env}` }] };
   },
 );
+```
+
+## Legacy Elicitation (Deprecated)
+
+> [!WARNING]
+> The blocking `ctx.mcpReq.elicitInput()` method is a 2025-era legacy API. It is synchronous/blocking and **throws an exception on modern 2026-era connections**. Use it only when backward compatibility with legacy-only clients is required and `inputRequired.legacyShim` is enabled on the server.
+
+```ts
+// DEPRECATED: Only use for legacy-only client connections.
+async ({ topic }, ctx) => {
+  const result = await ctx.mcpReq.elicitInput({
+    mode: 'form',
+    message: `How was ${topic}?`,
+    requestedSchema: {
+      type: 'object',
+      properties: {
+        rating: { type: 'number', title: 'Rating (1-5)', minimum: 1, maximum: 5 },
+        comment: { type: 'string', title: 'Comment' },
+      },
+      required: ['rating'],
+    },
+  });
+  if (result.action !== 'accept') {
+    return { content: [{ type: 'text', text: `Feedback ${result.action}.` }] }; // 'decline' | 'cancel'
+  }
+  return { content: [{ type: 'text', text: `Recorded: ${JSON.stringify(result.content)}` }] };
+};
 ```
 
 ## Progress Notifications

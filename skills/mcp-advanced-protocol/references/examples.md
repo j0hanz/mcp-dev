@@ -48,7 +48,7 @@ const SearchParams = z.object({
 });
 const SearchResult = z.object({ items: z.array(z.string()) });
 
-mcp.server.setRequestHandler(
+server.server.setRequestHandler(
   'acme/search',
   { params: SearchParams, result: SearchResult },
   async ({ query, limit }, ctx) => {

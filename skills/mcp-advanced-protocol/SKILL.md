@@ -43,7 +43,7 @@ McpServer (default) -> low-level Server -> custom methods -> custom transports -
 - Advertise non-standard behavior via `registerCapabilities({ extensions: { ... } })` so clients can feature-detect it.
 
 ```ts
-mcp.server.registerCapabilities({
+server.server.registerCapabilities({
   extensions: { 'com.example/feature-flags': { flags: ['dark-mode'] } },
 });
 ```

@@ -53,12 +53,29 @@ The SDK is published as an **ESM-only** package. To compile and run correctly un
 - Per-call options: `onprogress` for progress updates, `maxTotalTimeout` to bound total time, `signal` to cancel.
 
 ```ts
-await client.callTool(params, {
-  onprogress: (update) => console.log(update),
-  resetTimeoutOnProgress: true,
-  maxTotalTimeout: 600000,
-  signal: controller.signal, // abort → the server handler's ctx.mcpReq.signal aborts
-});
+import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
+
+const client = new Client(
+  { name: 'my-client', version: '1.0.0' },
+  { versionNegotiation: { mode: 'auto' } },
+);
+const transport = new StreamableHTTPClientTransport(new URL('http://localhost:3000/mcp'));
+
+await client.connect(transport);
+
+const result = await client.callTool(
+  { name: 'greet', arguments: { name: 'World' } },
+  {
+    onprogress: (update) => console.log(update),
+    resetTimeoutOnProgress: true,
+    maxTotalTimeout: 600000,
+    signal: controller.signal, // abort → the server handler's ctx.mcpReq.signal aborts
+  },
+);
+
+if (result.isError) {
+  console.error('Tool execution failed gracefully:', result.content);
+}
 ```
 
 ### 4. Version negotiation
