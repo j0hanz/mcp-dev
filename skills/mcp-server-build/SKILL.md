@@ -29,7 +29,12 @@ McpServer -> register (tools | resources | prompts) -> serve (stdio | HTTP) -> t
 
 See [Quick Start Example](references/examples.md#quick-start) for a complete stdio server implementation.
 
-The SDK derives the JSON Schema the model sees from the one Zod schema, validates every call against it before the handler runs, and infers the handler's argument types.
+### ESM & TypeScript Requirements
+
+The SDK is published as an **ESM-only** package. To compile and run correctly under Node.js:
+
+- **`package.json`**: Include `"type": "module"`.
+- **`tsconfig.json`**: Set `"module": "NodeNext"` and `"moduleResolution": "NodeNext"`.
 
 ### Design rules that hold everywhere
 
@@ -124,3 +129,4 @@ Code implementation examples are located in:
 - Failing to sanitize resource template variables before using them to access file-backed paths (always resolve with `realpath` and verify prefix match).
 - Throwing validation errors in tool handlers (they return `{ isError: true }` results instead).
 - Instantiating heavy databases or caches inside the per-request HTTP server factory (pools should be created at module scope and closed over).
+- Failing to configure the TypeScript environment for ESM-only packages (always include `"type": "module"` in `package.json`, and set `"module": "NodeNext"`, `"moduleResolution": "NodeNext"` in `tsconfig.json`).

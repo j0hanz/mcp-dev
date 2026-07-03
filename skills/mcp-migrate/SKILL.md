@@ -57,7 +57,7 @@ See [`references/tables.md`](references/tables.md#adopting-the-2026-07-28-era) f
 3. Persist cross-round data with `requestState`, not ad hoc session storage.
 4. Set `versionNegotiation: { mode: 'auto' }` so clients negotiate the era instead of hardcoding one.
 5. Replace unsolicited `list_changed` polling with a `subscriptions/listen` stream.
-6. CJS→ESM / Node 20 pre-flight — the codemod doesn't convert module systems; do this by hand first.
+6. CJS→ESM / Node 20 pre-flight — the codemod doesn't convert module systems; do this by hand first (ensure `"type": "module"` in `package.json`, and set `"module": "NodeNext"`, `"moduleResolution": "NodeNext"` in `tsconfig.json`).
 7. Header reads — `ctx.http?.req?.headers` bracket access becomes `.get()` calls (sending plain-record headers still works unchanged).
 8. **Testing & Verification** — Once manual follow-ups are complete, load the `/mcp-test` skill to write tests and diagnose integration or negotiation errors.
 
@@ -69,6 +69,6 @@ For full comparison tables, refer to:
 
 ## Common Mistakes
 
-- Forgetting module module conversion (CJS to ESM) prior to running the codemod.
+- Forgetting module conversion (CJS to ESM) prior to running the codemod.
 - Not searching for and resolving all `@mcp-codemod-error` markers left by the codemod.
 - Continuing to use deprecated features like sampling, client-advertised roots, or `sendLoggingMessage` (these should be replaced with native alternatives).

@@ -23,6 +23,13 @@ Client + transport -> connect -> call | read | subscribe -> handle server reques
 
 ## How It Works
 
+### ESM & TypeScript Requirements
+
+The SDK is published as an **ESM-only** package. To compile and run correctly under Node.js:
+
+- **`package.json`**: Include `"type": "module"`.
+- **`tsconfig.json`**: Set `"module": "NodeNext"` and `"moduleResolution": "NodeNext"`.
+
 ### 1. Connect and disconnect
 
 - `connect()` performs the handshake with the server.
@@ -88,3 +95,4 @@ Code implementation examples are located in:
 - Wrapping tool calls in try/catch expecting standard exceptions for server-side tool errors (check `isError: true` instead).
 - Defaulting a spawn-per-invocation stdio CLI client's version negotiation to `'auto'` (stalls the probe for the full timeout on legacy servers).
 - Exceeding the maximum pagination page limit (`listMaxPages`), causing `LIST_PAGINATION_EXCEEDED` errors.
+- Failing to configure the TypeScript environment for ESM-only packages (always include `"type": "module"` in `package.json`, and set `"module": "NodeNext"`, `"moduleResolution": "NodeNext"` in `tsconfig.json`).
