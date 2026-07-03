@@ -1,6 +1,6 @@
 ---
 name: mcp-server-build
-description: Use when building, serving, or publishing an MCP server with the TypeScript SDK v2 (@modelcontextprotocol/server) — registering tools, resources, or prompts, wiring stdio or HTTP transport, or packaging for npm. For planning a brand-new server, use /mcp-interview first.
+description: Use when building, serving, or publishing an MCP server with the TypeScript SDK v2 (@modelcontextprotocol/server) — registering tools, resources, or prompts, wiring stdio or HTTP transport, or packaging for npm.
 user-invocable: false
 metadata:
   category: technique
@@ -147,7 +147,7 @@ Code implementation examples are located in:
 - Quickstart, options, tools, resources, completions, stdio, and HTTP serving: [references/examples.md](references/examples.md)
 - Express, Hono, Fastify, session handling, DNS defense, multi-node scaling: [references/serving-and-scaling.md](references/serving-and-scaling.md)
 - Packaging, hosting registration, HTTP deployment: [references/distribution.md](references/distribution.md)
-- Framework Adapters and Codemod API Reference: [mcp_frameworks_v2_reference.md](file:///C:/Users/PC/.gemini/antigravity-cli/brain/50b14863-fa20-43b4-bbb2-a27d449be889/mcp_frameworks_v2_reference.md)
+- Framework Adapters and Codemod API Reference: [references/frameworks-reference.md](references/frameworks-reference.md)
 
 ## Common Mistakes
 

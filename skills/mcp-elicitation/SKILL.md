@@ -139,3 +139,23 @@ Code implementation examples are located in:
 - Continuing tool execution after `ctx.mcpReq.signal.aborted` is true.
 - Relying on deprecated features like sampling (`requestSampling`), listRoots/requestRoots, or MCP logging (`ctx.mcpReq.log`).
 - Forgetting to use `completable` when prompt arguments require dynamic autocomplete suggestions.
+
+## Anti-Rationalization & Loophole Closing
+
+Operating elicitation requires strict compliance with the following rules:
+
+### Red Flags - STOP and Correct
+
+- Collecting passwords, credentials, API keys, or payment details using `mode: 'form'` or prompt arguments.
+- Not passing `signal` to database queries, fetch requests, or child processes.
+- Skipping the `ctx.mcpReq.signal.aborted` check in loops.
+- Calling `elicitInput()` instead of using `input_required` returns.
+
+### Rationalization Rebuttals
+
+| Model Excuse / Rationalization                                                            | Iron Law                                                                                                                                                                   |
+| :---------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "A form is faster than setting up an OAuth URL redirect; I'll collect the password here." | **Iron Law**: NEVER request secrets via forms. If a login is required, redirect the user outside the chat using `mode: 'url'`. Insecure form fields will leak credentials. |
+| "Checking `signal.aborted` is overhead for a loop that only runs 10 times."               | **Iron Law**: ALWAYS check `ctx.mcpReq.signal.aborted` inside loops. Long-running or hanging requests block host resources if not aborted when the user cancels.           |
+| "I'll use blocking `elicitInput()` because the client looks like v1."                     | **Iron Law**: Modern 2026-era connections will instantly throw if blocking calls are made. Always return `inputRequired(...)` to support stateless, multi-round execution. |
+| "I will trigger `requestSampling` to get a quick summary from the LLM."                   | **Iron Law**: Sampling is deprecated. Use direct LLM APIs or call external provider SDKs outside the MCP server.                                                           |

@@ -76,7 +76,7 @@ The v2 SDK introduces a high-level `McpServer` class that automates capabilities
 For full comparison tables, refer to:
 
 - Package split, key renames, and legacy-vs-modern era comparisons: [references/tables.md](references/tables.md)
-- Framework Adapters and Codemod API Reference: [mcp_frameworks_v2_reference.md](file:///C:/Users/PC/.gemini/antigravity-cli/brain/50b14863-fa20-43b4-bbb2-a27d449be889/mcp_frameworks_v2_reference.md)
+- Framework Adapters and Codemod API Reference: [references/frameworks-reference.md](references/frameworks-reference.md)
 
 ## Common Mistakes
 

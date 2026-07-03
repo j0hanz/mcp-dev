@@ -69,3 +69,21 @@ Code implementation examples are located in:
 - Attempting to issue tokens from the MCP server (it must only verify tokens issued by a separate authorization server).
 - Assuming the MCP SDK handles token parsing or authorization routing via `requireBearerAuth`. You must pass `authInfo` into `handler.fetch(request, { authInfo })`.
 - Replying with a 403 HTTP error from inside an executing tool. Always return `{ isError: true, content: [...] }` to gracefully reject a tool call without breaking the active transport connection.
+
+## Anti-Rationalization & Loophole Closing
+
+The security of the MCP server relies on strict compliance with the following rules:
+
+### Red Flags - STOP and Correct
+
+- Generating JWTs, signing keys, or managing credentials inside tool logic.
+- Throwing raw HTTP errors (e.g. throwing 403 or 401 exceptions) inside a tool callback.
+- Assuming `McpServer` handles bearer token extraction natively.
+
+### Rationalization Rebuttals
+
+| Model Excuse / Rationalization                                                                    | Iron Law                                                                                                                                                                                     |
+| :------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "I'll quickly generate a test token inside the tool handler to simplify testing."                 | **Iron Law**: NEVER issue tokens inside the server or its tools. The server must only act as a Resource Server. Use a mock external token issuer for test environments.                      |
+| "The client transport is active, so I can return a direct HTTP 403 status to reject a tool call." | **Iron Law**: NEVER return HTTP statuses inside a tool handler. Always return `{ isError: true, content: [...] }`. Direct HTTP/transport failures will break the active connection channel.  |
+| "I'll read headers inside my tool to get authentication info."                                    | **Iron Law**: The MCP server handles abstract JSON-RPC messages. Do not read HTTP headers directly inside tools. Rely on the context `ctx.authInfo` provided via request middleware mapping. |

@@ -1,6 +1,6 @@
 ---
 name: mcp-interview
-description: Use when planning a new MCP server or client before any code exists and design decisions (transport, auth, tool surface) are still open. Also the Clarify step of the /mcp build workflow.
+description: Use when planning a new MCP server or client before any code exists and design decisions (such as transport, auth, or tool surface) are still open.
 user-invocable: false
 metadata:
   category: technique
