@@ -29,7 +29,7 @@ _(Note: Steps in brackets `[...]` are conditional)_
 
 ## Audit Workflow
 
-Use this workflow to review existing MCP code. Do not modify code unless explicitly requested.
+Executed automatically by the `mcp-auditor` agent when dispatched. Follow it directly yourself only for a narrow, single-file check that doesn't warrant a full sweep. Do not modify code unless explicitly requested.
 
 `Locate` → `Version` → `Design` → `[Security]` → `[Interactions]` → `Tests` → `Intent` → `Report`
 

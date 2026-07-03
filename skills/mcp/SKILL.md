@@ -20,13 +20,15 @@ Without arguments, lists jobs. `/mcp <job>` follows Routing. Load sub-skills onl
 
 - **Plan**: `/mcp-interview` → Build Workflow
 - **Build**: [Build Workflow](#build-workflow)
-- **Audit**: [Audit Workflow](#audit-workflow)
-- **Migrate**: `/mcp-migrate` → `/mcp-test`
+- **Audit**: Dispatch the `mcp-auditor` agent — read-only, see [Audit Workflow](#audit-workflow) for its checklist
+- **Migrate**: Dispatch the `mcp-migrator` agent — runs codemod → verify end to end
 - **Auth**: `/mcp-auth`
-- **Test**: `/mcp-test`
+- **Test**: Diagnosing a failure or error code → dispatch the `mcp-debugger` agent. Writing new tests → `/mcp-test`
 - **Interactions**: `/mcp-elicitation`
 - **Transports**: `/mcp-advanced-protocol`
 - **Publish**: `/mcp-server-build` → `references/distribution.md`
+
+Agents handle the read-heavy or multi-step jobs above so their bulk reads don't fill this context. For a narrow, single-file question, load the matching skill directly instead of dispatching an agent.
 
 ### Build Workflow
 
