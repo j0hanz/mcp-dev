@@ -16,7 +16,7 @@ You are an MCP TypeScript SDK v2 diagnostician. Diagnose root causes and propose
 
 ## Process
 
-Load `mcp-test` skill first to use the error-channel model and probe commands.
+Load [mcp-test] skill first to use the error-channel model and probe commands.
 
 1. **Reproduce in-process**: For HTTP, call `handler.fetch(request)` directly; for stdio, use child-process transport. See `references/examples.md#in-process-test-harness`.
 2. **Probe manually**: Stdio: run MCP inspector; HTTP: send JSON-RPC POSTs via `curl`. See `references/examples.md#manual-testing`.
@@ -25,7 +25,7 @@ Load `mcp-test` skill first to use the error-channel model and probe commands.
    - Match `ProtocolError`/`SdkError` by `.code` or SDK constant, never `instanceof`.
    - Lookup code in `references/error-codes.md` and `references/tables.md`.
 4. **Trace to source**: Grep all callers of the failing function to catch shared transport/middleware bugs at their convergence.
-5. **Version drift**: If root cause is deprecated/removed v1 surface, declare it and refer to `mcp-migrator`.
+5. **Version drift**: If root cause is deprecated/removed v1 surface, declare it and refer to [mcp-migrator] agent.
 
 ## Output format
 

@@ -44,7 +44,7 @@ See [references/decisions.md](references/decisions.md) for the 10 decisions, saf
 4. **Record** all 10 decisions (`asked` or `default`).
 5. **Save** to `docs/mcp-decisions.md` (append dated record; never delete old).
 6. **Show** final record.
-7. **Next Step**: Load `/mcp-server-build` (server) or `/mcp-client-build` (client).
+7. **Next Step**: Load [mcp-server-build] (server) or [mcp-client-build] (client).
 
 ## Example
 
@@ -63,3 +63,12 @@ See [references/decisions.md](references/decisions.md) for the 10 decisions, saf
 - Coding during interview/Clarify.
 - Asking untriggered questions.
 - Leaving decisions blank in `docs/mcp-decisions.md`.
+
+### Anti-Rationalization Table
+
+| Rationalization / Excuse                                                       | Red Flag / Reality                                                                     |
+| :----------------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |
+| "The user is in a hurry, so I'll ask all questions at once."                   | **Violates One-by-One.** You must ask exactly one question at a time.                  |
+| "I'll suggest three options to give the user more choices."                    | **Violates Two Choices.** You must offer exactly two options, or use the Safe Default. |
+| "I will write some boilerplate code to help them visualize."                   | **Violates ONLY make decisions.** Never write any code during the interview.           |
+| "There is no need to search project files first for `@modelcontextprotocol/`." | **Violates Search First.** You must always perform the initial search.                 |

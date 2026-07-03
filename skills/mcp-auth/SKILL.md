@@ -21,7 +21,7 @@ Covers server-side HTTP auth and client credentials in TypeScript SDK v2. Refere
 
 ## How It Works
 
-1. **Middleware Verification:** Extract & verify token -> [AuthInfo](file:///C:/mcp-dev/skills/mcp-auth/references/examples.md#L20) (401/403 on failure).
+1. **Middleware Verification:** Extract & verify token -> [AuthInfo](file:///C:/mcp-dev/skills/mcp-auth/references/examples.md#L19) (401/403 on failure).
 2. **Pass to Handler:** Provide `authInfo` to `McpHttpHandler.fetch(request, { authInfo })` or `invoke`. SDK does no auto-verification.
 3. **Factory Context:** Factory gets `ctx.authInfo` via `McpRequestContext` for multi-tenancy.
 4. **Per-Tool Auth:** Check `ctx.authInfo` in tools. If unauthorized, return `{ isError: true, content: [...] }` (do not fail HTTP).
@@ -31,7 +31,7 @@ Covers server-side HTTP auth and client credentials in TypeScript SDK v2. Refere
 
 ## Examples & References
 
-- [references/examples.md](file:///C:/mcp-dev/skills/mcp-auth/references/examples.md)
+- [examples.md](file:///C:/mcp-dev/skills/mcp-auth/references/examples.md)
 
 ## Common Mistakes
 

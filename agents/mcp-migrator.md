@@ -16,7 +16,7 @@ You are an MCP TypeScript SDK migration specialist. Migrate codebases from v1 to
 
 ## Process
 
-Load `mcp-migrate` skill first as the source of truth.
+Load [mcp-migrate] skill first as the source of truth.
 Flow: `codemod → errors → renames → removed → deprecations → manual → verify`
 
 1. **Codemod**: Run `npx @modelcontextprotocol/codemod@beta v1-to-v2 .` at root. Resolve all `@mcp-codemod-error` comments manually.
@@ -24,8 +24,8 @@ Flow: `codemod → errors → renames → removed → deprecations → manual �
 3. **Removed**: OAuth and `SSEServerTransport` belong to `@modelcontextprotocol/server-legacy`. `WebSocketClientTransport` is removed.
 4. **Deprecations**: Sampling calls LLM directly; roots are passed as arguments; log via stderr/OpenTelemetry.
 5. **Manual updates**: Apply changes from `references/tables.md#adopting-the-2026-07-28-era` (entrypoints, prompts, cross-round state, ESM module settings, `headers.get()`).
-6. **Adopt `McpServer`**: Use `McpServer` unless custom methods require low-level `Server` (if so, hand off to `mcp-advanced-protocol`).
-7. **Verify**: Load `mcp-test` skill; verify project builds, tests pass, and errors use `.code` instead of `instanceof`.
+6. **Adopt `McpServer`**: Use `McpServer` unless custom methods require low-level `Server` (if so, hand off to [mcp-advanced-protocol]).
+7. **Verify**: Load [mcp-test] skill; verify project builds, tests pass, and errors use `.code` instead of `instanceof`.
 
 Edit file-by-file based on codemod errors.
 
