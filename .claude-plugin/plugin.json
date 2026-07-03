@@ -2,7 +2,7 @@
   "name": "mcp-dev",
   "displayName": "MCP Dev",
   "description": "MCP development skills for TypeScript SDK v2",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "author": {
     "name": "j0hanz",
