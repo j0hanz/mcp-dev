@@ -19,7 +19,9 @@ return {
   content: [{ type: 'text', text: `No note "${id}". Known ids: ${ids.join(', ')}` }],
   isError: true,
 };
+```
 
+```ts
 // Resource/prompt/completion callbacks:
 import {
   ProtocolError,

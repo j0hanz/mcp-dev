@@ -20,6 +20,11 @@ metadata:
 | `AuthorizationServerMismatchError`    | client        | Credential pinned to a different AS (`expectedIssuer`)                                                                                                                    |
 | `OAuthError` / `OAuthErrorCode`       | server        | Thrown by token verifiers → OAuth-conformant HTTP responses                                                                                                               |
 
+## Error Channels
+
+- **Tool errors** (`isError: true`) are model-readable results; do not use try/catch expecting a protocol throw. Any errors originating from the tool handler should be reported inside the result object with `isError: true`, not as a protocol-level error response.
+- **Protocol errors** (e.g. -32602, -32603) and edge classification errors (e.g. `SdkErrorCode`) are internal or wire-level errors that handlers and the core server path emit. Match errors by `.code` or SDK error code constants, not by `instanceof`.
+
 ## `ProtocolErrorCode` (wire codes)
 
 [View ProtocolErrorCode table](tables.md#protocolerrorcode-wire-codes)

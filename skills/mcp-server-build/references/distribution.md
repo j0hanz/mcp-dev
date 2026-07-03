@@ -8,7 +8,7 @@ metadata:
 
 # Distributing MCP Servers
 
-Ship a finished, tested server (build it with `SKILL.md`; test it with the `mcp-test` skill first).
+Ship a finished server after testing it with `mcp-test`.
 
 ## stdio servers — npm package run via npx
 

@@ -1,144 +1,116 @@
 ---
-description: >-
-  Implementation code for input_required forms, legacy elicitation, progress notifications, and client-side interaction setup.
+description: Code examples for modern input_required, legacy elicitation, progress notifications, prompt autocompletion, and state management.
 metadata:
-  tags: [examples, input-elicitation, progress]
+  tags: [examples, mcp, code]
   source: internal
 ---
 
-# MCP Interaction Patterns Examples
+# MCP Interaction Examples
 
 ## Modern input_required Return (Recommended)
 
-In the 2026-07-28 protocol, mid-call user input is handled statelessly via `input_required` responses returned by the handler, rather than blocking the execution thread.
+Mid-call user input is handled statelessly via `input_required` responses.
 
 ```ts
-import {
-  acceptedContent,
-  inputRequired,
-  type CallToolResult,
-  type InputRequiredResult,
-} from '@modelcontextprotocol/server';
-
-server.registerTool(
-  'deploy',
-  { description: 'Deploy after the operator confirms', inputSchema: z.object({ env: z.string() }) },
-  async ({ env }, ctx): Promise<CallToolResult | InputRequiredResult> => {
-    const confirmed = acceptedContent(
-      ctx.mcpReq.inputResponses,
-      'confirm',
-      z.object({ confirm: z.boolean() }),
-    );
-    if (confirmed?.confirm !== true) {
-      return inputRequired({
-        inputRequests: {
-          confirm: inputRequired.elicit({
-            message: `Deploy to ${env}?`,
-            requestedSchema: {
-              type: 'object',
-              properties: { confirm: { type: 'boolean' } },
-              required: ['confirm'],
-            },
-          }),
-        },
-      });
-    }
-    return { content: [{ type: 'text', text: `Deployed to ${env}` }] };
-  },
-);
+server.registerTool('deploy', { env: z.string() }, async ({ env }, ctx) => {
+  const confirmed = acceptedContent(
+    ctx.mcpReq.inputResponses,
+    'confirm',
+    z.object({ confirm: z.boolean() }),
+  )?.confirm;
+  if (confirmed) return { content: [{ type: 'text', text: 'Deployed' }] };
+  return inputRequired({
+    inputRequests: {
+      confirm: inputRequired.elicit({
+        message: `Deploy?`,
+        requestedSchema: { type: 'object', properties: { confirm: { type: 'boolean' } } },
+      }),
+    },
+  });
+});
 ```
 
 ## Legacy Elicitation (Deprecated)
 
 > [!WARNING]
-> The blocking `ctx.mcpReq.elicitInput()` method is a 2025-era legacy API. It is synchronous/blocking and **throws an exception on modern 2026-era connections**. Use it only when backward compatibility with legacy-only clients is required and `inputRequired.legacyShim` is enabled on the server.
+> Blocking `elicitInput()` throws on 2026-era connections. Use only for legacy clients with `inputRequired.legacyShim` enabled.
 
 ```ts
-// DEPRECATED: Only use for legacy-only client connections.
-async ({ topic }, ctx) => {
-  const result = await ctx.mcpReq.elicitInput({
-    mode: 'form',
-    message: `How was ${topic}?`,
-    requestedSchema: {
-      type: 'object',
-      properties: {
-        rating: { type: 'number', title: 'Rating (1-5)', minimum: 1, maximum: 5 },
-        comment: { type: 'string', title: 'Comment' },
-      },
-      required: ['rating'],
-    },
-  });
-  if (result.action !== 'accept') {
-    return { content: [{ type: 'text', text: `Feedback ${result.action}.` }] }; // 'decline' | 'cancel'
-  }
+const result = await ctx.mcpReq.elicitInput({
+  mode: 'form',
+  message: `Rate topic`,
+  requestedSchema: {
+    type: 'object',
+    properties: { rating: { type: 'number' } },
+    required: ['rating'],
+  },
+});
+if (result.action === 'accept') {
   return { content: [{ type: 'text', text: `Recorded: ${JSON.stringify(result.content)}` }] };
-};
+}
 ```
 
 ## Progress Notifications
 
 ```ts
 async ({ files }, ctx) => {
-  const progressToken = ctx.mcpReq._meta?.progressToken;
+  const tok = ctx.mcpReq._meta?.progressToken;
   for (let i = 0; i < files.length; i++) {
-    // … process files[i] …
-    if (progressToken !== undefined) {
+    if (tok)
       await ctx.mcpReq.notify({
         method: 'notifications/progress',
-        params: {
-          progressToken,
-          progress: i + 1,
-          total: files.length,
-          message: `Processed ${files[i]}`,
-        },
+        params: { progressToken: tok, progress: i + 1, total: files.length },
       });
-    }
   }
-  return { content: [{ type: 'text', text: `Processed ${files.length} files` }] };
+  return { content: [{ type: 'text', text: 'Done' }] };
 };
 ```
 
-## Client Side Interaction
+## Client-Side Interaction
 
 ```ts
 const client = new Client(
-  { name: 'my-client', version: '1.0.0' },
+  { name: 'client', version: '1.0' },
   {
     capabilities: { elicitation: { form: {}, url: {} } },
-    inputRequired: { maxRounds: 10, autoFulfill: true },
+    inputRequired: { maxRounds: 10 },
   },
 );
-
-client.setRequestHandler('elicitation/create', async (request) => {
-  if (request.params.mode === 'url') return { action: 'accept' }; // after opening the URL
-  // anything else is a form (old requests omit mode — never branch on mode === 'form')
-  return {
-    action: 'accept',
-    content: {/* what the user entered */},
-  };
+client.setRequestHandler('elicitation/create', async (req) => {
+  if (req.params.mode === 'url') return { action: 'accept' };
+  return { action: 'accept', content: { confirmed: true } };
 });
 ```
 
 ## Cross-round State (requestState)
 
 ```ts
-import { createRequestStateCodec } from '@modelcontextprotocol/server';
-
-const stateCodec = createRequestStateCodec<{ step: string }>({
-  key: crypto.getRandomValues(new Uint8Array(32)), // ≥ 32 bytes; share across a fleet
+const codec = createRequestStateCodec<{ step: string }>({
+  key: crypto.getRandomValues(new Uint8Array(32)),
   ttlSeconds: 600,
 });
-
 const server = new McpServer(
-  { name: 'releases', version: '1.0.0' },
-  { requestState: { verify: stateCodec.verify } },
-); // runs before every stateful entry
-
-// inside a handler:
+  { name: 'app', version: '1.0' },
+  { requestState: { verify: codec.verify } },
+);
+// Inside handler:
 return inputRequired({
-  inputRequests: {
-    scope: inputRequired.elicit({/* … */}),
-  },
-  requestState: await stateCodec.mint({ step: 'confirmed' }),
+  inputRequests: { scope: inputRequired.elicit({/* … */}) },
+  requestState: await codec.mint({ step: 'confirmed' }),
 });
+```
+
+## Prompt Autocompletion (Completable)
+
+```ts
+import { completable } from '@modelcontextprotocol/server';
+server.registerPrompt(
+  'review',
+  {
+    argsSchema: z.object({
+      lang: completable(z.string(), (val) => ['ts', 'js', 'py'].filter((l) => l.startsWith(val))),
+    }),
+  },
+  ({ lang }) => ({}),
+);
 ```

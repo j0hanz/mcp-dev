@@ -1,6 +1,6 @@
 ---
 name: mcp-client-build
-description: Use when building an MCP client with the TypeScript SDK v2 (@modelcontextprotocol/client) — connecting to servers, calling tools, reading resources or prompts, subscriptions, caching, or middleware. For planning a brand-new client, use /mcp-interview first.
+description: Build MCP clients using TypeScript SDK v2 (@modelcontextprotocol/client) — connect, call, subscribe, caching, middleware.
 user-invocable: false
 metadata:
   category: technique
@@ -9,112 +9,59 @@ metadata:
 
 # Building MCP Clients (TypeScript SDK v2)
 
-Covers `@modelcontextprotocol/client` `2.0.0-beta.2` (beta — API may shift before stable). Requires Node.js ≥ 20. Official reference: https://ts.sdk.modelcontextprotocol.io/v2/
-
-```
-Client + transport -> connect -> call | read | subscribe -> handle server requests -> terminate + close
-```
+Covers `@modelcontextprotocol/client` `2.0.0-beta.2`. SDK: https://ts.sdk.modelcontextprotocol.io/v2/
 
 ## When to Use
 
-- Building or running an MCP client (connecting, calling tools, reading resources, handling prompts).
-- Setting up subscriptions, caching, or middleware on the client side.
-- To write tests or troubleshoot client connection/negotiation issues, load the `/mcp-test` skill.
+- Building/running MCP clients (connecting, tools, resources, caching, middleware).
+- Connection troubleshooting or tests (load `/mcp-test`).
 
 ## How It Works
 
-### ESM & TypeScript Requirements
+### Setup & Requirements
 
-The SDK is published as an **ESM-only** package. To compile and run correctly under Node.js:
+- SDK is ESM-only.
+- **`package.json`**: `"type": "module"`
+- **`tsconfig.json`**: `"module": "NodeNext"`, `"moduleResolution": "NodeNext"`
 
-- **`package.json`**: Include `"type": "module"`.
-- **`tsconfig.json`**: Set `"module": "NodeNext"` and `"moduleResolution": "NodeNext"`.
+### Transports & Connection
 
-### 1. Connect and disconnect
+- **Transports**: `StreamableHTTPClientTransport` (HTTP, default), `StdioClientTransport` (local process), `SSEClientTransport` (legacy fallback), `InMemoryTransport` (testing).
+- **Handshake**: `await client.connect(transport)`. Info: `getServerVersion()`, `getServerCapabilities()`, `getInstructions()`, `getProtocolEra()`.
+- **Shutdown**: `await transport.terminateSession()`, then `await client.close()`.
 
-- `connect()` performs the handshake with the server.
-- After connecting: `getServerVersion()`, `getServerCapabilities()` (only request what the server actually declared), `getInstructions()` (the server's usage guidance), `getProtocolEra()` (`'legacy'` or `'modern'`).
-- To close: `await transport.terminateSession()` first, then `await client.close()`.
+### Calling Tools & Resources
 
-### 2. Transports
-
-| Transport                       | Use                                                                                             |
-| ------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `StreamableHTTPClientTransport` | Remote servers over HTTP (default choice).                                                      |
-| `StdioClientTransport`          | A local server as a child process — the transport spawns it; never start it yourself.           |
-| `SSEClientTransport`            | Legacy fallback for older remote servers — try Streamable first, retry on a **fresh** `Client`. |
-| `InMemoryTransport`             | In-process testing.                                                                             |
-
-### 3. Calling tools and resources
-
-- Server-side failures come back as `{ isError: true }`, not a throw — check it before trusting `content`. A `throw` only happens if the connection itself breaks or times out.
-- `structuredContent` is `unknown` — only present when the tool declares `outputSchema`; narrow before use.
-- List calls (`listTools`, etc.) auto-paginate up to `listMaxPages` (default 64; `0` removes the cap) — exceeding it rejects with `SdkError(LIST_PAGINATION_EXCEEDED)`. Pass `{ cursor }` to fetch exactly one raw page; explicit-cursor calls are never capped.
-- Per-call options: `onprogress` for progress updates, `maxTotalTimeout` to bound total time, `signal` to cancel.
+- **Failures**: Check `result.isError` (does not throw).
+- **Pagination**: List calls paginate up to `listMaxPages` (default 64). Pass `{ cursor }` for single page.
+- **Options**: `onprogress`, `maxTotalTimeout`, `signal`.
 
 ```ts
-import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
-
-const client = new Client(
-  { name: 'my-client', version: '1.0.0' },
-  { versionNegotiation: { mode: 'auto' } },
-);
-const transport = new StreamableHTTPClientTransport(new URL('http://localhost:3000/mcp'));
-
-await client.connect(transport);
-
-const result = await client.callTool(
-  { name: 'greet', arguments: { name: 'World' } },
-  {
-    onprogress: (update) => console.log(update),
-    resetTimeoutOnProgress: true,
-    maxTotalTimeout: 600000,
-    signal: controller.signal, // abort → the server handler's ctx.mcpReq.signal aborts
-  },
-);
-
-if (result.isError) {
-  console.error('Tool execution failed gracefully:', result.content);
-}
+const client = new Client({ name: 'my-client', version: '1.0.0' });
+await client.connect(new StreamableHTTPClientTransport(new URL('http://localhost:3000/mcp')));
+const result = await client.callTool({ name: 'greet', arguments: { name: 'World' } });
 ```
 
-### 4. Version negotiation
+### Version Negotiation
 
-Two protocol eras: legacy (2024/2025) and modern (2026-07-28). `versionNegotiation.mode` controls how the client picks:
+Eras: legacy (2024/2025) and modern (2026-07-28).
 
-- `'legacy'` (default) — always negotiates the older era.
-- `'auto'` — tries modern first, falls back to legacy if the server doesn't support it.
-- An explicit version pins the client to exactly that era.
+- `'legacy'` (default): older era.
+- `'auto'`: tries modern first. Avoid for spawn-per-invocation stdio CLI (stalls legacy).
 
-```ts
-const client = new Client(
-  { name: 'my-client', version: '1.0.0' },
-  { versionNegotiation: { mode: 'auto' } },
-);
-```
+### Multi-round-trip Auto-Fulfilment
 
-- `'auto'` probes with `server/discover`; tune with `probe: { timeoutMs, maxRetries }`. `supportedProtocolVersions` shapes the probe — removing every pre-2026 entry removes the legacy fallback.
-- Don't default a spawn-per-invocation stdio CLI to `'auto'` — a legacy stdio server stalls the probe for its full timeout.
+Modern protocol uses `input_required` instead of push-style requests.
 
-### 5. Multi-round-trip Auto-Fulfilment
-
-The 2026-07-28 protocol replaces 2025 "push-style" server-to-client requests with `input_required` results for `tools/call`, `prompts/get`, and `resources/read`.
-
-- The client automatically fulfils these using its multi-round-trip engine via `flow.retry`.
-- Register your handlers (for elicitation, sampling, roots) once at client construction — the engine will run them when needed. Load the `/mcp-elicitation` skill for the handler patterns.
-- Progress updates are still delivered as mid-call notifications.
+- Handled via `flow.retry`. Register handlers (elicitation, sampling, roots) at client construction (see `/mcp-elicitation`).
 
 ## Examples
 
-Code implementation examples are located in:
-
-- Connecting, calling, subscribing, and middleware: [references/examples.md](references/examples.md)
-- Subscriptions, caching, middleware, and roots: [references/subscriptions-caching-middleware.md](references/subscriptions-caching-middleware.md)
+- Connection, tools, subscriptions, middleware: [references/examples.md](references/examples.md)
+- Subscriptions, caching, middleware, roots: [references/subscriptions-caching-middleware.md](references/subscriptions-caching-middleware.md)
 
 ## Common Mistakes
 
-- Wrapping tool calls in try/catch expecting standard exceptions for server-side tool errors (check `isError: true` instead).
-- Defaulting a spawn-per-invocation stdio CLI client's version negotiation to `'auto'` (stalls the probe for the full timeout on legacy servers).
-- Exceeding the maximum pagination page limit (`listMaxPages`), causing `LIST_PAGINATION_EXCEEDED` errors.
-- Failing to configure the TypeScript environment for ESM-only packages (always include `"type": "module"` in `package.json`, and set `"module": "NodeNext"`, `"moduleResolution": "NodeNext"` in `tsconfig.json`).
-- Assuming the 2025 push-style server-to-client requests (like sampling or elicitation) are still initiated out-of-band by the server. In the modern era, they are `input_required` returns fulfilled by the client's multi-round-trip engine.
+- Catching exceptions for tool errors (check `result.isError`).
+- `'auto'` negotiation on stdio CLI (stalls legacy).
+- Missing ESM setup.

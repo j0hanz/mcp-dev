@@ -16,7 +16,7 @@ import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/cli
 const client = new Client(
   { name: 'my-client', version: '1.0.0' },
   {
-    // ClientOptions (all optional)
+    // Options
     capabilities: { elicitation: { form: {}, url: {} }, sampling: {} },
     versionNegotiation: { mode: 'auto' },
     listChanged: { tools: { onChanged } },
@@ -36,9 +36,9 @@ await client.connect(new StreamableHTTPClientTransport(new URL('http://localhost
 ```ts
 const { tools } = await client.listTools();
 const result = await client.callTool({ name: 'lookup-order', arguments: { id: 'A-1041' } });
-// result.content — the handler's blocks, unchanged
-// result.isError — check before trusting content; schema rejections come back this way too
-// result.structuredContent — unknown; present when the tool declares outputSchema (narrow before use)
+// result.content: block array
+// result.isError: true if tool failed (check before using content)
+// result.structuredContent: unknown; present if outputSchema declared
 
 const { resources } = await client.listResources();
 const { resourceTemplates } = await client.listResourceTemplates();
@@ -72,7 +72,7 @@ subscription.honoredFilter; // the capability-gated subset the server granted
 
 await subscription.close();
 const reason = await subscription.closed; // resolves once, never rejects:
-// 'local' (you closed) | 'graceful' (server ended) | 'remote' (dropped) — re-listen only on 'remote'
+// 'local' (you closed) | 'graceful' (server ended) | 'remote' (re-listen only on 'remote')
 ```
 
 ## HTTP Middleware

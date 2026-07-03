@@ -15,10 +15,10 @@ import assert from 'node:assert/strict';
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
 import { createMcpHandler } from '@modelcontextprotocol/server';
 
-const handler = createMcpHandler(createServer); // the factory that gets deployed
+const handler = createMcpHandler(createServer); // server factory
 
 const transport = new StreamableHTTPClientTransport(new URL('http://test.local/mcp'), {
-  fetch: (url, init) => handler.fetch(new Request(url, init)), // never dials — served in-process
+  fetch: (url, init) => handler.fetch(new Request(url, init)), // in-process fetch mock
 });
 
 const client = new Client(
@@ -37,9 +37,30 @@ const failed = await client.callTool({
   name: 'apply-discount',
   arguments: { price: -5, percent: 25 },
 });
-assert.equal(failed.isError, true); // failures resolve; nothing to catch
+assert.equal(failed.isError, true); // tool error returns isError: true
 
 // afterEach:
 await client.close();
-await handler.close(); // aborts in-flight exchanges — hung calls can't leak into the next test
+await handler.close(); // clean up transport
+```
+
+## Manual Testing
+
+### stdio server
+
+Run the inspector on a local TS/JS stdio server:
+
+```sh
+npx @modelcontextprotocol/inspector npx tsx src/index.ts
+```
+
+### HTTP server
+
+Perform a manual JSON-RPC POST request:
+
+```sh
+curl -X POST http://127.0.0.1:3000/mcp \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json, text/event-stream' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 ```

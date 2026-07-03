@@ -1,9 +1,7 @@
 ---
-description: >-
-  Code examples illustrating low-level server setup, custom methods, schema validation libraries, and custom transports.
+description: Code examples for low-level server setup, custom methods, validation, and custom transports.
 metadata:
-  tags: [examples, protocol, custom-transports, low-level]
-  source: internal
+  tags: [examples, protocol, transport, low-level]
 ---
 
 # MCP Advanced Protocol Examples
@@ -19,7 +17,7 @@ server.setRequestHandler('tools/list', async () => ({
   tools: [
     {
       name: 'search',
-      description: 'Search the catalog',
+      description: 'Search catalog',
       inputSchema: {
         type: 'object',
         properties: { query: { type: 'string' } },
@@ -28,13 +26,12 @@ server.setRequestHandler('tools/list', async () => ({
     },
   ],
 }));
-server.setRequestHandler('tools/call', async (request) => {
-  if (request.params.name !== 'search')
-    return {
-      content: [{ type: 'text', text: `Unknown tool: ${request.params.name}` }],
-      isError: true,
-    };
-  const { query } = request.params.arguments as { query: string };
+
+server.setRequestHandler('tools/call', async (req) => {
+  if (req.params.name !== 'search') {
+    return { content: [{ type: 'text', text: `Unknown: ${req.params.name}` }], isError: true };
+  }
+  const { query } = req.params.arguments as { query: string };
   // …
 });
 ```
@@ -60,7 +57,7 @@ server.server.setRequestHandler(
   },
 );
 
-// Client:
+// Client
 const result = await client.request(
   { method: 'acme/search', params: { query: 'mcp', limit: 3 } },
   SearchResult,
@@ -75,18 +72,18 @@ client.setNotificationHandler(
 ## Schema libraries and validators
 
 ```ts
-// Zod v4 — as-is
+// Zod v4
 inputSchema: z.object({ name: z.string() });
 
-// ArkType — as-is
+// ArkType
 import { type } from 'arktype';
 inputSchema: type({ name: 'string', 'times?': '1 <= number.integer <= 5' });
 
-// Valibot — wrap
+// Valibot
 import { toStandardJsonSchema } from '@valibot/to-json-schema';
 inputSchema: toStandardJsonSchema(v.object({ name: v.string() }));
 
-// Plain JSON Schema — the generic types the handler args (unknown if omitted)
+// Plain JSON Schema
 import { fromJsonSchema } from '@modelcontextprotocol/server';
 inputSchema: fromJsonSchema<{ name: string }>({
   type: 'object',
@@ -98,13 +95,13 @@ inputSchema: fromJsonSchema<{ name: string }>({
 ## Custom transports
 
 ```ts
-import type { JSONRPCMessage, Transport, TransportSendOptions } from '@modelcontextprotocol/server'; // or /client
+import type { JSONRPCMessage, Transport, TransportSendOptions } from '@modelcontextprotocol/server';
 
 class SocketTransport implements Transport {
   onclose?: () => void;
   onerror?: (error: Error) => void;
   onmessage?: (message: JSONRPCMessage) => void;
-  private readonly readBuffer = new ReadBuffer(); // newline-delimited framing helper
+  private readonly readBuffer = new ReadBuffer();
   constructor(private readonly socket: Socket) {}
 
   async start() {

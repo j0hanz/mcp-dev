@@ -1,6 +1,6 @@
 ---
 name: mcp-test
-description: Use when an MCP server or client needs tests or is misbehaving — connection failures, opaque ProtocolError/SdkError codes, or inspector sessions in the TypeScript SDK v2.
+description: Use when an MCP server or client needs tests or is misbehaving — connection failures, ProtocolError/SdkError codes, or inspector sessions in the TypeScript SDK v2.
 user-invocable: false
 metadata:
   category: technique
@@ -9,81 +9,36 @@ metadata:
 
 # Testing & Debugging MCP (TypeScript SDK v2)
 
-Covers testing and error diagnosis for `2.0.0-beta.2`. Official reference: https://ts.sdk.modelcontextprotocol.io/v2/
+Covers testing and error diagnosis for `2.0.0-beta.2`. Reference: https://ts.sdk.modelcontextprotocol.io/v2/
 
-```
-in-process tests -> manual probe (inspector | curl) -> match error channel -> look up code
-```
+`in-process tests -> manual probe (inspector | curl) -> match error channel -> look up code`
 
 ## When to Use
 
-- Writing tests for MCP servers or clients in TypeScript/JavaScript.
-- Troubleshooting connection failures, unexpected errors, or ProtocolError/SdkError exceptions.
+- Writing tests for MCP servers/clients in TS/JS.
+- Troubleshooting connection failures or ProtocolError/SdkError.
 - Running inspector sessions or manual HTTP/stdio probes.
-- If the codebase utilizes deprecated APIs, or fails due to mismatched SDK versions (v1 vs v2), load the `/mcp-migrate` skill.
-- If debugging a server that needs proper configuration (e.g. logging to `stderr` instead of `stdout` or handling custom schemas), refer to the `/mcp-server-build` skill.
-- If testing a client connection, refer to the `/mcp-client-build` skill.
+- Deprecated APIs / mismatched SDKs: load `/mcp-migrate`.
+- Server config (stderr logging, custom schemas): see `/mcp-server-build`.
+- Client connection testing: see `/mcp-client-build`.
 
 ## How It Works
 
-### 1. Test in-process (no network, no child process)
+### 1. Test in-process
 
-- Fastest path for an HTTP server: call `handler.fetch(request)` directly — nothing dials a real port.
-
-```ts
-import { createMcpHandler } from '@modelcontextprotocol/server';
-const handler = createMcpHandler(() => server);
-const res = await handler.fetch(
-  new Request('http://localhost/mcp', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }),
-  }),
-);
-console.log(await res.json());
-```
-
-- For direct server instance testing, use `invoke(server, message, ctx)` from `@modelcontextprotocol/server/invoke`. It connects the server to a fresh single-exchange transport and returns a `Response` directly.
-- A stdio server under test needs the real process: `new StdioClientTransport({ command: 'node', args: ['dist/server.js'] })`.
+- HTTP servers: Call `handler.fetch(request)` directly to bypass real ports.
+- Direct server testing: Use `invoke(server, message, ctx)` from `@modelcontextprotocol/server/invoke`.
+- Stdio servers: Use a child process transport (`StdioClientTransport`).
+- See [references/examples.md](references/examples.md#in-process-test-harness) for test harness setup.
 
 ### 2. Manual testing
 
-- stdio server: `npx @modelcontextprotocol/inspector npx tsx src/index.ts`
-- HTTP server:
+- Stdio servers: Run the MCP inspector to probe commands.
+- HTTP servers: Perform manual JSON-RPC POST requests via `curl`.
+- See [references/examples.md](references/examples.md#manual-testing) for command details.
 
-  ```sh
-  curl -X POST http://127.0.0.1:3000/mcp -H 'Content-Type: application/json' \
-    -H 'Accept: application/json, text/event-stream' \
-    -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
-  ```
+### 3. Error channels
 
-### 3. Common errors
-
-| Error                                                | Fix                                                                                         |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| `SyntaxError: ... is not valid JSON`                 | Something wrote to stdout on a stdio server. Log with `console.error`, never `console.log`. |
-| `TS2589: Type instantiation is excessively deep`     | Multiple Zod versions in the tree. Dedupe to a single Zod 4.                                |
-| `ReferenceError: crypto is not defined`              | Node < 20. Upgrade, or polyfill: `globalThis.crypto = webcrypto`.                           |
-| `SdkError: ERA_NEGOTIATION_FAILED`                   | Client and server share no protocol era. Set `versionNegotiation: { mode: 'auto' }`.        |
-| `SdkError: METHOD_NOT_SUPPORTED_BY_PROTOCOL_VERSION` | Calling a method the negotiated era doesn't have — the error names the replacement.         |
-| `No exported member 'SSEServerTransport'`            | HTTP serving now uses `createMcpHandler()` from `@modelcontextprotocol/server`.             |
-
-### 4. Error channels
-
-- **Tool errors** (`isError: true`) are results the model reads and can retry from — don't wrap tool calls in try/catch expecting a throw.
-- Any errors originating from the tool SHOULD be reported inside the result object with `isError: true`, not as a protocol-level error response.
-- A tool handler can't emit a protocol error: every throw inside one becomes `isError: true` so the LLM can see the error and self-correct.
-- **Protocol errors** (e.g. -32602, -32603) and edge classification errors (e.g. `SdkErrorCode`) are internal or wire-level errors that handlers and the core server path emit. Match errors by `.code` or SDK error code constants, not by `instanceof`.
-
-## Examples
-
-Code implementation examples are located in:
-
-- In-process test harnesses and direct endpoint test code: [references/examples.md](references/examples.md)
-
-## Common Mistakes
-
-- Writing to `stdout` (e.g. `console.log`) in a stdio server, which breaks the JSON-RPC wire communication.
-- Having multiple Zod versions in the tree, causing deep type instantiation errors (`TS2589`).
-- Relying on `instanceof` for errors across bundle boundaries (check `.code` instead).
-- Attempting to emit protocol errors from tool handlers (use `{ isError: true }` results instead so the LLM can self-correct).
+- **Tool errors**: Report inside result using `isError: true` so the model can self-correct.
+- **Protocol/SDK errors**: Match using `.code` or SDK constants instead of `instanceof`.
+- See [references/error-codes.md](references/error-codes.md) and [references/tables.md](references/tables.md) for details and code lookups.

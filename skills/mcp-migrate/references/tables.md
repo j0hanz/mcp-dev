@@ -1,6 +1,5 @@
 ---
-description: >-
-  Comparison and reference tables for packages split, API renames, and legacy-vs-modern era compatibility.
+description: Reference tables for package split, API renames, and legacy-vs-modern era compatibility.
 metadata:
   tags: [migration-tables, renames, compatibility]
   source: internal
@@ -8,47 +7,68 @@ metadata:
 
 # Migration Reference Tables
 
-## Package split
+## Package Split
 
-| Package                               | Purpose                                                                               |
-| ------------------------------------- | ------------------------------------------------------------------------------------- |
-| `@modelcontextprotocol/server`        | `McpServer`, low-level `Server`, `createMcpHandler`, errors, validators               |
-| `@modelcontextprotocol/client`        | `Client`, HTTP/SSE transports, OAuth & machine-auth providers, middleware, caching    |
-| `@modelcontextprotocol/node`          | Node HTTP adapter: `toNodeHandler`, `NodeStreamableHTTPServerTransport`               |
-| `@modelcontextprotocol/express`       | Express adapter + resource-server auth (`requireBearerAuth`, `mcpAuthMetadataRouter`) |
-| `@modelcontextprotocol/hono`          | Hono adapter (`createMcpHonoApp`)                                                     |
-| `@modelcontextprotocol/fastify`       | Fastify adapter (`createMcpFastifyApp`)                                               |
-| `@modelcontextprotocol/core`          | Raw Zod wire schemas for gateways/proxies                                             |
-| `@modelcontextprotocol/server-legacy` | Frozen v1 SSE transport + OAuth AS helpers (migration only)                           |
-| `@modelcontextprotocol/codemod`       | The migration CLI                                                                     |
+### Core Packages
 
-## Key renames
+| Package                         | Purpose                                                        |
+| :------------------------------ | :------------------------------------------------------------- |
+| `@modelcontextprotocol/server`  | `McpServer`, `Server`, `createMcpHandler`, validation & errors |
+| `@modelcontextprotocol/client`  | `Client`, transport, auth, middleware, caching                 |
+| `@modelcontextprotocol/core`    | Raw Zod wire schemas for gateways & proxies                    |
+| `@modelcontextprotocol/node`    | Node HTTP adapter: `toNodeHandler` & stream transport          |
+| `@modelcontextprotocol/codemod` | Migration CLI utility                                          |
 
-| v1                                                            | v2                                                                                                                                                                                |
-| ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `server.setRequestHandler(CallToolRequestSchema, ...)`        | `server.registerTool(...)` or `server.tool(...)` (on high-level `McpServer`)                                                                                                      |
-| `McpError` / `ErrorCode`                                      | `ProtocolError` / `ProtocolErrorCode` (local-only members → `SdkErrorCode`)                                                                                                       |
-| `StreamableHTTPError`                                         | `SdkHttpError` (constructor shape changed)                                                                                                                                        |
-| `RequestHandlerExtra` (`extra`)                               | `ServerContext` / `ClientContext` (`ctx`) — no type parameters                                                                                                                    |
-| `extra.signal` / `requestId` / `_meta`                        | `ctx.mcpReq.signal` / `ctx.mcpReq.id` / `ctx.mcpReq._meta`                                                                                                                        |
-| `extra.sendRequest` / `sendNotification`                      | `ctx.mcpReq.send` / `ctx.mcpReq.notify`                                                                                                                                           |
-| `extra.authInfo` / `requestInfo`                              | `ctx.http?.authInfo` / `ctx.http?.req` (optional — `undefined` on stdio)                                                                                                          |
-| `server.sendLoggingMessage` / `elicitInput` / `createMessage` | `ctx.mcpReq.log` / `elicitInput` / `requestSampling` (log & sampling deprecated)                                                                                                  |
-| `StreamableHTTPServerTransport`                               | `NodeStreamableHTTPServerTransport` (`@modelcontextprotocol/node`) or `WebStandardStreamableHTTPServerTransport` (`@modelcontextprotocol/server`) — or better, `createMcpHandler` |
-| `IsomorphicHeaders`                                           | Web-standard `Headers`                                                                                                                                                            |
-| `SchemaInput<T>`                                              | `StandardSchemaWithJSON.InferInput<T>`                                                                                                                                            |
-| `ResourceTemplate` wire **type**                              | `ResourceTemplateType` (the URI-template helper **class** keeps its name)                                                                                                         |
+### Adapters & Legacy
 
-## Adopting the 2026-07-28 era
+| Package                               | Purpose                                      |
+| :------------------------------------ | :------------------------------------------- |
+| `@modelcontextprotocol/express`       | Express adapter and Bearer auth              |
+| `@modelcontextprotocol/hono`          | Hono adapter                                 |
+| `@modelcontextprotocol/fastify`       | Fastify adapter                              |
+| `@modelcontextprotocol/server-legacy` | Legacy v1 SSE transport and OAuth AS helpers |
 
-| Axis                      | 2025 era (`legacy`)                              | 2026 era (`modern`)                             |
-| ------------------------- | ------------------------------------------------ | ----------------------------------------------- |
-| Server HTTP entry         | `*StreamableHTTPServerTransport`                 | `createMcpHandler`                              |
-| Server stdio entry        | `server.connect(new StdioServerTransport())`     | `serveStdio(factory)`                           |
-| Client connect            | `initialize` handshake                           | `server/discover` probe                         |
-| Client identity on server | `getClientCapabilities()` / `getClientVersion()` | `ctx.mcpReq.envelope` (per request)             |
-| Server→client requests    | `ctx.mcpReq.elicitInput` / `requestSampling`     | `return inputRequired(...)`                     |
-| Change notifications      | unsolicited `list_changed` / `resources/updated` | `subscriptions/listen` stream                   |
-| Client cancel (HTTP)      | POST `notifications/cancelled`                   | close the request's SSE stream                  |
-| `ctx.mcpReq.log()` filter | session `logging/setLevel`                       | per-request `_meta.logLevel` (absent = no logs) |
-| HTTP `400` JSON-RPC error | `SdkHttpError`                                   | `ProtocolError`, in-band                        |
+## Key Renames
+
+### API & Type Renames
+
+| v1                                                     | v2                                                        |
+| :----------------------------------------------------- | :-------------------------------------------------------- |
+| `server.setRequestHandler(CallToolRequestSchema, ...)` | `server.registerTool(...)` (on high-level `McpServer`)    |
+| `McpError` / `ErrorCode`                               | `ProtocolError` / `ProtocolErrorCode` (or `SdkErrorCode`) |
+| `StreamableHTTPError`                                  | `SdkHttpError`                                            |
+| `IsomorphicHeaders`                                    | Web-standard `Headers`                                    |
+| `SchemaInput<T>`                                       | `StandardSchemaWithJSON.InferInput<T>`                    |
+| `ResourceTemplate` wire type                           | `ResourceTemplateType`                                    |
+
+### Context & Property Renames
+
+| v1                                          | v2                                               |
+| :------------------------------------------ | :----------------------------------------------- |
+| `RequestHandlerExtra` (`extra`)             | `ServerContext` / `ClientContext` (`ctx`)        |
+| `extra.signal` / `requestId` / `_meta`      | `ctx.mcpReq.signal` / `id` / `_meta`             |
+| `extra.sendRequest` / `sendNotification`    | `ctx.mcpReq.send` / `notify`                     |
+| `extra.authInfo` / `requestInfo`            | `ctx.http?.authInfo` / `req` (stdio = undefined) |
+| `server.sendLoggingMessage` / `elicitInput` | `ctx.mcpReq.log` / `elicitInput`                 |
+| `StreamableHTTPServerTransport`             | `Node/WebStandardStreamableHTTPServerTransport`  |
+
+## Adopting the 2026-07-28 Era
+
+### Transports & Handshakes
+
+| Axis                 | 2025 Era (Legacy)                      | 2026 Era (Modern)                   |
+| :------------------- | :------------------------------------- | :---------------------------------- |
+| Server HTTP entry    | `*StreamableHTTPServerTransport`       | `createMcpHandler`                  |
+| Server stdio entry   | `server.connect(StdioServerTransport)` | `serveStdio(factory)`               |
+| Client connect       | `initialize` handshake                 | `server/discover` probe             |
+| Client identity      | `getClientCapabilities/Version`        | `ctx.mcpReq.envelope` (per request) |
+| Client cancel (HTTP) | POST `notifications/cancelled`         | Close the request's SSE stream      |
+
+### Runtime Features
+
+| Axis                    | 2025 Era (Legacy)          | 2026 Era (Modern)             |
+| :---------------------- | :------------------------- | :---------------------------- |
+| Server->client requests | `ctx.mcpReq.elicitInput`   | `return inputRequired(...)`   |
+| Change notifications    | `list_changed` / `updated` | `subscriptions/listen` stream |
+| `ctx.mcpReq.log()`      | Session `logging/setLevel` | Per-request `_meta.logLevel`  |
+| HTTP 400 JSON-RPC error | `SdkHttpError`             | `ProtocolError` (in-band)     |

@@ -1,85 +1,66 @@
 ---
 name: mcp-migrate
-description: Use when migrating MCP TypeScript SDK v1 code to the v2 packages, or when v1 APIs like SSEServerTransport, McpError, or RequestHandlerExtra stop resolving after an upgrade.
+description: Migrate MCP TS SDK v1 to v2.
 user-invocable: false
 metadata:
   category: technique
-  triggers: migrating mcp, upgrade sdk, SSEServerTransport, McpError, RequestHandlerExtra, sdk v1 to v2, McpServer, toNodeHandler
+  triggers: migrating mcp, upgrade sdk, SSEServerTransport, McpError, RequestHandlerExtra, sdk v1 to v2, McpServer
 ---
 
 # Migrating MCP SDK v1 to v2
 
-Upgrades a project from `@modelcontextprotocol/sdk` v1 to the split v2 packages (`2.0.0-beta.2`). Requires Node.js ≥ 20. Official reference: https://ts.sdk.modelcontextprotocol.io/v2/
+Upgrades from `@modelcontextprotocol/sdk` v1 to split v2 packages on Node ≥ 20. Official docs: https://ts.sdk.modelcontextprotocol.io/v2/
 
-```
-codemod -> fix markers -> renames -> removed APIs -> deprecations -> manual follow-ups -> tsc + tests
-```
-
-## When to Use
-
-- Migrating MCP TypeScript SDK v1 code to the v2 packages.
-- When v1 APIs like `SSEServerTransport`, `McpError`, or `RequestHandlerExtra` stop resolving after an upgrade.
-- Refactoring from the low-level `Server` API to the new high-level `McpServer` API.
+Flow: `codemod` → `errors` → `renames` → `removed` → `deprecations` → `manual` → `verify`
 
 ## How It Works
 
-### Step 1: Run the codemod
+### Step 1: Run the Codemod
+
+Run at package root:
 
 ```sh
-npx @modelcontextprotocol/codemod@beta v1-to-v2 .   # run at the package root, not ./src
+npx @modelcontextprotocol/codemod@beta v1-to-v2 .
 grep -rn '@mcp-codemod-error' .
-tsc --noEmit && <formatter> && <tests>
 ```
 
-The codemod rewrites imports, renames, and mechanical API shifts. It leaves a `@mcp-codemod-error` marker wherever it couldn't determine the right rewrite — grep for those and fix them by hand.
+Resolve all `@mcp-codemod-error` comments manually.
 
-### Step 2: Check the new package layout and renames
+### Step 2: Packages & Renames
 
-The single v1 package is now 9 scoped packages. See [`references/tables.md`](references/tables.md#package-split) for the full split and [`references/tables.md`](references/tables.md#key-renames) for renamed APIs (`McpError` → `ProtocolError`, `RequestHandlerExtra` → `ServerContext`/`ClientContext`, etc.).
+- See [references/tables.md](references/tables.md) for packages/renames.
+- **Removed**: `SSEServerTransport` & OAuth helpers are in `@modelcontextprotocol/server-legacy`. `WebSocketClientTransport` is removed.
 
-### Step 3: Removed — fix manually
+### Step 3: Deprecations
 
-- `SSEServerTransport` moved to `@modelcontextprotocol/server-legacy/sse`; prefer Streamable HTTP for new code.
-- OAuth helpers moved to `@modelcontextprotocol/server-legacy/auth`.
-- `WebSocketClientTransport` and experimental tasks are gone — no replacement.
+- **Sampling**: Call LLM directly.
+- **Roots**: Pass paths as arguments.
+- **Logging**: Use stderr/OpenTelemetry instead of `sendLoggingMessage`.
 
-### Step 4: Deprecated — migrate within the year
+### Step 4: Manual Updates
 
-- **Sampling** — call the LLM provider directly instead of routing through the client.
-- **Roots** — pass paths as tool arguments instead of relying on client-advertised roots.
-- **Logging** — use stderr or OpenTelemetry instead of `sendLoggingMessage`.
+See [references/tables.md](references/tables.md#adopting-the-2026-07-28-era):
 
-### Step 5: Manual follow-ups the codemod can't do
+1. **Entrypoints**: Use `createMcpHandler` (HTTP) or `serveStdio` (stdio). Wrap HTTP with `toNodeHandler` for Express/Fastify.
+2. **Prompts**: Return `input_required` instead of calling `elicitInput`.
+3. **State**: Use `requestState` for cross-round data.
+4. **Negotiation**: Set `versionNegotiation: { mode: 'auto' }`.
+5. **Subscriptions**: Replace `list_changed` with `subscriptions/listen` stream.
+6. **ESM**: Set `"type": "module"`, `"module": "NodeNext"`, `"moduleResolution": "NodeNext"`.
+7. **Headers**: Use `headers.get('name')` instead of bracket notation.
+8. **Testing**: Validate with the `/mcp-test` skill.
 
-See [`references/tables.md`](references/tables.md#adopting-the-2026-07-28-era) for the full legacy-vs-modern axis comparison.
+### Step 5: Adopt `McpServer`
 
-1. Swap the server entry point: `createMcpHandler` for HTTP, `serveStdio` for stdio. For HTTP, optionally pass `{ legacy: 'reject' }` for strict modern-only. If using Node frameworks (Express/Fastify/Node HTTP), wrap the HTTP handler with `toNodeHandler(handler)` from `@modelcontextprotocol/node`.
-2. Return `input_required` instead of blocking on `elicitInput` for new mid-call prompts.
-3. Persist cross-round data with `requestState`, not ad hoc session storage.
-4. Set `versionNegotiation: { mode: 'auto' }` so clients negotiate the era instead of hardcoding one.
-5. Replace unsolicited `list_changed` polling with a `subscriptions/listen` stream.
-6. CJS→ESM / Node 20 pre-flight — the codemod doesn't convert module systems; do this by hand first (ensure `"type": "module"` in `package.json`, and set `"module": "NodeNext"`, `"moduleResolution": "NodeNext"` in `tsconfig.json`).
-7. Header reads — `ctx.http?.req?.headers` bracket access becomes `.get()` calls (sending plain-record headers still works unchanged).
-8. **Testing & Verification** — Once manual follow-ups are complete, load the `/mcp-test` skill to write tests and diagnose integration or negotiation errors.
+`McpServer` handles Zod and capabilities automatically:
 
-### Step 6: Adopting the High-Level `McpServer` API (Recommended)
+- Replace low-level `Server` with `McpServer`.
+- `.registerTool()`, `.registerPrompt()`, `.registerResource()` accept Zod directly.
+- Use `completable()` for prompt autocompletion.
 
-The v2 SDK introduces a high-level `McpServer` class that automates capabilities management and streamlines registration:
+## References
 
-- **Swap `Server` for `McpServer`**: Replaces the low-level `Server` (which requires manual `setRequestHandler` and handling empty results for capabilities).
-- **Standard Schemas integration**: Use `.registerTool()`, `.registerPrompt()`, and `.registerResource()` which natively accept Standard Schemas like Zod (no need for `zodToJsonSchema`).
-- **Autocompletion**: Use the `completable()` wrapper in prompt arguments to dynamically generate completions (e.g., `completable(z.string(), value => [...])`).
-- **JSON Schema generation**: Use `fromJsonSchema()` for seamless JSON Schema integration.
-
-## Examples
-
-For full comparison tables, refer to:
-
-- Package split, key renames, and legacy-vs-modern era comparisons: [references/tables.md](references/tables.md)
-- Framework Adapters and Codemod API Reference: [references/frameworks-reference.md](references/frameworks-reference.md)
-
-## Common Mistakes
-
-- Forgetting module conversion (CJS to ESM) prior to running the codemod.
-- Not searching for and resolving all `@mcp-codemod-error` markers left by the codemod.
-- Continuing to use deprecated features like sampling, client-advertised roots, or `sendLoggingMessage` (these should be replaced with native alternatives).
+- Express: [express-reference.md](references/express-reference.md)
+- Fastify: [fastify-reference.md](references/fastify-reference.md)
+- Hono: [hono-reference.md](references/hono-reference.md)
+- Codemod: [codemod-reference.md](references/codemod-reference.md)

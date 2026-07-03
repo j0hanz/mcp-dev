@@ -1,6 +1,6 @@
 ---
 name: mcp-interview
-description: Use when planning a new MCP server or client before any code exists and design decisions (such as transport, auth, or tool surface) are still open.
+description: Plan MCP server/client before coding.
 user-invocable: false
 metadata:
   category: technique
@@ -13,66 +13,53 @@ Make and record all MCP design decisions before writing any code.
 
 ## When to Use
 
-- Planning a brand-new MCP server or client before any implementation code exists.
-- Working on the "Clarify" step of the `/mcp build` workflow.
-- Designing transport, auth, tool surface, or distribution strategy.
+- Planning new MCP server/client.
+- "Clarify" step of `/mcp build`.
+- Designing transport, auth, tools, or distribution.
 
 ## How It Works
 
-**Goal:** Make and record all MCP design decisions before writing any code.
-**Rule:** ONLY make decisions. NEVER write, change, or save code.
+**Goal:** Record decisions before coding.
+**Rule:** ONLY make decisions; never code.
 
-```
-Search -> ask triggered questions (one at a time) -> record 10 decisions -> save + show docs/mcp-decisions.md
-```
+`Search -> Ask triggered questions -> Record 10 decisions -> Save docs/mcp-decisions.md`
 
 ### Rules
 
-- **Search First:** Check project files for `@modelcontextprotocol/` code to guide your choices. Skip if no files exist.
-- **Follow Triggers:** Only ask a question if its "Trigger" happens. Otherwise, use the "Safe Default" silently.
-- **One by One:** Ask one question at a time. Wait for the answer before moving on.
-- **Two Choices Only:** Always offer exactly two choices: (1) your top pick, (2) the next best pick. Never offer "Other".
-- **No Vague Answers:** If the user is unclear, ask again. If they say "you choose," pick your top choice and record it.
+- **Search First**: Check project for `@modelcontextprotocol/`.
+- **Triggers**: Ask only if triggered; else use "Safe Default".
+- **One by One**: Ask one question at a time.
+- **Two Choices**: Offer exactly two options (no "Other").
+- **Vague Input**: Re-ask if vague; if they say "you choose," use option 1.
 
-### Decision Table
+### Decision List
 
-| #   | Decision       | Safe Default                         | Trigger to Ask                                         | Two Choices (Pick 1 / Pick 2)                         |
-| :-- | :------------- | :----------------------------------- | :----------------------------------------------------- | :---------------------------------------------------- |
-| 1   | Scope          | server                               | Request is not clear about direction                   | Server (shares tools) / Client (uses tools)           |
-| 2   | Transport      | stdio                                | User mentions remote access, multi-user, or deployment | stdio (local) / HTTP (v2 createMcpHandler)            |
-| 3   | Auth           | none (stdio)                         | Transport is HTTP                                      | OAuth tokens / Custom AuthInfo pass-through           |
-| 4   | Tool surface   | Few simple tools                     | User wants >3 tools or one "do everything" tool        | Many simple tools / Few big tools with settings       |
-| 5   | Input schemas  | Zod schema on every tool/prompt      | NEVER ask (always record this)                         | —                                                     |
-| 6   | Interaction    | Plain request-response               | User mentions long tasks or needing user input         | Progress & cancel / Multi-round-trip (input_required) |
-| 7   | Prompts        | None                                 | User mentions reusable prompts or UI integration       | Static prompts / Completable prompts                  |
-| 8   | Error strategy | Protocol errors only for real faults | NEVER ask (always record this)                         | —                                                     |
-| 9   | Distribution   | Local project                        | User wants to publish or share                         | npm package / Keep local                              |
-| 10  | Testing        | One test per tool                    | NEVER ask (always record this)                         | —                                                     |
+See [references/decisions.md](file:///C:/mcp-dev/skills/mcp-interview/references/decisions.md) for the 10 decisions, safe defaults, triggers, and choices.
 
 ### Steps
 
-1. **Search** the project files.
-2. **Check** the Decision Table to see which questions trigger.
+1. **Search** project files.
+2. **Check** [decisions.md](file:///C:/mcp-dev/skills/mcp-interview/references/decisions.md) for triggers.
 3. **Ask** triggered questions one at a time.
-4. **Record** all 10 decisions. Mark each as `(asked)` or `(default)`.
-5. **Save** to `docs/mcp-decisions.md`; if it exists, append a dated record below the old ones — never delete old choices.
-6. **Show** the final record.
-7. **Next Step** — load the `/mcp-server-build` (if building a server) or `/mcp-client-build` (if building a client) skill to begin implementation.
+4. **Record** all 10 decisions (`asked` or `default`).
+5. **Save** to `docs/mcp-decisions.md` (append dated record; never delete old).
+6. **Show** final record.
+7. **Next Step**: Load `/mcp-server-build` (server) or `/mcp-client-build` (client).
 
-## Examples
+## Example
 
-### Record Format Example
+`docs/mcp-decisions.md` format:
 
 ```markdown
 # MCP Decision Record — YYYY-MM-DD
 
 1. Scope: server exposing 4 tools. (asked)
 2. Transport: stdio. (default)
-3. Auth: none — stdio transport. (default)
+3. Auth: none. (default)
 ```
 
 ## Common Mistakes
 
-- Writing or editing implementation code during the interview/Clarify phase.
-- Asking a question from the Decision Table if its trigger condition did not happen.
-- Leaving any of the 10 decisions blank or undocumented in `docs/mcp-decisions.md`.
+- Coding during interview/Clarify.
+- Asking untriggered questions.
+- Leaving decisions blank in `docs/mcp-decisions.md`.
