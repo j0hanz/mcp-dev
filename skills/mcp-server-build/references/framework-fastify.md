@@ -1,3 +1,11 @@
+---
+description: >-
+  Detailed API reference, hooks configuration, and integration examples for mounting MCP servers on Fastify.
+metadata:
+  tags: [fastify, hooks, validation, integration]
+  source: internal
+---
+
 # Fastify Integration
 
 The `@modelcontextprotocol/fastify` package provides Fastify plugins and hooks to run MCP servers.

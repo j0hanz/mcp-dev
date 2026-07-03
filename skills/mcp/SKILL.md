@@ -1,6 +1,6 @@
 ---
 name: mcp
-description: Router for MCP SDK v2 tasks (build, migrate, audit, debug) when the correct sub-skill is unclear.
+description: Use when building, auditing, migrating, or testing MCP SDK v2 servers and clients. Also for planning workflows, authentication, and publishing.
 user-invocable: true
 argument-hint: plan | build | audit | migrate | auth | test | elicit | protocol | publish
 metadata:

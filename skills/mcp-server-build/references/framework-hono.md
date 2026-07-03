@@ -1,3 +1,11 @@
+---
+description: >-
+  Detailed API reference, middleware configuration, and integration examples for mounting MCP servers on Hono.
+metadata:
+  tags: [hono, serverless, middleware, integration]
+  source: internal
+---
+
 # Hono Integration
 
 The `@modelcontextprotocol/hono` package provides an adapter for Hono, suitable for Node.js, Bun, Deno, Deno Deploy, Cloudflare Workers, and other web-standard environments.

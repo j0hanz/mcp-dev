@@ -1,6 +1,6 @@
 ---
 name: mcp-server-build
-description: Building, serving, or publishing an MCP server with the TypeScript SDK v2 (@modelcontextprotocol/server).
+description: Use when building, serving, testing, or publishing a Model Context Protocol (MCP) server using the TypeScript SDK v2 (@modelcontextprotocol/server).
 user-invocable: false
 metadata:
   category: technique
@@ -51,6 +51,10 @@ SDK is ESM-only. Ensure `package.json` contains `"type": "module"` and `tsconfig
 - **Tools**: `registerTool(name, schema, handler)`. Errors return `isError: true` so the model can retry.
 - **Resources**: `registerResource(name, uriOrTemplate, config, readCallback)`. Address data via URI templates.
 - **Prompts**: `registerPrompt(name, config, callback)`. Return message templates. Auto-complete arguments using `completable()`.
+
+## Examples
+
+For practical code configurations, see the dedicated [Code Examples](references/examples.md) guide.
 
 ## Reference Guides
 

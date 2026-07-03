@@ -1,6 +1,6 @@
 ---
 name: mcp-migrate
-description: Migrate MCP TS SDK v1 to v2.
+description: Use when migrating an MCP TypeScript codebase from SDK v1 to SDK v2, using codemods, or updating imports and deprecated surfaces.
 user-invocable: false
 metadata:
   category: technique

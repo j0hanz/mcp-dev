@@ -1,3 +1,11 @@
+---
+description: >-
+  Detailed workflows for building, testing, and auditing Model Context Protocol (MCP) SDK v2 servers and clients.
+metadata:
+  tags: [workflow, audit, build, process]
+  source: internal
+---
+
 # MCP Build and Audit Workflows
 
 Detailed step-by-step instructions for building, testing, and auditing Model Context Protocol (MCP) SDK v2 servers and clients.

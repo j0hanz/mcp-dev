@@ -1,3 +1,11 @@
+---
+description: >-
+  Guide to using the `@modelcontextprotocol/codemod` tool to automate refactoring of MCP TypeScript codebases from v1 to v2.
+metadata:
+  tags: [codemod, migration, refactoring, v1-to-v2]
+  source: internal
+---
+
 # Codemod Migration Tool
 
 The `@modelcontextprotocol/codemod` package provides a programmatic API and command-line tool to automate refactoring of MCP TypeScript codebases from v1 to v2.

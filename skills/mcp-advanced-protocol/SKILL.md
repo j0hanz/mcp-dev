@@ -1,6 +1,6 @@
 ---
 name: mcp-advanced-protocol
-description: Low-level MCP v2 protocol: custom transports, raw messages, gateways, and low-level Server.
+description: Use when working with low-level MCP v2 protocol, custom transports, raw wire messages, gateways, or the low-level Server class.
 user-invocable: false
 metadata:
   category: technique

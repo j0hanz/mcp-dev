@@ -2,6 +2,7 @@
 description: Code examples for low-level server setup, custom methods, validation, and custom transports.
 metadata:
   tags: [examples, protocol, transport, low-level]
+  source: internal
 ---
 
 # MCP Advanced Protocol Examples

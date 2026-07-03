@@ -1,3 +1,11 @@
+---
+description: >-
+  Detailed API reference and Fastify integration patterns for migrating HTTP/SSE servers to MCP v2.
+metadata:
+  tags: [fastify, server, migration, integration]
+  source: internal
+---
+
 # Fastify Integration
 
 The `@modelcontextprotocol/fastify` package provides Fastify plugins and hooks to run MCP servers.

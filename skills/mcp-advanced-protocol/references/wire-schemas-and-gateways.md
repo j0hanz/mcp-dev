@@ -2,6 +2,7 @@
 description: Reference for raw wire schemas and gateway/worker-fleet patterns using DiscoverResult.
 metadata:
   tags: [wire-schemas, gateway, routing]
+  source: internal
 ---
 
 # Wire Schemas & Gateway Patterns

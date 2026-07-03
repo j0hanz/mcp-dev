@@ -1,6 +1,6 @@
 ---
 name: mcp-elicitation
-description: Mid-call user interaction and prompt autocomplete in TypeScript SDK v2.
+description: Use when implementing mid-call user interaction, prompt autocomplete, progress tracking, or cancellation in the TypeScript SDK v2.
 user-invocable: false
 metadata:
   category: technique

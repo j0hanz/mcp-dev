@@ -1,6 +1,6 @@
 ---
 name: mcp-client-build
-description: Build MCP clients using TypeScript SDK v2 (@modelcontextprotocol/client) — connect, call, subscribe, caching, middleware.
+description: Use when building MCP clients using TypeScript SDK v2 (@modelcontextprotocol/client), managing connections, calling tools/resources, subscribing to changes, caching, or configuring middleware.
 user-invocable: false
 metadata:
   category: technique

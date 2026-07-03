@@ -1,3 +1,11 @@
+---
+description: >-
+  Detailed API reference, middleware configuration, and integration examples for mounting MCP servers on Express.
+metadata:
+  tags: [express, middleware, oauth, integration]
+  source: internal
+---
+
 # Express Integration
 
 The `@modelcontextprotocol/express` package provides middleware, routers, and application bootstrap helpers to run MCP servers over Express.

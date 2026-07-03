@@ -1,3 +1,11 @@
+---
+description: >-
+  Reference mapping for the 10 core MCP design decisions, safe defaults, trigger conditions, and choices.
+metadata:
+  tags: [decisions, planning, defaults, triggers]
+  source: internal
+---
+
 # MCP Decisions & Safe Defaults
 
 This reference contains the 10 core decisions, safe defaults, triggers, and choices for the MCP interview.

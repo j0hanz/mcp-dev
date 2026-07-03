@@ -1,6 +1,6 @@
 ---
 name: mcp-interview
-description: Plan MCP server/client before coding.
+description: Use when planning a new MCP server or client before writing any code to make and record architectural design decisions.
 user-invocable: false
 metadata:
   category: technique
