@@ -1,14 +1,11 @@
 ---
-description: >-
-  Guide to using the `@modelcontextprotocol/codemod` tool to automate refactoring of MCP TypeScript codebases from v1 to v2.
+description: Guide to using the `@modelcontextprotocol/codemod` tool to refactor MCP codebases from v1 to v2.
 metadata:
   tags: [codemod, migration, refactoring, v1-to-v2]
   source: internal
 ---
 
 # Codemod Migration Tool
-
-The `@modelcontextprotocol/codemod` package provides a programmatic API and command-line tool to automate refactoring of MCP TypeScript codebases from v1 to v2.
 
 ## CLI Usage
 
@@ -26,18 +23,18 @@ The tool automates the following mechanical refactors:
    - `@modelcontextprotocol/core`
    - `@modelcontextprotocol/node` / `express` / `hono` / `fastify`
 2. **Symbol Renaming:**
-   - `McpError` $\rightarrow$ `ProtocolError`
-   - `JSONRPCError` $\rightarrow$ `JSONRPCErrorResponse`
-   - `StreamableHTTPError` $\rightarrow$ `SdkHttpError`
-   - `ErrorCode` $\rightarrow$ `ProtocolErrorCode`
+   - `McpError` → `ProtocolError`
+   - `JSONRPCError` → `JSONRPCErrorResponse`
+   - `StreamableHTTPError` → `SdkHttpError`
+   - `ErrorCode` → `ProtocolErrorCode`
 3. **Low-level Request Handlers:** Converts schema-based requests:
-   - `server.setRequestHandler(CallToolRequestSchema, ...)` $\rightarrow$ `server.setRequestHandler('tools/call', ...)`
+   - `server.setRequestHandler(CallToolRequestSchema, ...)` → `server.setRequestHandler('tools/call', ...)`
 4. **Context Parameter Remapping:** Adapts `extra` parameters to v2 `ctx`:
-   - `extra.signal` $\rightarrow$ `ctx.mcpReq.signal`
-   - `extra.requestId` $\rightarrow$ `ctx.mcpReq.id`
-   - `extra.sendRequest(...)` $\rightarrow$ `ctx.mcpReq.send(...)`
-   - `extra.sendNotification(...)` $\rightarrow$ `ctx.mcpReq.notify(...)`
-   - `extra.authInfo` $\rightarrow$ `ctx.http?.authInfo`
+   - `extra.signal` → `ctx.mcpReq.signal`
+   - `extra.requestId` → `ctx.mcpReq.id`
+   - `extra.sendRequest(...)` → `ctx.mcpReq.send(...)`
+   - `extra.sendNotification(...)` → `ctx.mcpReq.notify(...)`
+   - `extra.authInfo` → `ctx.http?.authInfo`
 5. **Schema Structuring:**
    - Converts `.tool()` / `.prompt()` / `.resource()` calls to `registerTool` / `registerPrompt` / `registerResource`.
    - Wraps raw input configurations in `z.object()`.
@@ -49,50 +46,3 @@ If a safe refactoring rule cannot be determined, the tool injects an inline erro
 `/* @mcp-codemod-error WebSocketClientTransport removed in v2. Use StreamableHTTPClientTransport or StdioClientTransport. */`
 
 Find files with warnings: `grep -rn '@mcp-codemod-error' .`
-
----
-
-## Programmatic API Reference
-
-Import and trigger migrations using `ts-morph` and the runner API.
-
-### Diagnostic Interfaces
-
-```ts
-enum DiagnosticLevel {
-  Error = 'error',
-  Warning = 'warning',
-  Info = 'info',
-}
-
-interface Diagnostic {
-  level: DiagnosticLevel;
-  file: string;
-  line: number;
-  message: string;
-  category?: 'v2-gap';
-  advisoryOnly?: boolean;
-  tag?: 'zod-injected';
-  insertComment?: boolean;
-}
-```
-
-### Runner Configurations & Results
-
-```ts
-interface RunnerOptions {
-  targetDir: string;
-  dryRun?: boolean;
-  verbose?: boolean;
-  transforms?: string[];
-  ignore?: string[];
-}
-
-interface RunnerResult {
-  filesChanged: number;
-  totalChanges: number;
-  diagnostics: Diagnostic[];
-  packageJsonChanges?: PackageJsonChange[];
-  commentCount: number;
-}
-```

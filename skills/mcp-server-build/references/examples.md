@@ -23,8 +23,6 @@ const server = new McpServer(
 
 ## Quick Start
 
-A complete stdio server is one file:
-
 ```ts
 import { McpServer } from '@modelcontextprotocol/server';
 import { serveStdio } from '@modelcontextprotocol/server/stdio';
@@ -32,10 +30,7 @@ import { z } from 'zod';
 const server = new McpServer({ name: 'weather', version: '1.0.0' });
 server.registerTool(
   'get-forecast',
-  {
-    description: 'Get weather forecast',
-    inputSchema: z.object({ city: z.string() }),
-  },
+  { description: 'Get forecast', inputSchema: z.object({ city: z.string() }) },
   async ({ city }) => ({ content: [{ type: 'text', text: `Sunny in ${city}` }] }),
 );
 serveStdio(() => server);
@@ -124,8 +119,6 @@ process.on('SIGINT', () => void handle.close());
 
 ## HTTP Serving
 
-One MCP endpoint many clients share, over Streamable HTTP:
-
 ```ts
 import { createMcpHandler, McpServer } from '@modelcontextprotocol/server';
 const handler = createMcpHandler(() => {
@@ -142,12 +135,3 @@ import { createServer } from 'node:http';
 import { toNodeHandler } from '@modelcontextprotocol/node';
 createServer(toNodeHandler(handler)).listen(3000);
 ```
-
-## Framework Adapters
-
-For detailed installation, configuration, security, and setup examples for web frameworks, see the dedicated references:
-
-- [Express Integration](framework-express.md)
-- [Fastify Integration](framework-fastify.md)
-- [Hono Integration](framework-hono.md)
-- [Codemod Migration Tool](framework-codemod.md)

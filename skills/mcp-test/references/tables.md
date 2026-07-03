@@ -1,6 +1,5 @@
 ---
-description: >-
-  Debugging reference tables comparing common error symptoms with their respective root causes and solutions.
+description: Debugging reference tables comparing common error symptoms with their respective root causes and solutions.
 metadata:
   tags: [debugging-tables, troubleshooting, errors]
   source: internal
@@ -11,7 +10,7 @@ metadata:
 ## ProtocolErrorCode (wire codes)
 
 | Member                            | Code   | Meaning                                                                             |
-| --------------------------------- | ------ | ----------------------------------------------------------------------------------- |
+| :-------------------------------- | :----- | :---------------------------------------------------------------------------------- |
 | `ParseError`                      | −32700 | Not valid JSON                                                                      |
 | `InvalidRequest`                  | −32600 | Not a valid JSON-RPC request                                                        |
 | `MethodNotFound`                  | −32601 | No handler for the method                                                           |
@@ -25,7 +24,7 @@ metadata:
 ## SdkErrorCode (local codes)
 
 | Code                                                                                                                                                                                    | When                                                     |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------- |
 | `NotConnected` / `AlreadyConnected` / `NotInitialized`                                                                                                                                  | Transport/protocol lifecycle misuse                      |
 | `CapabilityNotSupported`                                                                                                                                                                | Required capability not supported                        |
 | `RequestTimeout`                                                                                                                                                                        | Request timed out                                        |
@@ -42,7 +41,7 @@ metadata:
 ## Common Error Symptoms and Fixes
 
 | Error                                                | Fix                                                                                         |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| :--------------------------------------------------- | :------------------------------------------------------------------------------------------ |
 | `SyntaxError: ... is not valid JSON`                 | Something wrote to stdout on a stdio server. Log with `console.error`, never `console.log`. |
 | `TS2589: Type instantiation is excessively deep`     | Multiple Zod versions in the tree. Dedupe to a single Zod 4.                                |
 | `ReferenceError: crypto is not defined`              | Node < 20. Upgrade, or polyfill: `globalThis.crypto = webcrypto`.                           |
