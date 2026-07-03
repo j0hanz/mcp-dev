@@ -11,7 +11,7 @@ metadata:
 
 For sequential `input_required` flows, return an opaque string the client echoes byte-for-byte; read it back with `ctx.mcpReq.requestState<State>()`. It round-trips through the client, so it is **attacker-controlled** — protect it with the HMAC codec and mint only what earlier rounds already proved:
 
-See [Cross-round State (requestState) example](file:///C:/mcp-dev/skills/mcp-elicitation/references/examples.md#cross-round-state-requeststate).
+See [Cross-round State (requestState) example](examples.md#cross-round-state-requeststate).
 
 Tampered or expired state answers `-32602 Invalid or expired requestState` and never reaches the handler. The codec is **signed, not encrypted** — keep secrets out of the payload.
 

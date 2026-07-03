@@ -19,7 +19,7 @@ Flow: `McpServer` ➔ register (tools/resources/prompts) ➔ serve (stdio/HTTP) 
 - Registering tools, resources, prompts, or autocompletion.
 - Wiring stdio or HTTP transports (Express, Hono, Fastify, Serverless).
 - Packaging servers for deployment or npm.
-- For testing and error codes, load `/mcp-test`.
+- For testing and error codes, load [mcp-test].
 
 ## How It Works
 

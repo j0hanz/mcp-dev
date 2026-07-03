@@ -32,4 +32,4 @@ throw new ProtocolError(ProtocolErrorCode.InvalidParams, `Note ids are lowercase
 throw new ResourceNotFoundError(uri.href); // -32602 with data: { uri }
 ```
 
-A tool handler **cannot** emit a protocol error — every throw (even a thrown `ProtocolError`) becomes `isError: true`. The one exception: `UrlElicitationRequiredError` propagates (`-32042`). Full code tables live in the `mcp-test` skill.
+A tool handler **cannot** emit a protocol error — every throw (even a thrown `ProtocolError`) becomes `isError: true`. The one exception: `UrlElicitationRequiredError` propagates (`-32042`). Full code tables live in the [mcp-test] skill.

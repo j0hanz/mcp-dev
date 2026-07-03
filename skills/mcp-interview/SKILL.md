@@ -34,12 +34,12 @@ Make and record all MCP design decisions before writing any code.
 
 ### Decision List
 
-See [references/decisions.md](file:///C:/mcp-dev/skills/mcp-interview/references/decisions.md) for the 10 decisions, safe defaults, triggers, and choices.
+See [references/decisions.md](references/decisions.md) for the 10 decisions, safe defaults, triggers, and choices.
 
 ### Steps
 
 1. **Search** project files.
-2. **Check** [decisions.md](file:///C:/mcp-dev/skills/mcp-interview/references/decisions.md) for triggers.
+2. **Check** [decisions.md](references/decisions.md) for triggers.
 3. **Ask** triggered questions one at a time.
 4. **Record** all 10 decisions (`asked` or `default`).
 5. **Save** to `docs/mcp-decisions.md` (append dated record; never delete old).

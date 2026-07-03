@@ -45,7 +45,7 @@ npx @modelcontextprotocol/inspector npx -y ./example-mcp-0.1.0.tgz
 
 ## HTTP servers
 
-Deploy like any web service — `references/serving-and-scaling.md` covers handlers and adapters. Never expose a public endpoint without auth (the `mcp-auth` skill).
+Deploy like any web service — [serving-http.md](serving-http.md) and [scaling.md](scaling.md) cover handlers, adapters, and scaling. Never expose a public endpoint without auth (the [mcp-auth] skill).
 
 ## Versioning
 

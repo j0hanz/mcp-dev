@@ -14,7 +14,7 @@ Covers `@modelcontextprotocol/client` `2.0.0-beta.2`. SDK: https://ts.sdk.modelc
 ## When to Use
 
 - Building/running MCP clients (connecting, tools, resources, caching, middleware).
-- Connection troubleshooting or tests (load `/mcp-test`).
+- Connection troubleshooting or tests (load [mcp-test]).
 
 ## How It Works
 
@@ -53,7 +53,7 @@ Eras: legacy (2024/2025) and modern (2026-07-28).
 
 Modern protocol uses `input_required` instead of push-style requests.
 
-- Handled via `flow.retry`. Register handlers (elicitation, sampling, roots) at client construction (see `/mcp-elicitation`).
+- Handled via `flow.retry`. Register handlers (elicitation, sampling, roots) at client construction (see [mcp-elicitation]).
 
 ## Examples
 

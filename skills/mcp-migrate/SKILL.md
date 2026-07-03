@@ -48,7 +48,7 @@ See [references/tables.md](references/tables.md#adopting-the-2026-07-28-era):
 5. **Subscriptions**: Replace `list_changed` with `subscriptions/listen` stream.
 6. **ESM**: Set `"type": "module"`, `"module": "NodeNext"`, `"moduleResolution": "NodeNext"`.
 7. **Headers**: Use `headers.get('name')` instead of bracket notation.
-8. **Testing**: Validate with the `/mcp-test` skill.
+8. **Testing**: Validate with the [mcp-test] skill.
 
 ### Step 5: Adopt `McpServer`
 

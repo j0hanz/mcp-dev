@@ -34,13 +34,13 @@ Agents handle the read-heavy or multi-step jobs above so their bulk reads don't 
 
 `Clarify` → `Scaffold` → `[Auth]` → `[Interaction]` → `Test` → `[Distribute]` → `Verify` (`[...]` is conditional)
 
-See detailed steps in [workflows.md](file:///C:/mcp-dev/skills/mcp/references/workflows.md).
+See detailed steps in [workflows.md](references/workflows.md).
 
 ### Audit Workflow
 
 `Locate` → `Version` → `Design` → `[Security]` → `[Interactions]` → `Tests` → `Intent` → `Report` (Read-only findings)
 
-See detailed steps in [workflows.md](file:///C:/mcp-dev/skills/mcp/references/workflows.md).
+See detailed steps in [workflows.md](references/workflows.md).
 
 ## Examples & Mistakes
 

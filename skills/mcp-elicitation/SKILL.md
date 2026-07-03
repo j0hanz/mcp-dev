@@ -27,9 +27,9 @@ Mid-call communication between server and user, and prompt autocomplete.
 
 ## Reference Guides
 
-- [Mechanics](file:///C:/mcp-dev/skills/mcp-elicitation/references/mechanics.md): Protocol details for input, progress, client, and autocomplete.
-- [Advanced Patterns](file:///C:/mcp-dev/skills/mcp-elicitation/references/advanced-interaction-patterns.md): Cross-round state (`requestState`) and deprecated features.
-- [Code Examples](file:///C:/mcp-dev/skills/mcp-elicitation/references/examples.md): Implementation code blocks.
+- [Mechanics](references/mechanics.md): Protocol details for input, progress, client, and autocomplete.
+- [Advanced Patterns](references/advanced-interaction-patterns.md): Cross-round state (`requestState`) and deprecated features.
+- [Code Examples](references/examples.md): Implementation code blocks.
 
 ## Red Flags & Iron Laws
 
