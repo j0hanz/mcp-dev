@@ -1,7 +1,23 @@
 {
+  "name": "mcp-dev",
+  "version": "1.0.0",
+  "description": "MCP development skills for TypeScript SDK v2",
+  "author": {
+    "name": "j0hanz",
+    "email": "l.johansson93@outlook.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/j0hanz/mcp-dev",
+  "repository": "https://github.com/j0hanz/mcp-dev",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "typescript-sdk"
+  ],
   "scripts": {
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "validate": "claude plugin validate . --strict"
   },
   "devDependencies": {
     "prettier": "^3.8.4"
