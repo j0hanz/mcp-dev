@@ -38,7 +38,7 @@ The SDK is published as an **ESM-only** package. To compile and run correctly un
 
 ### Design rules that hold everywhere
 
-- One schema (Zod v4, ArkType, or any Standard Schema with JSON Schema output) drives advertisement, validation, and handler typing.
+- One schema (Zod v4, ArkType, or any Standard Schema with JSON Schema output) drives advertisement, validation, and handler typing. To use raw JSON Schema directly, wrap it with `fromJsonSchema(schema)` from `@modelcontextprotocol/server`.
 - Tool failures are **results** (`isError: true`) the model reads; everything else fails as JSON-RPC **protocol errors**.
 - HTTP serving is **per-request**: a factory builds a fresh server instance for every request; state lives outside the instance.
 - On stdio, **stdout is the wire** — log with `console.error`, never `console.log`.
@@ -103,7 +103,7 @@ See [Errors API Reference](references/errors.md) for detailed error channels (To
 
 ### Serving on stdio
 
-For servers a host launches as a local child process — `serveStdio(factory, options?)` owns the transport.
+For servers a host launches as a local child process — `serveStdio(factory, options?)` (imported from `@modelcontextprotocol/server/stdio`) owns the transport.
 
 - **stdout is the JSON-RPC channel.** One `console.log` corrupts the stream and the host drops the connection.
 - `legacy` option: `'serve'` (default — a 2025-era opening pins the connection to a legacy instance) or `'reject'`.
@@ -111,9 +111,12 @@ For servers a host launches as a local child process — `serveStdio(factory, op
 
 ### Serving over HTTP
 
-The factory runs once per HTTP request; a fresh instance serves every call → stateless and horizontally scalable as-is. Keep the factory cheap; create pools/caches at module scope and close over them.
+`createMcpHandler(factory, options?)` creates a web-standard HTTP handler. The factory runs once per HTTP request; a fresh instance serves every call → stateless and horizontally scalable as-is. Keep the factory cheap; create pools/caches at module scope and close over them.
 
-**Security:** the handler trusts its caller — it validates no `Host`/`Origin` header and verifies no token. Mount those in front (framework adapters arm DNS-rebinding defense by default; auth is pass-through via `handler.fetch(request, { authInfo })`).
+- **Mounting:** `handler.fetch` is the web-standard interface (Cloudflare Workers, Deno, Bun, Hono). For Node frameworks (Express, Fastify, `node:http`), wrap it once with `toNodeHandler(handler)` from `@modelcontextprotocol/node`.
+- **Options:** Supports `legacy: 'stateless'` (default) or `'reject'`, and `responseMode: 'auto'` (default), `'sse'`, or `'json'`.
+- **Notifications:** `handler.notify` provides a typed publish-side facade over the handler's subscriptions bus.
+- **Security:** the handler trusts its caller — it validates no `Host`/`Origin` header and verifies no token. Mount those in front (framework adapters arm DNS-rebinding defense by default; auth is pass-through via `handler.fetch(request, { authInfo })`).
 
 ## Examples
 

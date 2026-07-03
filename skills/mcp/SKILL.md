@@ -23,17 +23,17 @@ No argument: offer the Job column as a menu. `/mcp <job>`: follow its Routing ro
 
 ### Routing
 
-| Job                                    | Do                                                              |
-| :------------------------------------- | :-------------------------------------------------------------- |
-| Plan / clarify requirements            | Load `/mcp-interview`, then the Build Workflow                  |
-| Build a new server or client           | [Build Workflow](#build-workflow-server-or-client)              |
-| Audit existing MCP code                | [Audit](#audit)                                                 |
-| Migrate SDK v1 → v2                    | Load `/mcp-migrate`, then `/mcp-test`                           |
-| Auth / tokens / OAuth                  | Load `/mcp-auth`                                                |
-| Test / debug / error codes             | Load `/mcp-test`                                                |
-| Elicitation / progress / cancellation  | Load `/mcp-elicitation`                                         |
-| Low-level protocol / custom transports | Load `/mcp-advanced-protocol`                                   |
-| Package / publish / register with host | Load `/mcp-server-build`, then its `references/distribution.md` |
+| Job                                                   | Do                                                              |
+| :---------------------------------------------------- | :-------------------------------------------------------------- |
+| Plan / clarify requirements                           | Load `/mcp-interview`, then the Build Workflow                  |
+| Build a new server or client                          | [Build Workflow](#build-workflow-server-or-client)              |
+| Audit existing MCP code                               | [Audit](#audit)                                                 |
+| Migrate SDK v1 → v2                                   | Load `/mcp-migrate`, then `/mcp-test`                           |
+| Auth / tokens / OAuth                                 | Load `/mcp-auth`                                                |
+| Test / debug / error codes                            | Load `/mcp-test`                                                |
+| Elicitation / progress / cancellation / autocomplete  | Load `/mcp-elicitation`                                         |
+| Transports (Stdio, HTTP/SSE) / low-level `Server` API | Load `/mcp-advanced-protocol`                                   |
+| Package / publish / register with host                | Load `/mcp-server-build`, then its `references/distribution.md` |
 
 ### Build Workflow (Server or Client)
 
@@ -44,7 +44,7 @@ Clarify -> Scaffold -> [Auth] -> [Interaction] -> Test -> [Distribute] -> Verify
 `[step]` = conditional; skip it unless its condition below holds. Every other step is mandatory, in order.
 
 1. **Clarify** — load `/mcp-interview`; obtain the Decision Record (`docs/mcp-decisions.md`).
-2. **Scaffold** — load `/mcp-server-build` or `/mcp-client-build`.
+2. **Scaffold** — load `/mcp-server-build` (prefer high-level `McpServer` + standard web handlers) or `/mcp-client-build`.
 3. **Auth** _(HTTP servers or protected clients)_ — load `/mcp-auth`.
 4. **Interaction** _(tools that ask the user, report progress, or run long)_ — load `/mcp-elicitation`.
 5. **Test** — load `/mcp-test`.
@@ -59,13 +59,13 @@ Locate -> Version -> Design -> [Security] -> [Interactions] -> Tests -> Intent -
 
 READ-ONLY: report findings; fix nothing unless asked. Audit against each loaded skill's rules — the checklists live there, not here.
 
-1. **Locate** — search for `@modelcontextprotocol/` imports; note server or client, transport, SDK version (v1 or v2).
+1. **Locate** — search for `@modelcontextprotocol/` imports; note server or client, transport (Stdio, HTTP), API level (`McpServer` vs `Server`), SDK version (v1 or v2).
 2. **Version** — if v1, load `/mcp-migrate`; migration is the top finding — keep auditing the rest.
 3. **Design** — load `/mcp-server-build` (plus `/mcp-client-build` if there is client code).
 4. **Security** _(any HTTP code)_ — load `/mcp-auth`. Missing auth is a Blocker.
 5. **Interactions** _(tools that ask for input, show progress, or run long)_ — load `/mcp-elicitation`.
 6. **Tests** — load `/mcp-test`.
-7. **Intent** — mismatches with `docs/mcp-decisions.md` are Should Fix; a missing file is a Nice to Have (run `/mcp-interview` to document existing choices).
+7. **Intent** — mismatches with `docs/mcp-decisions.md` are Should Fix; a missing file is a Nice to Have (run `/mcp-interview` to document existing choices). Flag unnecessary use of low-level `Server` instead of `McpServer` as a Should Fix.
 
 Report one ranked list; name every skipped step (e.g. no HTTP code). Categories: **Blockers** (broken or unsafe for production), **Should Fix** (breaks a design rule), **Nice to Have**. Each finding:
 `- [file:line] | [What is wrong] | [Skill that fixes it]`

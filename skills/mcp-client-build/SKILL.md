@@ -79,9 +79,13 @@ const client = new Client(
 - `'auto'` probes with `server/discover`; tune with `probe: { timeoutMs, maxRetries }`. `supportedProtocolVersions` shapes the probe — removing every pre-2026 entry removes the legacy fallback.
 - Don't default a spawn-per-invocation stdio CLI to `'auto'` — a legacy stdio server stalls the probe for its full timeout.
 
-### 5. Responding to server-initiated requests
+### 5. Multi-round-trip Auto-Fulfilment
 
-If the server elicits input or reports progress, register the handlers once at client construction — load the `/mcp-elicitation` skill for the handler patterns.
+The 2026-07-28 protocol replaces 2025 "push-style" server-to-client requests with `input_required` results for `tools/call`, `prompts/get`, and `resources/read`.
+
+- The client automatically fulfils these using its multi-round-trip engine via `flow.retry`.
+- Register your handlers (for elicitation, sampling, roots) once at client construction — the engine will run them when needed. Load the `/mcp-elicitation` skill for the handler patterns.
+- Progress updates are still delivered as mid-call notifications.
 
 ## Examples
 
@@ -96,3 +100,4 @@ Code implementation examples are located in:
 - Defaulting a spawn-per-invocation stdio CLI client's version negotiation to `'auto'` (stalls the probe for the full timeout on legacy servers).
 - Exceeding the maximum pagination page limit (`listMaxPages`), causing `LIST_PAGINATION_EXCEEDED` errors.
 - Failing to configure the TypeScript environment for ESM-only packages (always include `"type": "module"` in `package.json`, and set `"module": "NodeNext"`, `"moduleResolution": "NodeNext"` in `tsconfig.json`).
+- Assuming the 2025 push-style server-to-client requests (like sampling or elicitation) are still initiated out-of-band by the server. In the modern era, they are `input_required` returns fulfilled by the client's multi-round-trip engine.

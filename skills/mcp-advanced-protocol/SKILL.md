@@ -21,6 +21,7 @@ McpServer (default) -> low-level Server -> custom methods -> custom transports -
 
 - MCP work needs to drop below `McpServer` to the low-level `Server`.
 - Implementing custom protocol methods, custom transports, raw wire messages, or an MCP gateway/proxy.
+- Handling v2 serving modes (e.g., `McpServerFactory`, `isLegacyRequest`, or `invoke()`).
 - Before using this low-level skill, ensure you have set up a standard server with the `/mcp-server-build` skill or client with the `/mcp-client-build` skill.
 
 ## How It Works
@@ -33,6 +34,7 @@ McpServer (default) -> low-level Server -> custom methods -> custom transports -
 - Incoming arguments aren't validated automatically — validate them before use.
 - An uncaught throw becomes a JSON-RPC **protocol error**, not an `isError` result — the model doesn't get a retry hint, the caller's code does.
 - Capabilities aren't inferred from registrations; declare `listChanged` etc. explicitly or list-change notifications throw.
+- **v2 Serving:** The SDK serves traffic using `createMcpHandler` (HTTP) or `serveStdio` (stdio). Both take an `McpServerFactory` (`(ctx) => McpServer | Server`) that builds a fresh instance per HTTP request or connection. The same factory is used for the modern 2026-07-28 protocol and the legacy 2025-era fallback.
 
 ### 2. Custom methods & extension capabilities
 
@@ -57,7 +59,11 @@ Implement `Transport`: three methods (`start`, `send`, `close`) and three option
 - **Never call `start()` yourself** — pass the transport to `connect()`, which calls it.
 - `close()` must trigger `onclose` before resolving.
 - A failed `send()` should `throw`; reserve `onerror` for out-of-band failures (the socket dropped, not one specific send failing).
-- Set `hasPerRequestStream = true` if the transport carries exactly one request per stream — it enables clean per-request cancellation.
+
+### 5. Gateways & Proxies (v2 API)
+
+- **`invoke(server, message, ctx)`**: Serves one classified inbound message on a given server instance and returns the HTTP `Response`. It connects the instance to a single-exchange transport and pushes the message directly. Use this when building gateways that bypass standard HTTP/stdio handling.
+- **`isLegacyRequest(request)`**: Routes older v2025-era stateless HTTP traffic if you are mixing strict `legacy: 'reject'` handler entries with custom backward-compatibility layers.
 
 ## Examples
 

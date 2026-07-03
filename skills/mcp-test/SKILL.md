@@ -28,8 +28,8 @@ in-process tests -> manual probe (inspector | curl) -> match error channel -> lo
 
 ### 1. Test in-process (no network, no child process)
 
-- Fastest path for an HTTP server: call `handler.fetch` directly, or point `StreamableHTTPClientTransport`'s `fetch` option at it — nothing dials a real port.
-- `InMemoryTransport.createLinkedPair()` links a server and client for direct testing; import both ends from the same package version, or the linked pair's message types drift.
+- Fastest path for an HTTP server: call `handler.fetch(request)` directly — nothing dials a real port.
+- For direct server instance testing, use `invoke(server, message, ctx)` from `@modelcontextprotocol/server/invoke`. It connects the server to a fresh single-exchange transport and returns a `Response` directly.
 - A stdio server under test needs the real process: `new StdioClientTransport({ command: 'node', args: ['dist/server.js'] })`.
 
 ### 2. Manual testing
@@ -52,14 +52,14 @@ in-process tests -> manual probe (inspector | curl) -> match error channel -> lo
 | `ReferenceError: crypto is not defined`              | Node < 20. Upgrade, or polyfill: `globalThis.crypto = webcrypto`.                           |
 | `SdkError: ERA_NEGOTIATION_FAILED`                   | Client and server share no protocol era. Set `versionNegotiation: { mode: 'auto' }`.        |
 | `SdkError: METHOD_NOT_SUPPORTED_BY_PROTOCOL_VERSION` | Calling a method the negotiated era doesn't have — the error names the replacement.         |
-| `No exported member 'SSEServerTransport'`            | Moved to `@modelcontextprotocol/server-legacy/sse`.                                         |
+| `No exported member 'SSEServerTransport'`            | HTTP serving now uses `createMcpHandler()` from `@modelcontextprotocol/server`.             |
 
 ### 4. Error channels
 
 - **Tool errors** (`isError: true`) are results the model reads and can retry from — don't wrap tool calls in try/catch expecting a throw.
-- **Protocol errors** are thrown `ProtocolError`s the caller's code must handle.
-- A tool handler can't emit a protocol error: every throw inside one becomes `isError: true`, except `UrlElicitationRequiredError` (`-32042`), which propagates.
-- Match errors by `.code`, not `instanceof` — instances can come from a different copy of the package across a workspace boundary. `ProtocolError.fromError(code, message, data)` reconstructs a typed error across bundle boundaries.
+- Any errors originating from the tool SHOULD be reported inside the result object with `isError: true`, not as a protocol-level error response.
+- A tool handler can't emit a protocol error: every throw inside one becomes `isError: true` so the LLM can see the error and self-correct.
+- **Protocol errors** (e.g. -32602, -32603) and edge classification errors (e.g. `SdkErrorCode`) are internal or wire-level errors that handlers and the core server path emit. Match errors by `.code` or SDK error code constants, not by `instanceof`.
 
 ## Examples
 
@@ -71,5 +71,5 @@ Code implementation examples are located in:
 
 - Writing to `stdout` (e.g. `console.log`) in a stdio server, which breaks the JSON-RPC wire communication.
 - Having multiple Zod versions in the tree, causing deep type instantiation errors (`TS2589`).
-- Relying on `instanceof ProtocolError` across bundle boundaries (check `.code` or use `ProtocolError.fromError` instead).
-- Attempting to emit protocol errors from tool handlers (use `{ isError: true }` results instead).
+- Relying on `instanceof` for errors across bundle boundaries (check `.code` instead).
+- Attempting to emit protocol errors from tool handlers (use `{ isError: true }` results instead so the LLM can self-correct).

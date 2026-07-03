@@ -9,11 +9,7 @@ metadata:
 
 # MCP Authorization (TypeScript SDK v2)
 
-Covers `2.0.0-beta.2` server- and client-side OAuth. Official reference: https://ts.sdk.modelcontextprotocol.io/v2/
-
-```
-client authProvider -> token -> request -> requireBearerAuth -> verifyAccessToken -> AuthInfo -> handler
-```
+Covers `2.0.0` server-side HTTP authentication and client-side credential configuration. Official reference: https://ts.sdk.modelcontextprotocol.io/v2/
 
 **The server only verifies tokens; it never issues them.** Token issuance belongs to a separate authorization server — the MCP server is a resource server that checks what it's handed.
 
@@ -27,29 +23,26 @@ client authProvider -> token -> request -> requireBearerAuth -> verifyAccessToke
 
 ### 1. Server side — protecting the endpoint
 
-`requireBearerAuth` wraps the handler around one supplied function, `verifyAccessToken(token) => AuthInfo`.
+In the TypeScript SDK v2, **the server framework performs no token verification or authorization of its own**. You must implement token extraction and validation using your chosen HTTP framework (e.g., Express middleware, native fetch wrappers) _before_ passing the request to the MCP handler.
 
-- Missing or invalid token → `401`, prompting the client to (re-)authorize.
-- Valid token, insufficient scope → `403`.
-- `AuthInfo.expiresAt` is required — tokens without an expiry are rejected.
-- Per-tool authorization isn't a transport concern: check `ctx.http?.authInfo.scopes` inside the handler and return `isError: true` if the caller can't use that tool — replying `403` at the HTTP layer instead triggers the client's automatic scope step-up (SEP-2350).
-- `getOAuthProtectedResourceMetadataUrl(mcpServerUrl)` builds the RFC 9728 resource-metadata URL passed as `resourceMetadataUrl` to `requireBearerAuth`; `mcpAuthMetadataRouter({ oauthMetadata, resourceServerUrl })` mounts the route that serves it — used together in the example below.
+1. **Verify in middleware:** Extract the Bearer token, verify it, and produce an `AuthInfo` object.
+   - Missing or invalid token → respond with HTTP `401`.
+   - Valid token, insufficient scope for endpoint → respond with HTTP `403`.
+2. **Pass to the handler:** Provide the validated `AuthInfo` to `McpHttpHandler.fetch(request, { authInfo })` or `invoke(server, message, { classification, authInfo })`. The entry performs **no token verification**: `authInfo` given to `fetch` is passed through strictly as-is and never derived from request headers.
+3. **Use in the factory:** The server factory receives `ctx: McpRequestContext` which contains `ctx.authInfo`. This allows for multi-tenant setups where different principals get different server components or resources.
+4. **Per-tool authorization:** To enforce scopes per tool/prompt, check `ctx.authInfo` (captured by closure in the factory) inside your tool handler. If the caller lacks permission, return `isError: true` with an appropriate message rather than trying to fail the HTTP request, since MCP executes over an established transport.
 
 ### 2. Client side — using the token
 
-Pass an `authProvider` to the client transport. Three provider shapes:
+_(Client-side OAuth implementation depends on the specific transport used, typically requiring authorization headers to be appended to outgoing HTTP/SSE requests.)_
 
 #### A. End-user OAuth (authorization_code)
 
-For a human completing a browser login. The SDK runs discovery, registers/looks up the client, and calls `provider.redirectToAuthorization(url)`.
-
-- Tokens persist through the provider so re-auth isn't needed every connection.
-- `finishAuth` validates the RFC 9207 `iss` on the callback; a mismatched authorization server aborts the exchange rather than accepting a token from the wrong issuer. Never render the callback's `error`/`error_description` — they arrive on an untrusted redirect.
-- Dynamic client registrations are keyed by issuer (SEP-2352) so a `client_id` from one authorization server is never sent to another; RFC 8707 resource binding is automatic (override `validateResourceURL` to pin or omit the `resource` parameter).
+For a human completing a browser login. The client must handle the OAuth flow and token storage, attaching the acquired token as a Bearer token in the Authorization header when establishing the MCP transport connection.
 
 #### B. Machine-to-machine (client_credentials)
 
-For a service authenticating without a human in the loop.
+For a service authenticating without a human in the loop. The service requests a token from the authorization server and injects it into the MCP transport headers.
 
 #### C. Cross-app access
 
@@ -57,12 +50,10 @@ For a user already authenticated in the host app — exchanges that session for 
 
 ### 3. Error reference
 
-| Error                              | Raised to | Meaning                                                   |
-| ---------------------------------- | --------- | --------------------------------------------------------- |
-| `UnauthorizedError`                | Client    | Token missing or expired — re-run the auth flow.          |
-| `IssuerMismatchError`              | Client    | Callback or metadata came from the wrong issuer.          |
-| `AuthorizationServerMismatchError` | Client    | Credential is pinned to a different authorization server. |
-| `OAuthError`                       | Server    | Token verifier rejected the token.                        |
+| Error          | Raised to | Meaning                                                   |
+| -------------- | --------- | --------------------------------------------------------- |
+| `Unauthorized` | Client    | HTTP 401: Token missing or expired — re-run auth flow.    |
+| `Forbidden`    | Client    | HTTP 403: Token valid but lacks required endpoint scopes. |
 
 ## Examples
 
@@ -73,5 +64,5 @@ Code implementation examples are located in:
 ## Common Mistakes
 
 - Attempting to issue tokens from the MCP server (it must only verify tokens issued by a separate authorization server).
-- Rendering untrusted redirect error parameters on the client callback page.
-- Pinned client credentials sent to mismatched authorization servers.
+- Assuming the MCP SDK handles token parsing or authorization routing via `requireBearerAuth`. You must pass `authInfo` into `handler.fetch(request, { authInfo })`.
+- Replying with a 403 HTTP error from inside an executing tool. Always return `{ isError: true, content: [...] }` to gracefully reject a tool call without breaking the active transport connection.

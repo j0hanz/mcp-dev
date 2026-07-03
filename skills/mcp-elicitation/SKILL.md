@@ -1,10 +1,10 @@
 ---
 name: mcp-elicitation
-description: Use when an MCP tool call needs mid-call interaction with the user — eliciting input, confirming before acting, reporting progress, cancellation, or sampling in the TypeScript SDK v2.
+description: Use when an MCP tool call needs mid-call interaction with the user (eliciting input, confirming before acting, reporting progress, cancellation) or when providing prompt argument autocompletion (completable) in the TypeScript SDK v2.
 user-invocable: false
 metadata:
   category: technique
-  triggers: input elicitation, progress reporting, client-side cancellation, user interaction, cancel tool
+  triggers: input elicitation, progress reporting, client-side cancellation, user interaction, cancel tool, prompt autocomplete, completable, inputRequired
 ---
 
 # MCP Elicitation (TypeScript SDK v2)
@@ -93,7 +93,37 @@ Register the `elicitation/create` handler once at client construction. Set `inpu
 
 ### 7. Deprecated
 
-Sampling (`requestSampling`) and MCP logging (`ctx.mcpReq.log`) are deprecated (SEP-2577) — call the LLM provider directly, and log to stderr or OpenTelemetry instead. See `references/advanced-interaction-patterns.md`.
+The 2025 push-style server-to-client request model is deprecated (SEP-2577) and replaced by `input_required` results or other alternatives in the 2026-07-28 protocol:
+
+- **Sampling** (`requestSampling`): Call the LLM provider directly instead.
+- **Roots** (`listRoots` / `requestRoots`): Migrate to passing paths via tool parameters, resource URIs, configuration, or use `inputRequired` (multi-round-trip).
+- **Logging** (`ctx.mcpReq.log`): Migrate to stderr logging (STDIO servers) or OpenTelemetry.
+
+See `references/advanced-interaction-patterns.md`.
+
+### 8. Prompt Autocompletion (Completable)
+
+While `input_required` is for mid-call tool interaction, gathering prompt arguments interactively before the call can use `completable` schemas:
+
+```ts
+import { completable } from '@modelcontextprotocol/server';
+import { z } from 'zod';
+
+server.registerPrompt(
+  'review-code',
+  {
+    title: 'Code Review',
+    argsSchema: z.object({
+      language: completable(z.string().describe('Programming language'), (value) =>
+        ['typescript', 'javascript', 'python', 'rust', 'go'].filter((lang) =>
+          lang.startsWith(value),
+        ),
+      ),
+    }),
+  },
+  ({ language }) => ({/* ... */}),
+);
+```
 
 ## Examples
 
@@ -107,4 +137,5 @@ Code implementation examples are located in:
 - Using blocking `ctx.mcpReq.elicitInput()` on 2026-era connections, which will throw (use `input_required` instead).
 - Requesting secrets (passwords, payment details) via the insecure `mode: 'form'` elicitation.
 - Continuing tool execution after `ctx.mcpReq.signal.aborted` is true.
-- Relying on deprecated features like sampling (`requestSampling`) or MCP logging (`ctx.mcpReq.log`).
+- Relying on deprecated features like sampling (`requestSampling`), listRoots/requestRoots, or MCP logging (`ctx.mcpReq.log`).
+- Forgetting to use `completable` when prompt arguments require dynamic autocomplete suggestions.

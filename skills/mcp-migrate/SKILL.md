@@ -4,7 +4,7 @@ description: Use when migrating MCP TypeScript SDK v1 code to the v2 packages, o
 user-invocable: false
 metadata:
   category: technique
-  triggers: migrating mcp, upgrade sdk, SSEServerTransport, McpError, RequestHandlerExtra, sdk v1 to v2
+  triggers: migrating mcp, upgrade sdk, SSEServerTransport, McpError, RequestHandlerExtra, sdk v1 to v2, McpServer, toNodeHandler
 ---
 
 # Migrating MCP SDK v1 to v2
@@ -19,6 +19,7 @@ codemod -> fix markers -> renames -> removed APIs -> deprecations -> manual foll
 
 - Migrating MCP TypeScript SDK v1 code to the v2 packages.
 - When v1 APIs like `SSEServerTransport`, `McpError`, or `RequestHandlerExtra` stop resolving after an upgrade.
+- Refactoring from the low-level `Server` API to the new high-level `McpServer` API.
 
 ## How It Works
 
@@ -52,7 +53,7 @@ The single v1 package is now 9 scoped packages. See [`references/tables.md`](ref
 
 See [`references/tables.md`](references/tables.md#adopting-the-2026-07-28-era) for the full legacy-vs-modern axis comparison.
 
-1. Swap the server entry point: `createMcpHandler` for HTTP, `serveStdio` for stdio.
+1. Swap the server entry point: `createMcpHandler` for HTTP, `serveStdio` for stdio. For HTTP, optionally pass `{ legacy: 'reject' }` for strict modern-only. If using Node frameworks (Express/Fastify/Node HTTP), wrap the HTTP handler with `toNodeHandler(handler)` from `@modelcontextprotocol/node`.
 2. Return `input_required` instead of blocking on `elicitInput` for new mid-call prompts.
 3. Persist cross-round data with `requestState`, not ad hoc session storage.
 4. Set `versionNegotiation: { mode: 'auto' }` so clients negotiate the era instead of hardcoding one.
@@ -60,6 +61,15 @@ See [`references/tables.md`](references/tables.md#adopting-the-2026-07-28-era) f
 6. CJS→ESM / Node 20 pre-flight — the codemod doesn't convert module systems; do this by hand first (ensure `"type": "module"` in `package.json`, and set `"module": "NodeNext"`, `"moduleResolution": "NodeNext"` in `tsconfig.json`).
 7. Header reads — `ctx.http?.req?.headers` bracket access becomes `.get()` calls (sending plain-record headers still works unchanged).
 8. **Testing & Verification** — Once manual follow-ups are complete, load the `/mcp-test` skill to write tests and diagnose integration or negotiation errors.
+
+### Step 6: Adopting the High-Level `McpServer` API (Recommended)
+
+The v2 SDK introduces a high-level `McpServer` class that automates capabilities management and streamlines registration:
+
+- **Swap `Server` for `McpServer`**: Replaces the low-level `Server` (which requires manual `setRequestHandler` and handling empty results for capabilities).
+- **Standard Schemas integration**: Use `.registerTool()`, `.registerPrompt()`, and `.registerResource()` which natively accept Standard Schemas like Zod (no need for `zodToJsonSchema`).
+- **Autocompletion**: Use the `completable()` wrapper in prompt arguments to dynamically generate completions (e.g., `completable(z.string(), value => [...])`).
+- **JSON Schema generation**: Use `fromJsonSchema()` for seamless JSON Schema integration.
 
 ## Examples
 
