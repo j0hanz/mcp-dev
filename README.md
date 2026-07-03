@@ -55,7 +55,7 @@ Issues and PRs are welcome at [j0hanz/mcp-dev](https://github.com/j0hanz/mcp-dev
 
 ## Maintenance
 
-The SDK version (`2.0.0-beta.2`) is pinned in six SDK-facing skills — `mcp-server-build`, `mcp-client-build`, `mcp-auth`, `mcp-test`, `mcp-migrate`, `mcp-advanced-protocol`. When bumping it, update all six (`mcp-interview`, `mcp-elicitation`, and the `mcp` router don't reference a version).
+The SDK version (`2.0.0-beta.2`) is targeted by the six SDK-facing skills — `mcp-server-build`, `mcp-client-build`, `mcp-auth`, `mcp-test`, `mcp-migrate`, `mcp-advanced-protocol`. It is explicitly pinned in `mcp-client-build`, `mcp-test`, and `mcp-server-build`'s distribution references. When bumping it, update these occurrences accordingly.
 
 ## License
 
