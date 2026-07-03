@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const skillPath = path.join(__dirname, '..', 'skills', 'mcp', 'SKILL.md');
+const skillPath = path.join(__dirname, '..', 'skills', 'mcp-dev', 'SKILL.md');
 
 console.log('<mcp-dev-router>');
 console.log(
