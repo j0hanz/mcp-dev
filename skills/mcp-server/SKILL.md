@@ -1,5 +1,5 @@
 ---
-name: mcp-server-build
+name: mcp-server
 description: Use when building, serving, testing, or publishing a Model Context Protocol (MCP) server using the TypeScript SDK v2 (@modelcontextprotocol/server).
 user-invocable: false
 metadata:

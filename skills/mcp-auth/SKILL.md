@@ -17,7 +17,7 @@ Covers server-side HTTP auth and client credentials in TypeScript SDK v2. Refere
 
 - Protecting MCP server endpoints with bearer tokens.
 - Configuring client credentials, OAuth, or machine-to-machine auth.
-- Loaded via `/mcp-server-build` or `/mcp-client-build`.
+- Loaded via [mcp-server] or [mcp-client].
 
 ## Steps
 

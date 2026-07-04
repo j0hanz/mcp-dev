@@ -1,5 +1,5 @@
 ---
-name: mcp-advanced-protocol
+name: mcp-protocol
 description: Use when working with low-level MCP v2 protocol, custom transports, raw wire messages, gateways, or the low-level Server class.
 user-invocable: false
 metadata:
@@ -7,7 +7,7 @@ metadata:
   triggers: custom methods, custom transports, raw wire messages, mcp gateway, mcp proxy, low-level server
 ---
 
-# MCP Advanced Protocol
+# MCP Protocol
 
 Prefer `McpServer`. Only use `Server` for custom features. Docs: https://ts.sdk.modelcontextprotocol.io/v2/
 

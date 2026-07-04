@@ -33,7 +33,7 @@ A Claude Code plugin: skills and agents for building, testing, auditing, distrib
 
 Knowledge skills load automatically when the work touches their territory — no command needed:
 
-`mcp-interview`, `mcp-server-build`, `mcp-client-build`, `mcp-auth`, `mcp-elicitation`, `mcp-test`, `mcp-advanced-protocol`, `mcp-migrate`
+`mcp-planning`, `mcp-server`, `mcp-client`, `mcp-auth`, `mcp-elicitation`, `mcp-test`, `mcp-protocol`, `mcp-migrate`
 
 A SessionStart hook (`hooks/session-start.js`) injects the `/mcp` routing table into context at session start and after `/clear` or compaction (~4.2KB), so MCP work routes to the right skill without typing `/mcp`. Runs natively and cross-platform via Node.js (supported on Windows, macOS, and Linux).
 
@@ -55,7 +55,7 @@ Issues and PRs are welcome at [j0hanz/mcp-dev](https://github.com/j0hanz/mcp-dev
 
 ## Maintenance
 
-The SDK version (`2.0.0-beta.2`) is targeted by the six SDK-facing skills — `mcp-server-build`, `mcp-client-build`, `mcp-auth`, `mcp-test`, `mcp-migrate`, `mcp-advanced-protocol`. It is explicitly pinned in `mcp-client-build`, `mcp-test`, and `mcp-server-build`'s distribution references. When bumping it, update these occurrences accordingly.
+The SDK version (`2.0.0-beta.2`) is targeted by the six SDK-facing skills — `mcp-server`, `mcp-client`, `mcp-auth`, `mcp-test`, `mcp-migrate`, `mcp-protocol`. It is explicitly pinned in `mcp-client`, `mcp-test`, and `mcp-server`'s distribution references. When bumping it, update these occurrences accordingly.
 
 ## License
 

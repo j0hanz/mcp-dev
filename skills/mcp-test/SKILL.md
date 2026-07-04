@@ -19,8 +19,8 @@ Covers testing and error diagnosis for `2.0.0-beta.2`. Reference: https://ts.sdk
 - Troubleshooting connection failures or ProtocolError/SdkError.
 - Running inspector sessions or manual HTTP/stdio probes.
 - Deprecated APIs / mismatched SDKs: load [mcp-migrate].
-- Server config (stderr logging, custom schemas): see [mcp-server-build].
-- Client connection testing: see [mcp-client-build].
+- Server config (stderr logging, custom schemas): see [mcp-server].
+- Client connection testing: see [mcp-client].
 
 ## Steps
 

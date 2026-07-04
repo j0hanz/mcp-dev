@@ -1,5 +1,5 @@
 ---
-name: mcp-interview
+name: mcp-planning
 description: Use when planning a new MCP server or client before writing any code to make and record architectural design decisions.
 user-invocable: false
 metadata:
@@ -7,7 +7,7 @@ metadata:
   triggers: architectural choices, mcp transport, hosting, capability discovery, state management, auth requirements
 ---
 
-# MCP Interview
+# MCP Planning
 
 Make and record all MCP design decisions before writing any code.
 

@@ -1,5 +1,5 @@
 ---
-name: mcp-client-build
+name: mcp-client
 description: Use when building MCP clients using TypeScript SDK v2 (@modelcontextprotocol/client), managing connections, calling tools/resources, subscribing to changes, caching, or configuring middleware.
 user-invocable: false
 metadata:
