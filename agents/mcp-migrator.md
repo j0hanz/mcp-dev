@@ -1,7 +1,6 @@
 ---
 name: mcp-migrator
 description: Migrate MCP codebases from SDK v1 (@modelcontextprotocol/sdk) to split v2 packages (@modelcontextprotocol/server / @modelcontextprotocol/client).
-model: inherit
 color: yellow
 tools: ['Read', 'Write', 'Edit', 'Bash', 'Grep', 'Glob', 'Skill']
 ---

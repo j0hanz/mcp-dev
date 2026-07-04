@@ -1,7 +1,6 @@
 ---
 name: mcp-auditor
 description: Diagnose existing MCP SDK v2 server or client code for read-only production-readiness review ( Locate -> Report sweep).
-model: inherit
 color: cyan
 tools: ['Read', 'Grep', 'Glob', 'Bash', 'Skill']
 ---

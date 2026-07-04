@@ -2,16 +2,32 @@
 
 <!-- docs-maintainer:START -->
 
-![Claude](https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=fff&style=for-the-badge) ![Version](https://img.shields.io/github/v/tag/j0hanz/mcp-dev?label=version&style=for-the-badge) ![License](https://img.shields.io/github/license/j0hanz/mcp-dev?style=for-the-badge)
+![Claude](https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=fff&style=for-the-badge) ![GitHub Copilot](https://img.shields.io/badge/GitHub_Copilot-000000?logo=githubcopilot&logoColor=fff&style=for-the-badge) ![Version](https://img.shields.io/github/v/tag/j0hanz/mcp-dev?label=version&style=for-the-badge) ![License](https://img.shields.io/github/license/j0hanz/mcp-dev?style=for-the-badge)
 <!-- docs-maintainer:END -->
 
-A Claude Code plugin: skills and agents for building, testing, auditing, distributing, and migrating MCP servers and clients with the [MCP TypeScript SDK v2](https://ts.sdk.modelcontextprotocol.io/v2/) (`2.0.0-beta.2`, protocol revision `2026-07-28`).
+A plugin for [Claude Code](https://claude.com/claude-code) and [GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli): skills and agents for building, testing, auditing, distributing, and migrating MCP servers and clients with the [MCP TypeScript SDK v2](https://ts.sdk.modelcontextprotocol.io/v2/) (`2.0.0-beta.2`, protocol revision `2026-07-28`).
 
 ## Install
+
+### Claude Code
 
 ```bash
 /plugin marketplace add j0hanz/mcp-dev
 /plugin install mcp-dev@mcp-dev
+```
+
+### GitHub Copilot CLI
+
+```bash
+/plugin marketplace add j0hanz/mcp-dev
+/plugin install mcp-dev@mcp-dev
+```
+
+Or from a terminal:
+
+```bash
+copilot plugin marketplace add j0hanz/mcp-dev
+copilot plugin install mcp-dev@mcp-dev
 ```
 
 ## Usage
@@ -39,7 +55,7 @@ A SessionStart hook (`hooks/session-start.js`) injects the `/mcp` routing table 
 
 ## Agents
 
-Three subagents handle work that's autonomous or context-heavy rather than a single command. Claude Code dispatches them automatically when a task matches their description — no `/mcp` invocation needed.
+Three subagents handle work that's autonomous or context-heavy rather than a single command. Claude Code and Copilot CLI dispatch them automatically when a task matches their description — no `/mcp` invocation needed.
 
 | Agent          | Handles                                                                 | Tools                                      |
 | -------------- | ----------------------------------------------------------------------- | ------------------------------------------ |

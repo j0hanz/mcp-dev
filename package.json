@@ -12,7 +12,11 @@
   "keywords": [
     "mcp",
     "model-context-protocol",
-    "typescript-sdk"
+    "typescript-sdk",
+    "mcp-server",
+    "mcp-client",
+    "claude-code",
+    "github-copilot"
   ],
   "scripts": {
     "format": "prettier --write .",
