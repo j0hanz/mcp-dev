@@ -11,52 +11,35 @@ metadata:
 
 Upgrades from `@modelcontextprotocol/sdk` v1 to split v2 packages on Node ≥ 20. Official docs: https://ts.sdk.modelcontextprotocol.io/v2/
 
-Flow: `codemod` → `errors` → `renames` → `removed` → `deprecations` → `manual` → `verify`
+Flow: `codemod` ➔ `errors` ➔ `renames` ➔ `removed` ➔ `deprecations` ➔ `manual` ➔ `verify`
 
-## How It Works
+## Steps
 
-### Step 1: Run the Codemod
+1. **Verify**: Ensure the codebase actually contains `@modelcontextprotocol` dependencies or legacy v1 imports.
+2. **Execute Codemod**: Run the official migrator codemod tool at the package root:
+   ```sh
+   npx @modelcontextprotocol/codemod@beta v1-to-v2 .
+   ```
+3. **Resolve Flags**: Run `grep -rn '@mcp-codemod-error' .` and manually resolve all flagged inline comments in the code.
+4. **Update Packages**: Convert deprecated `@modelcontextprotocol/sdk` dependencies to appropriate v2 packages from [references/tables.md](references/tables.md). Load `@modelcontextprotocol/server-legacy` if using `SSEServerTransport`.
+5. **Modernize State & Flow**:
+   - Change `elicitInput` calls to stateless returning JSON-RPC `input_required` template definitions.
+   - Employ `requestState` context properties for multi-round communication.
+   - Replace legacy `list_changed` events with modern `subscriptions/listen` streams.
+6. **Adopt McpServer**: Change low-level `Server` implementations to modern `McpServer` where appropriate to automate capability registration, and transition to direct Zod schemas.
+7. **Transition TS Config**: Configure `tsconfig.json` modules to `"NodeNext"`, `"moduleResolution": "NodeNext"` and set `"type": "module"` in `package.json`.
+8. **Verify with Tests**: Validate code functionality using [mcp-test] integration and unit assertions.
 
-Run at package root:
+## Completion Criteria
 
-```sh
-npx @modelcontextprotocol/codemod@beta v1-to-v2 .
-grep -rn '@mcp-codemod-error' .
-```
+To consider a migration complete, you must verify:
 
-Resolve all `@mcp-codemod-error` comments manually.
-
-### Step 2: Packages & Renames
-
-- See [references/tables.md](references/tables.md) for packages/renames.
-- **Removed**: `SSEServerTransport` & OAuth helpers are in `@modelcontextprotocol/server-legacy`.
-
-### Step 3: Deprecations
-
-- **Sampling**: Call LLM directly.
-- **Roots**: Pass paths as arguments.
-- **Logging**: Use stderr/OpenTelemetry instead of `sendLoggingMessage`.
-
-### Step 4: Manual Updates
-
-See [references/tables.md](references/tables.md#adopting-the-2026-07-28-era):
-
-1. **Entrypoints**: Use `createMcpHandler` (HTTP) or `serveStdio` (stdio). Wrap HTTP with `toNodeHandler` for Express/Fastify.
-2. **Prompts**: Return `input_required` instead of calling `elicitInput`.
-3. **State**: Use `requestState` for cross-round data.
-4. **Negotiation**: Set `versionNegotiation: { mode: 'auto' }`.
-5. **Subscriptions**: Replace `list_changed` with `subscriptions/listen` stream.
-6. **ESM**: Set `"type": "module"`, `"module": "NodeNext"`, `"moduleResolution": "NodeNext"`.
-7. **Headers**: Use `headers.get('name')` instead of bracket notation.
-8. **Testing**: Validate with the [mcp-test] skill.
-
-### Step 5: Adopt `McpServer`
-
-`McpServer` handles Zod and capabilities automatically:
-
-- Replace low-level `Server` with `McpServer`.
-- `.registerTool()`, `.registerPrompt()`, `.registerResource()` accept Zod directly.
-- Use `completable()` for prompt autocompletion.
+- [ ] No remaining references to the single legacy `@modelcontextprotocol/sdk` library exist in `package.json` or source files.
+- [ ] All instances of `@mcp-codemod-error` comments are resolved and removed from the codebase.
+- [ ] Low-level manual capabilities setup is migrated to Zod-backed `McpServer` calls where applicable.
+- [ ] Deprecated stateful push APIs (such as older roots sampling or logging mechanisms) are swapped for modern stateless alternatives.
+- [ ] The app uses modern ECMAScript Modules (ESM) with a verified `NodeNext` resolution context.
+- [ ] The test suite compiled by [mcp-test] executes and passes successfully.
 
 ## References
 

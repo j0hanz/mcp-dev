@@ -34,17 +34,28 @@ Make and record all MCP design decisions before writing any code.
 
 ### Decision List
 
-See [references/decisions.md](references/decisions.md) for the 10 decisions, safe defaults, triggers, and choices.
+See [references/decisions.md](references/decisions.md) for the 12 decisions, safe defaults, triggers, and choices.
 
 ### Steps
 
-1. **Search** project files.
-2. **Check** [decisions.md](references/decisions.md) for triggers.
-3. **Ask** triggered questions one at a time.
-4. **Record** all 12 decisions (`asked` or `default`).
-5. **Save** to `docs/mcp-decisions.md` (append dated record; never delete old).
-6. **Show** final record.
-7. **Next Step**: Load [mcp-server-build] (server) or [mcp-client-build] (client).
+1. **Search** project files for existing `@modelcontextprotocol/` imports to understand current scope.
+2. **Determine** trigger needs by reviewing trigger parameters in [references/decisions.md](references/decisions.md).
+3. **Query** triggered questions to the user, strictly one at a time, providing exactly two choices for each.
+4. **Synthesize** a record of all 12 decision points, identifying each parameter as either `(asked)` or `(default)`.
+5. **Acknowledge** any vague input by re-asking, or defaulting safely to option 1 if the user delegates choice.
+6. **Append** the finalized dated markdown record directly onto `docs/mcp-decisions.md` without modifying any legacy records.
+7. **Present** the completed decision document to the user.
+
+### Completion Criteria
+
+To consider the interview phase complete, you must verify:
+
+- [ ] Existing codebase has been fully searched for imports of `@modelcontextprotocol/` or dependencies.
+- [ ] Decisions have been resolved or defaulted for all 12 core design criteria from [references/decisions.md](references/decisions.md).
+- [ ] No more than one clarification question was asked at a time.
+- [ ] `docs/mcp-decisions.md` exists or has been appended to, containing the new dated decision record.
+- [ ] All 12 decisions in the record are explicitly marked as either `(asked)` or `(default)`.
+- [ ] The full formatted decision summary has been outputted to the user.
 
 ## Example
 

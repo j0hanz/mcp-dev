@@ -19,15 +19,22 @@ Covers server-side HTTP auth and client credentials in TypeScript SDK v2. Refere
 - Configuring client credentials, OAuth, or machine-to-machine auth.
 - Loaded via `/mcp-server-build` or `/mcp-client-build`.
 
-## How It Works
+## Steps
 
-1. **Middleware Verification:** Extract & verify token -> [AuthInfo](references/examples.md#server-side---protecting-the-endpoint) (401/403 on failure).
-2. **Pass to Handler:** Provide `authInfo` to `McpHttpHandler.fetch(request, { authInfo })` or `invoke`. SDK does no auto-verification.
-3. **Factory Context:** Factory gets `ctx.authInfo` via `McpRequestContext` for multi-tenancy.
-4. **Per-Tool Auth:** Check `ctx.http?.authInfo` in tools (`ctx.authInfo` is only populated on the per-request factory context, not inside tool handlers; it's `undefined` over stdio). If unauthorized, return `{ isError: true, content: [...] }` (do not fail HTTP).
+1. **Extract**: Fetch Authorization header from request object inside middleware hook.
+2. **Verify**: Check token validity against IdP/external verification keys (return 401/403 directly if invalid).
+3. **Populate**: Add context under `authInfo` property of the `McpRequestContext` during init/fetch.
+4. **Enforce**: Within tool callbacks, verify `ctx.http?.authInfo` and return `{ isError: true, content: [...] }` if unauthorized.
 
-> [!IMPORTANT]
-> Act as Resource Server only. Do not build auth flows (JWT generation, password checks) in tools. Use an IdP and verify tokens beforehand.
+## Completion Criteria
+
+To consider authentication implementation complete, you must verify:
+
+- [ ] Direct token generation, JWT issuing, or credential database checks are omitted from the server (Resource Server only).
+- [ ] Token validation fails cleanly with standard HTTP 401/403 errors outside/before tool dispatch.
+- [ ] Tool business failures due to failed authorization return `{ isError: true }` and reject tool calls without throwing transport exceptions.
+- [ ] Tool callbacks read tenant/user permissions via `ctx.http?.authInfo` instead of factory `ctx.authInfo`.
+- [ ] No raw HTTP headers are processed directly inside individual tool callback handlers.
 
 ## Examples & References
 
@@ -35,15 +42,9 @@ Covers server-side HTTP auth and client credentials in TypeScript SDK v2. Refere
 
 ## Common Mistakes
 
-- Issuing tokens from MCP server (must only verify external tokens).
-- Expecting SDK to parse tokens automatically without passing `authInfo` to `fetch`.
-- Throwing HTTP errors inside tools. Return `{ isError: true, content: [...] }` to reject tool calls.
-- Reading `ctx.authInfo` inside a tool handler — that field lives on the factory context. Tools must read `ctx.http?.authInfo`.
-- Registering a new OAuth client via Dynamic Client Registration (`registerClient`) — deprecated in favor of Client ID Metadata Documents (see [examples.md](references/examples.md#custom-oauthclientprovider--discovery)).
-
-## Rules & Anti-Rationalization
-
-- **Red Flags**: Generating JWTs/keys in tool logic; throwing HTTP errors (403/401) in tools; assuming native bearer extraction.
-- **Mocking**: Use mock external issuer for tests, never generate tokens inside tools. For end-to-end coverage of an auth-protected server, pair with [mcp-test].
-- **Failures**: Return `{ isError: true, content: [...] }` to reject tool calls. Do not throw HTTP/transport errors.
-- **Headers**: Never read HTTP headers directly inside tools. Use `ctx.http?.authInfo`.
+- **Token Generation**: Issuing tokens or generating JWT keys from the MCP server instead of verifying external ones using an IdP.
+- **Header Extraction**: Expecting the SDK to automatically extract bearer tokens without configuring custom middleware.
+- **Tool Exceptions**: Throwing HTTP/transport errors inside a tool (always return `{ isError: true, content: [...] }` instead).
+- **Wrong Auth Context**: Reading `ctx.authInfo` inside a tool callback (which only exists on factory context) instead of reading `ctx.http?.authInfo`.
+- **Dynamic Clients**: Registering OAuth clients via deprecated `registerClient` dynamic registrations instead of Client ID Metadata Documents.
+- **Test Tokens**: Generating real tokens inside test tools rather than using mock external token issuers paired with [mcp-test].

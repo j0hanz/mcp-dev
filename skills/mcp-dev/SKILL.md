@@ -58,3 +58,20 @@ Entry point and canonical workflows for MCP SDK v2. Load sub-skills only when ne
    `- [file:line] | [Issue details] | [Skill to fix]`
 
 _(_) denotes conditional steps.*
+
+### Completion Criteria
+
+To consider a router workflow phase complete, you must verify the corresponding checklist:
+
+#### For Build Workflows:
+
+- [ ] Requirements and architectural designs are completed and stored inside `docs/mcp-decisions.md`.
+- [ ] The scaffolded codebase uses modern split v2 SDK dependencies under an ESM-only environment.
+- [ ] Mid-round elicitation, authentication, and custom transports are fully implemented and free of synchronous logs logic.
+- [ ] Unit or integration tests compile and run to completion successfully.
+
+#### For Audit Workflows:
+
+- [ ] The codebase has been fully scanned for references to older `@modelcontextprotocol/sdk` imports.
+- [ ] Multi-tenant server routing, authorization extraction, and event registrations are evaluated and validated.
+- [ ] A final structured findings summary listing Blockers, Should Fix, and Nice to Have points is compiled and presented in the correct structure: `- [file:line] | [Issue details] | [Skill to fix]`.

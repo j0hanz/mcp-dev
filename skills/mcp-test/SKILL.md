@@ -22,25 +22,25 @@ Covers testing and error diagnosis for `2.0.0-beta.2`. Reference: https://ts.sdk
 - Server config (stderr logging, custom schemas): see [mcp-server-build].
 - Client connection testing: see [mcp-client-build].
 
-## How It Works
+## Steps
 
-### 1. Test in-process
+1. **Verify Sandbox**: Confirm test isolation. Prefer `InMemoryTransport.createLinkedPair()` to pair a `Client` and `McpServer` directly, avoiding real ports or subprocesses.
+2. **Mock Security**: If testing auth-protected endpoints, pass mock `authInfo` payloads following [mcp-auth] policies to test 401/403 controls.
+3. **Execute Probe**: For stdio servers, launch the MCP inspector to probe commands interactively. For HTTP servers, direct post raw JSON-RPC requests via `curl` to the `/mcp` endpoints.
+4. **Assert Correct Channel**:
+   - Check standard tool execution errors through user payload `isError: true` responses.
+   - Guard and match protocol/SDK exceptions on `.code` checks or SDK constants instead of standard `instanceof` checks.
 
-- Zero-transport: Pair a `Client` and `McpServer` directly with `InMemoryTransport.createLinkedPair()` — no HTTP/stdio involved.
-- HTTP servers: Call `handler.fetch(request)` directly to bypass real ports.
-- Direct server testing: Use `invoke(server, message, ctx)` from `@modelcontextprotocol/server/invoke`.
-- Stdio servers: Use a child process transport (`StdioClientTransport`).
-- Auth-protected servers: pass a mock `authInfo`/issuer per [mcp-auth]'s mocking guidance, then verify 401/403 via the harness above.
-- See [references/examples.md](references/examples.md#in-process-test-harness) for test harness setup.
+## Completion Criteria
 
-### 2. Manual testing
+To consider testing implementation complete, you must verify:
 
-- Stdio servers: Run the MCP inspector to probe commands.
-- HTTP servers: Perform manual JSON-RPC POST requests via `curl`.
-- See [references/examples.md](references/examples.md#manual-testing) for command details.
+- [ ] Stdio and HTTP adapters are tested using isolated custom memory pairs or mock fetch calls.
+- [ ] No real network ports are spawned in the standard unit test execution workflows.
+- [ ] Tool business failures return structured `isError: true` bodies in the success payload, not protocol-level crashes.
+- [ ] Test suite executes successfully with no hanging tasks or loose connections.
 
-### 3. Error channels
+## Examples & References
 
-- **Tool errors**: Report inside result using `isError: true` so the model can self-correct.
-- **Protocol/SDK errors**: Match using `.code` or SDK constants instead of `instanceof`.
-- See [references/error-codes.md](references/error-codes.md) and [references/tables.md](references/tables.md) for details and code lookups.
+- In-process/manual test harness setup: [references/examples.md](references/examples.md)
+- Protocol Error codes and lookups: [references/error-codes.md](references/error-codes.md) and [references/tables.md](references/tables.md)

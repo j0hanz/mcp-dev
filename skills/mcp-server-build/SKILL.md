@@ -35,41 +35,39 @@ server.registerTool('hello', { name: z.string() }, async ({ name }) => ({
 await serveStdio(() => server);
 ```
 
-### ESM & TypeScript Requirements
+## Steps
 
-SDK is ESM-only. Ensure `package.json` contains `"type": "module"` and `tsconfig.json` has `"module": "NodeNext"`, `"moduleResolution": "NodeNext"`.
+1. **Configure ESM**: Standardize project files to ESM-only (`"type": "module"` in `package.json`, `"NodeNext"` resolutions in `tsconfig.json`).
+2. **Initialize Server**: Instantiate `McpServer` with a suitable identifier.
+3. **Register Capabilities**:
+   - Register tools using `.registerTool()` passing a strict validation Zod schema.
+   - Register dynamic templates using `.registerResource()` mapping dynamic parameters.
+   - Register prompt layouts using `.registerPrompt()`.
+4. **Sanitize Access Paths**: Resolve and ensure resource paths using `realpath`, validating boundaries to protect against directory traversal.
+5. **Establish Transport**: Bind server dependencies to standard channels (`serveStdio` or HTTP interfaces per-request factories).
 
-### Design Rules
+## Completion Criteria
 
-- **Stdio**: `stdout` is the wire channel. Log via `console.error()`, never `console.log()`.
-- **HTTP**: Per-request lifecycle. Factory builds a fresh server instance per call.
-- **Failures**: Tool errors return `{ isError: true }` in results; standard protocol crashes throw JSON-RPC errors.
-- **Resources**: Sanitize template paths using `realpath`; verify they stay inside the root directory.
+To consider a server implementation complete, you must verify:
 
-### Registration APIs
+- [ ] Codebase operates exclusively with modern ESM resolutions.
+- [ ] Stdio servers NEVER use `console.log()` to prevent JSON-RPC wire corruption. All debug messages are output on `console.error()`.
+- [ ] Factory setups for HTTP endpoints instantiate fresh servers per-request without accumulating heavy persistent DB connections.
+- [ ] Resource template targets resolve securely and cannot exit their root directories.
+- [ ] Normal tool exceptions let the SDK automatically wrap failures into standard `{ isError: true }` responses.
 
-- **Tools**: `registerTool(name, schema, handler)`. Errors return `isError: true` so the model can retry.
-- **Resources**: `registerResource(name, uriOrTemplate, config, readCallback)`. Address data via URI templates.
-- **Prompts**: `registerPrompt(name, config, callback)`. Return message templates. Auto-complete arguments using `completable()`.
+## Reference Guides & Adapters
 
-## Examples
-
-For practical code configurations, see the dedicated [Code Examples](references/examples.md) guide.
-
-## Reference Guides
-
+- [Code Examples](references/examples.md): Practical code samples.
 - [Context API](references/context.md): Context variables (`ctx.mcpReq`, `ctx.http`, etc.).
 - [Errors API](references/errors.md): Tool vs Protocol error channels and handling.
-- [Code Examples](references/examples.md): Practical configurations for tools, resources, and servers.
-- [HTTP Serving](references/serving-http.md): Setup, Host/Origin security (including bare Cloudflare Workers/Deno/Bun runtimes with no framework), and legacy clients.
+- [HTTP Serving](references/serving-http.md): Setup, Host/Origin security, and legacy clients.
 - [Scaling & Notifications](references/scaling.md): Caching, state, Event Bus, and pub/sub.
 - [Distribution](references/distribution.md): Npm publishing and host installation (`mcp.json`).
-- Framework Adapters: [Express](references/framework-express.md) \| [Fastify](references/framework-fastify.md) \| [Hono](references/framework-hono.md) \| [Codemod](references/framework-codemod.md).
+- Adapters: [Express](references/framework-express.md) \| [Fastify](references/framework-fastify.md) \| [Hono](references/framework-hono.md) \| [Codemod](references/framework-codemod.md).
 
 ## Common Mistakes
 
-- Using `console.log()` on stdio servers, which corrupts the JSON-RPC wire.
-- Failing to sanitize resource paths, allowing directory traversal.
-- Creating heavy DB pool instances inside the per-request HTTP factory.
-
-Note: throwing inside a tool handler is not a mistake — the SDK catches it and converts it to `{ isError: true }` automatically. Return `{ isError: true, content: [...] }` explicitly only when you need to control the error `content`.
+- **Logs Corridor**: Outputting debug statements to standard stdout via `console.log()`.
+- **Directory Traversal**: Exposing raw path interpolation to resource endpoints without sanitizing.
+- **Shared States in HTTP**: Instantiating static DB pool allocations inside global request factories.

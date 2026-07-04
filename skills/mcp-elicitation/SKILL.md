@@ -17,23 +17,26 @@ Mid-call communication between server and user, and prompt autocomplete.
 - Client needs to register auto-fulfillment handlers.
 - Prompt arguments require dynamic autocompletion.
 
-## Core Concepts
+## Steps
 
-> Flow: handler ➔ `inputRequired(...)` ➔ client prompts user ➔ handler re-runs ➔ `acceptedContent(answer)`
+1. **Elicit Input**: Return `inputRequired(...)` from your tool callback when user input is needed.
+2. **Handle Stateless Return**: Store multi-round session parameters in the `requestState` object so callbacks can resume seamlessly once the responses are accepted.
+3. **Emit Progress**: Emit operation updates using `notify()` in the handler's execution.
+4. **Guard Cancellation**: Pass `signal` to database or HTTP calls, and verify `signal.aborted` within recursive functions or loop conditions.
+5. **Autocompletion**: Wrap input properties within standard `completable(...)` schema builders to allow prompt suggestions dynamically.
 
-- **Stateless**: Handlers return `inputRequired(...)` instead of blocking; they re-run from scratch when the user responds.
-- **Progress/Cancel**: Send progress via `notify()` and check `signal.aborted` in loops.
-- **Autocomplete**: Wrap prompt Zod schemas with `completable()` for typing suggestions.
+## Completion Criteria
+
+To consider elicitation and mid-call interaction complete, you must verify:
+
+- [ ] No mid-call tool handlers block threads or run synchronously while awaiting user actions.
+- [ ] All forms, input widgets, and prompt arguments are clear, validated, and do NOT request credentials or access key secrets.
+- [ ] The engine verifies `signal.aborted` on every iteration of loops or long database inquiries.
+- [ ] All 2026-era interaction flows return modern `inputRequired` descriptors instead of invoking deprecated `elicitInput()`.
+- [ ] Deprecated stateful push APIs (such as push sampling, roots, or logging) are replaced with modern alternatives (e.g. `inputRequired.createMessage()`, `inputRequired.listRoots()`).
 
 ## Reference Guides
 
 - [Mechanics](references/mechanics.md): Protocol details for input, progress, client, and autocomplete.
 - [Advanced Patterns](references/advanced-interaction-patterns.md): Cross-round state (`requestState`) and deprecated features.
 - [Code Examples](references/examples.md): Implementation code blocks.
-
-## Red Flags & Iron Laws
-
-- **Secrets**: NEVER request credentials or keys via forms; redirect to URL.
-- **Cancellation**: ALWAYS check `signal.aborted` in loops and pass `signal` to async/DB calls.
-- **Elicitation**: Return `inputRequired(...)` for modern. Blocking `elicitInput()` throws on 2026-era links.
-- **Deprecated**: Avoid legacy push-style sampling, root requests, and MCP logging (`log`). Use their stateless replacements instead: `inputRequired.createMessage()` and `inputRequired.listRoots()`.

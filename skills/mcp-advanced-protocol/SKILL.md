@@ -16,61 +16,32 @@ Prefer `McpServer`. Only use `Server` for custom features. Docs: https://ts.sdk.
 - Custom methods, transports, or proxy/gateways.
 - Advanced modes (`McpServerFactory`, `invoke()`).
 
-## 1. Low-Level Server
+## Steps
 
-Raw `Server` does nothing automatically:
+1. **Verify Suitability**: Assess if the standard high-level `McpServer` is inadequate before using the low-level raw `Server` module (which lacks automatic validation, capabilities, or error handling).
+2. **Define Custom Methods**: Prefix custom extension methods with distinct namespace identifiers (e.g. `acme/search`) and parameterize explicit schemas.
+3. **Register Custom Capabilities**: Declare extension support details explicitly by registering capabilities properties in the server metadata structure.
+4. **Implement Custom Transport**: When creating custom connections, build out `start()`, `send()`, and `close()`. Throw exceptions explicitly on send failures and trigger standard error callbacks.
+5. **Route Version Boundaries**: Use `isLegacyRequest()` to intercept 2025-era handshakes and branch message delivery between legacy and modern clients in multi-client gateways.
 
-- **Manual validation:** Validate inputs and schemas manually.
-- **Errors:** Uncaught errors break connection without retries.
-- **Capabilities:** Declare all supported features (e.g. `listChanged`) explicitly.
-- **McpServerFactory:** Instantiates servers per request on HTTP/stdio.
+## Completion Criteria
 
-## 2. Custom Methods
+To consider advanced implementation complete, you must verify:
 
-- Prefix custom methods (e.g. `acme/search`) and define strict `params`/`result` schemas.
-- Register:
+- [ ] Low-level raw namespaces and custom RPC method targets are prefixed with unique vendor names (e.g. `acme/`).
+- [ ] Custom transport classes implement the standard life stages properly, triggering `onclose` on termination.
+- [ ] Hand-rolled custom connection transport objects NEVER invoke `.start()` manually; transport startup is delegated to `.connect()`.
+- [ ] Intercept gateways are backed by rigorous error controls to prevent uncaught network failures from interrupting long-lived streams.
 
-```ts
-server.server.registerCapabilities({
-  extensions: { 'acme/feature': { flags: ['enabled'] } },
-});
-```
+## Reference Guides
 
-## 3. Schemas and Validation
-
-- Use Zod v4, ArkType, Valibot, or JSON Schema (with `fromJsonSchema<T>()`).
-- SDK auto-selects validator (like AJV).
-
-## 4. Custom Transports
-
-- Implement `start()`, `send()`, and `close()`.
-- `connect()` calls `start()`; do not call it manually.
-- `close()` must trigger `onclose` callback.
-- Throw on `send()` failure; use `onerror` for connection drops.
-
-## 5. Direct Invocation & Legacy Routing
-
-- **`invoke()`**: Direct server message invocation without a real transport, returns an HTTP `Response`. See [references/examples.md](references/examples.md).
-- **`isLegacyRequest()`**: Detects 2025-era requests so a single endpoint can branch between legacy and modern handling.
-
-## 6. Gateways & Worker Fleets
-
-Probe-once, connect-many pattern for many short-lived clients sharing one upstream connection (`DiscoverResult`), plus raw wire schemas for building proxies. See [references/wire-schemas-and-gateways.md](references/wire-schemas-and-gateways.md).
-
-## Related Skills
-
-- A hand-rolled transport or gateway still needs tests — use [mcp-test]'s in-process harness against it.
-- A gateway/proxy forwarding to an upstream server crosses an auth boundary — verify tokens per [mcp-auth] before forwarding, don't just pass them through.
-
-## Examples
-
-See details:
-
-- Transports & direct invocation: [references/examples.md](references/examples.md)
-- Gateways & Schemas: [references/wire-schemas-and-gateways.md](references/wire-schemas-and-gateways.md)
+- Custom transports & direct invocation (`invoke()`): [references/examples.md](references/examples.md)
+- Gateways, Worker Fleets, & wire schemas: [references/wire-schemas-and-gateways.md](references/wire-schemas-and-gateways.md)
+- Testing & debugging hand-rolled adapters: [mcp-test]
+- Gateway authentication boundary controls: [mcp-auth]
 
 ## Common Mistakes
 
-- Using low-level `Server` when `McpServer` suffices.
-- Calling `start()` on transports manually.
-- Letting errors crash the connection.
+- **Redundant Low-Level**: Opting to write raw `Server` instances manually when standard `McpServer` capabilities suffice.
+- **Manual Start**: Invoking `transport.start()` within setup scripts, which conflicts with native event registration.
+- **Leaked Exceptions**: Letting uncaught endpoint failures crash the connection state instead of translating the exceptions.

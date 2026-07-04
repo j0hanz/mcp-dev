@@ -16,54 +16,31 @@ Covers `@modelcontextprotocol/client` `2.0.0-beta.2`. SDK: https://ts.sdk.modelc
 - Building/running MCP clients (connecting, tools, resources, caching, middleware).
 - Connection troubleshooting or tests (load [mcp-test]).
 
-## How It Works
+## Steps
 
-### Setup & Requirements
+1. **Configure ESM**: Standardize project files to ESM-only (`"type": "module"` in `package.json`, `"NodeNext"` resolutions in `tsconfig.json`).
+2. **Initialize Client**: Initialize `new Client(...)` with your configurations, setting target credentials or capacities parameters (declaring roots upfront is mandatory).
+3. **Establish Transport Connection**: Instantiate transport layers (`StreamableHTTPClientTransport`, `StdioClientTransport`) and connect with `await client.connect(transport)`.
+4. **Register Hook Interceptors**: Register handlers afterward via `client.setRequestHandler('elicitation/create' | 'sampling/createMessage' | 'roots/list', ...)` to negotiate auto-fulfilment.
+5. **Manage Calls**: Call tools with `.callTool()` and paginations, verifying execution status on the `isError` payload.
+6. **Graceful Terminate**: Wrap termination within session endpoints with `await transport.terminateSession()` and `await client.close()`.
 
-- SDK is ESM-only.
-- **`package.json`**: `"type": "module"`
-- **`tsconfig.json`**: `"module": "NodeNext"`, `"moduleResolution": "NodeNext"`
+## Completion Criteria
 
-### Transports & Connection
+To consider a client implementation complete, you must verify:
 
-- **Transports**: `StreamableHTTPClientTransport` (HTTP, default), `StdioClientTransport` (local process), `SSEClientTransport` (legacy fallback), `InMemoryTransport` (testing).
-- **Handshake**: `await client.connect(transport)`. Info: `getServerVersion()`, `getServerCapabilities()`, `getInstructions()`, `getProtocolEra()`.
-- **Shutdown**: `await transport.terminateSession()`, then `await client.close()`.
+- [ ] ESM-only configurations are active within `tsconfig.json`.
+- [ ] Handshakes utilize the correct negotiation mode (`'auto'` or `'legacy'`). Avoid `'auto'` negotiation on spawn-per-invocation CLI tools to prevent legacy stalls.
+- [ ] Client declares capacities (elicitation, sampling, roots) in the constructor option BEFORE registering handler endpoints.
+- [ ] Execution success blocks check `result.isError` directly instead of catching exceptions on standard tool responses.
 
-### Calling Tools & Resources
-
-- **Failures**: Check `result.isError` (does not throw).
-- **Pagination**: List calls paginate up to `listMaxPages` (default 64). Pass `{ cursor }` for single page.
-- **Options**: `onprogress`, `maxTotalTimeout`, `signal`.
-
-```ts
-const client = new Client({ name: 'my-client', version: '1.0.0' });
-await client.connect(new StreamableHTTPClientTransport(new URL('http://localhost:3000/mcp')));
-const result = await client.callTool({ name: 'greet', arguments: { name: 'World' } });
-```
-
-### Version Negotiation
-
-Eras: legacy (2024/2025) and modern (2026-07-28).
-
-- `'legacy'` (default): older era.
-- `'auto'`: tries modern first. Avoid for spawn-per-invocation stdio CLI (stalls legacy).
-
-### Multi-round-trip Auto-Fulfilment
-
-Modern protocol uses `input_required` instead of push-style requests.
-
-- Declare capabilities (elicitation, sampling, roots) in the `Client` constructor's `capabilities` option, then register handlers afterward via `client.setRequestHandler('elicitation/create' | 'sampling/createMessage' | 'roots/list', ...)` — declaring `roots` first is mandatory, or `setRequestHandler('roots/list', ...)` throws.
-- Auto-fulfilment is bounded by the `inputRequired: { maxRounds, autoFulfill }` constructor option, not a public `flow.retry` API. See [mcp-elicitation] for handler mechanics.
-- 401 retry (re-running auth) and `input_required` auto-fulfilment are separate mechanisms — if `callTool()` hangs, check which one is stalling (see [mcp-auth] for the auth-retry side).
-
-## Examples
+## Reference Guides
 
 - Connection, tools, subscriptions, middleware: [references/examples.md](references/examples.md)
 - Subscriptions, caching, middleware, roots: [references/subscriptions-caching-middleware.md](references/subscriptions-caching-middleware.md)
 
 ## Common Mistakes
 
-- Catching exceptions for tool errors (check `result.isError`).
-- `'auto'` negotiation on stdio CLI (stalls legacy).
-- Missing ESM setup.
+- **Exception Traps**: Catching standard exceptions for tool-side errors (check `result.isError` instead of using try-catch blocks for business logic failures).
+- **Spawn Negotiation**: Configuring `'auto'` version negotiation on stdio-based CLI wrappers (stalls connections).
+- **Haphazard Registration**: Registering handlers for capability routes before declaring those capabilities in the client options.

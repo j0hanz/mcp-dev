@@ -1,12 +1,10 @@
 ---
 name: mcp
-description: Use when building, auditing, migrating, or testing MCP SDK v2 servers and clients. Also for planning workflows, authentication, and publishing.
 user-invocable: true
 disable-model-invocation: true
 argument-hint: plan | build | audit | migrate | auth | test | elicit | protocol | publish
 metadata:
   category: technique
-  triggers: mcp, model context protocol, mcp-sdk, mcp-server, mcp-client
 ---
 
 # Model Context Protocol (MCP) Router
