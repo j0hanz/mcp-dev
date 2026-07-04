@@ -1,8 +1,9 @@
 ---
 name: mcp
+description: Single entry point for MCP work — no argument lists available jobs, a job name routes to the right skill or agent.
 user-invocable: true
 disable-model-invocation: true
-argument-hint: plan | build | audit | migrate | auth | test | elicit | protocol | publish
+argument-hint: '[plan|build|audit|migrate|auth|test|elicit|protocol|publish]'
 metadata:
   category: technique
 ---
