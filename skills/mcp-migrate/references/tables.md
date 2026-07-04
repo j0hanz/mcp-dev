@@ -37,7 +37,6 @@ metadata:
 | `server.setRequestHandler(CallToolRequestSchema, ...)` | `server.registerTool(...)` (on high-level `McpServer`)    |
 | `McpError` / `ErrorCode`                               | `ProtocolError` / `ProtocolErrorCode` (or `SdkErrorCode`) |
 | `StreamableHTTPError`                                  | `SdkHttpError`                                            |
-| `IsomorphicHeaders`                                    | Web-standard `Headers`                                    |
 | `SchemaInput<T>`                                       | `StandardSchemaWithJSON.InferInput<T>`                    |
 | `ResourceTemplate` wire type                           | `ResourceTemplateType`                                    |
 

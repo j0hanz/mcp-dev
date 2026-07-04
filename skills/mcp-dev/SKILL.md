@@ -21,6 +21,7 @@ Entry point and canonical workflows for MCP SDK v2. Load sub-skills only when ne
 - **Migrate**: `mcp-migrator` agent (codemods)
 - **Test/Debug**: `mcp-debugger` agent or [mcp-test]
 - **Audit**: `mcp-auditor` agent (read-only)
+- **Publish**: [mcp-server-build] `references/distribution.md`
 
 ---
 
@@ -37,7 +38,7 @@ Entry point and canonical workflows for MCP SDK v2. Load sub-skills only when ne
 3. **Auth** (*): HTTP/SSE/OAuth security. Load [mcp-auth].
 4. **Interact** (*): Prompts, progress, cancellation. Load [mcp-elicitation].
 5. **Test**: Load [mcp-test] to implement tests.
-6. **Distribute** (*): Package setup / deployment.
+6. **Distribute** (*): Package setup / deployment. See [mcp-server-build] `references/distribution.md`.
 7. **Verify**: Ensure all tests pass.
 
 ### Audit Workflow

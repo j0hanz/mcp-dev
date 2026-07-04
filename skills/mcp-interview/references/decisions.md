@@ -1,6 +1,6 @@
 ---
 description: >-
-  Reference mapping for the 10 core MCP design decisions, safe defaults, trigger conditions, and choices.
+  Reference mapping for the 12 core MCP design decisions, safe defaults, trigger conditions, and choices.
 metadata:
   tags: [decisions, planning, defaults, triggers]
   source: internal
@@ -8,7 +8,7 @@ metadata:
 
 # MCP Decisions & Safe Defaults
 
-This reference contains the 10 core decisions, safe defaults, triggers, and choices for the MCP interview.
+This reference contains the 12 core decisions, safe defaults, triggers, and choices for the MCP interview.
 
 1. **Scope** (Default: `server`): Ask if unclear. Choices: Server | Client
 2. **Transport** (Default: `stdio`): Ask if remote/multi-user/deploy. Choices: stdio | HTTP
@@ -20,3 +20,5 @@ This reference contains the 10 core decisions, safe defaults, triggers, and choi
 8. **Error Strategy** (Default: `Protocol errors only`): Never ask.
 9. **Distribution** (Default: `Local`): Ask if publishing/sharing. Choices: npm | Local
 10. **Testing** (Default: `1 test/tool`): Never ask.
+11. **Session/Resumability** (Default: `Stateless (no session)`): Ask if HTTP + multi-request client state needed. Choices: Stateless | `EventStore`-backed resumable sessions
+12. **Notifications** (Default: `None`): Ask if clients need list-change/data-change push updates. Choices: `subscriptions/listen` stream | None

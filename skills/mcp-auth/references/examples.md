@@ -95,6 +95,32 @@ import { CrossAppAccessProvider } from '@modelcontextprotocol/client';
 new CrossAppAccessProvider({ assertion, clientId, clientSecret });
 ```
 
+### D. Custom `OAuthClientProvider` + Discovery
+
+Write a custom provider when no prebuilt provider fits (e.g. a browser app storing tokens itself). Implement:
+
+```ts
+import type { OAuthClientProvider } from '@modelcontextprotocol/client';
+
+const authProvider: OAuthClientProvider = {
+  redirectUrl: 'https://app.example.com/callback',
+  clientMetadata: {
+    client_name: 'Example App',
+    redirect_uris: ['https://app.example.com/callback'],
+  },
+  tokens: () => readFromSessionStorage('tokens'),
+  saveTokens: (tokens) => writeToSessionStorage('tokens', tokens),
+  clientInformation: () => readFromSessionStorage('client'),
+  saveClientInformation: (info) => writeToSessionStorage('client', info),
+  codeVerifier: () => readFromSessionStorage('pkce_verifier'),
+  saveCodeVerifier: (verifier) => writeToSessionStorage('pkce_verifier', verifier),
+};
+```
+
+The SDK's `auth()` orchestrator drives this provider through PKCE (`saveCodeVerifier` before redirect, verified on token exchange) and discovery: it fetches `.well-known/oauth-protected-resource` (RFC 9728) off the MCP server URL, then follows the returned issuer to `.well-known/oauth-authorization-server` (RFC 8414) via `discoverOAuthServerInfo`.
+
+Registering a new client with the authorization server via Dynamic Client Registration (`registerClient`) is deprecated (SEP-991) — prefer a **Client ID Metadata Document**: host `clientMetadata` at a stable HTTPS URL and pass that URL as `clientId` instead of registering.
+
 ## Error Reference
 
 | Error          | Raised to | Meaning                                                   |

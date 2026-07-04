@@ -48,16 +48,25 @@ server.server.registerCapabilities({
 - `close()` must trigger `onclose` callback.
 - Throw on `send()` failure; use `onerror` for connection drops.
 
-## 5. Gateways & Proxies
+## 5. Direct Invocation & Legacy Routing
 
-- **`invoke()`**: Direct server message invocation, returns HTTP `Response`.
-- **`isLegacyRequest()`**: Routes legacy traffic.
+- **`invoke()`**: Direct server message invocation without a real transport, returns an HTTP `Response`. See [references/examples.md](references/examples.md).
+- **`isLegacyRequest()`**: Detects 2025-era requests so a single endpoint can branch between legacy and modern handling.
+
+## 6. Gateways & Worker Fleets
+
+Probe-once, connect-many pattern for many short-lived clients sharing one upstream connection (`DiscoverResult`), plus raw wire schemas for building proxies. See [references/wire-schemas-and-gateways.md](references/wire-schemas-and-gateways.md).
+
+## Related Skills
+
+- A hand-rolled transport or gateway still needs tests — use [mcp-test]'s in-process harness against it.
+- A gateway/proxy forwarding to an upstream server crosses an auth boundary — verify tokens per [mcp-auth] before forwarding, don't just pass them through.
 
 ## Examples
 
 See details:
 
-- Transports: [references/examples.md](references/examples.md)
+- Transports & direct invocation: [references/examples.md](references/examples.md)
 - Gateways & Schemas: [references/wire-schemas-and-gateways.md](references/wire-schemas-and-gateways.md)
 
 ## Common Mistakes

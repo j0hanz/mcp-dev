@@ -10,6 +10,30 @@ metadata:
 
 ## In-process test harness
 
+### Zero-transport-mocking: `InMemoryTransport.createLinkedPair()`
+
+The SDK's own canonical pattern for testing an `McpServer` directly against a `Client` — no HTTP mocking, no `handler.fetch` shim:
+
+```ts
+import assert from 'node:assert/strict';
+import { Client } from '@modelcontextprotocol/client';
+import { InMemoryTransport } from '@modelcontextprotocol/core';
+
+const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+
+const client = new Client({ name: 'test-harness', version: '1.0.0' });
+await Promise.all([client.connect(clientTransport), server.connect(serverTransport)]);
+
+const result = await client.callTool({ name: 'greet', arguments: { name: 'World' } });
+assert.equal(result.isError, undefined);
+
+await client.close();
+```
+
+Prefer this over mocking `handler.fetch` when you don't need to exercise HTTP-specific behavior (headers, auth middleware, Host/Origin checks) — for those, use the `handler.fetch` harness below.
+
+### HTTP handler harness
+
 ```ts
 import assert from 'node:assert/strict';
 import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';

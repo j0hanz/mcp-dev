@@ -61,7 +61,7 @@ For practical code configurations, see the dedicated [Code Examples](references/
 - [Context API](references/context.md): Context variables (`ctx.mcpReq`, `ctx.http`, etc.).
 - [Errors API](references/errors.md): Tool vs Protocol error channels and handling.
 - [Code Examples](references/examples.md): Practical configurations for tools, resources, and servers.
-- [HTTP Serving](references/serving-http.md): Setup, Host/Origin security, and legacy clients.
+- [HTTP Serving](references/serving-http.md): Setup, Host/Origin security (including bare Cloudflare Workers/Deno/Bun runtimes with no framework), and legacy clients.
 - [Scaling & Notifications](references/scaling.md): Caching, state, Event Bus, and pub/sub.
 - [Distribution](references/distribution.md): Npm publishing and host installation (`mcp.json`).
 - Framework Adapters: [Express](references/framework-express.md) \| [Fastify](references/framework-fastify.md) \| [Hono](references/framework-hono.md) \| [Codemod](references/framework-codemod.md).
@@ -70,5 +70,6 @@ For practical code configurations, see the dedicated [Code Examples](references/
 
 - Using `console.log()` on stdio servers, which corrupts the JSON-RPC wire.
 - Failing to sanitize resource paths, allowing directory traversal.
-- Throwing exceptions in tool handlers instead of returning `{ isError: true }`.
 - Creating heavy DB pool instances inside the per-request HTTP factory.
+
+Note: throwing inside a tool handler is not a mistake — the SDK catches it and converts it to `{ isError: true }` automatically. Return `{ isError: true, content: [...] }` explicitly only when you need to control the error `content`.

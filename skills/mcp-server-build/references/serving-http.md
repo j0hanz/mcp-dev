@@ -45,6 +45,34 @@ new McpServer(
 );
 ```
 
+## Bare Web-Standard Runtimes (Cloudflare Workers / Deno / Bun)
+
+With no framework adapter, `handler.fetch` is the entire server — no app factory runs, so Host/Origin protection is **not** armed automatically. Wire it in yourself:
+
+```ts
+import {
+  createMcpHandler,
+  hostHeaderValidationResponse,
+  originValidationResponse,
+} from '@modelcontextprotocol/server';
+
+const handler = createMcpHandler(factory);
+const allowedHosts = ['api.example.com'];
+const allowedOrigins = ['https://app.example.com'];
+
+export default {
+  async fetch(request: Request): Promise<Response> {
+    return (
+      hostHeaderValidationResponse(request, allowedHosts) ??
+      originValidationResponse(request, allowedOrigins) ??
+      handler.fetch(request)
+    );
+  },
+};
+```
+
+Skipping this on a bare runtime leaves the server open to DNS-rebinding and cross-origin attacks that a framework adapter (Express/Fastify/Hono) would otherwise block by default.
+
 ## Legacy Clients
 
 Serving 2025-era clients:

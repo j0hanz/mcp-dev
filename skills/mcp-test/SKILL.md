@@ -26,9 +26,11 @@ Covers testing and error diagnosis for `2.0.0-beta.2`. Reference: https://ts.sdk
 
 ### 1. Test in-process
 
+- Zero-transport: Pair a `Client` and `McpServer` directly with `InMemoryTransport.createLinkedPair()` — no HTTP/stdio involved.
 - HTTP servers: Call `handler.fetch(request)` directly to bypass real ports.
 - Direct server testing: Use `invoke(server, message, ctx)` from `@modelcontextprotocol/server/invoke`.
 - Stdio servers: Use a child process transport (`StdioClientTransport`).
+- Auth-protected servers: pass a mock `authInfo`/issuer per [mcp-auth]'s mocking guidance, then verify 401/403 via the harness above.
 - See [references/examples.md](references/examples.md#in-process-test-harness) for test harness setup.
 
 ### 2. Manual testing

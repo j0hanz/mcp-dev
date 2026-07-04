@@ -36,4 +36,4 @@ Mid-call communication between server and user, and prompt autocomplete.
 - **Secrets**: NEVER request credentials or keys via forms; redirect to URL.
 - **Cancellation**: ALWAYS check `signal.aborted` in loops and pass `signal` to async/DB calls.
 - **Elicitation**: Return `inputRequired(...)` for modern. Blocking `elicitInput()` throws on 2026-era links.
-- **Deprecated**: Avoid sampling, root requests, and MCP logging (`log`).
+- **Deprecated**: Avoid legacy push-style sampling, root requests, and MCP logging (`log`). Use their stateless replacements instead: `inputRequired.createMessage()` and `inputRequired.listRoots()`.

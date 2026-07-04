@@ -43,6 +43,6 @@ The tool automates the following mechanical refactors:
 
 If a safe refactoring rule cannot be determined, the tool injects an inline error comment:
 
-`/* @mcp-codemod-error WebSocketClientTransport removed in v2. Use StreamableHTTPClientTransport or StdioClientTransport. */`
+`/* @mcp-codemod-error SSEServerTransport moved to @modelcontextprotocol/server-legacy. */`
 
 Find files with warnings: `grep -rn '@mcp-codemod-error' .`

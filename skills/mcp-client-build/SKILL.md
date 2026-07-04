@@ -53,7 +53,9 @@ Eras: legacy (2024/2025) and modern (2026-07-28).
 
 Modern protocol uses `input_required` instead of push-style requests.
 
-- Handled via `flow.retry`. Register handlers (elicitation, sampling, roots) at client construction (see [mcp-elicitation]).
+- Declare capabilities (elicitation, sampling, roots) in the `Client` constructor's `capabilities` option, then register handlers afterward via `client.setRequestHandler('elicitation/create' | 'sampling/createMessage' | 'roots/list', ...)` — declaring `roots` first is mandatory, or `setRequestHandler('roots/list', ...)` throws.
+- Auto-fulfilment is bounded by the `inputRequired: { maxRounds, autoFulfill }` constructor option, not a public `flow.retry` API. See [mcp-elicitation] for handler mechanics.
+- 401 retry (re-running auth) and `input_required` auto-fulfilment are separate mechanisms — if `callTool()` hangs, check which one is stalling (see [mcp-auth] for the auth-retry side).
 
 ## Examples
 

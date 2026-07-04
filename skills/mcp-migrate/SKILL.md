@@ -29,7 +29,7 @@ Resolve all `@mcp-codemod-error` comments manually.
 ### Step 2: Packages & Renames
 
 - See [references/tables.md](references/tables.md) for packages/renames.
-- **Removed**: `SSEServerTransport` & OAuth helpers are in `@modelcontextprotocol/server-legacy`. `WebSocketClientTransport` is removed.
+- **Removed**: `SSEServerTransport` & OAuth helpers are in `@modelcontextprotocol/server-legacy`.
 
 ### Step 3: Deprecations
 

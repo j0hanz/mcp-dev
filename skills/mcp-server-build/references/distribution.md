@@ -37,11 +37,11 @@ npx @modelcontextprotocol/inspector npx -y ./example-mcp-0.1.0.tgz
 
 ## Host registration — copy into the README
 
-| App             | How to connect                                                                                                 |
-| --------------- | -------------------------------------------------------------------------------------------------------------- |
-| **Claude Code** | `claude mcp add example -- npx -y example-mcp`                                                                 |
-| **VS Code**     | Add to `.vscode/mcp.json`: `{ "servers": { "example": { "command": "npx", "args": ["-y", "example-mcp"] } } }` |
-| **Cursor**      | Add to `.cursor/mcp.json`: `{ "servers": { "example": { "command": "npx", "args": ["-y", "example-mcp"] } } }` |
+| App             | How to connect                                                                                                                  |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **Claude Code** | `claude mcp add example -- npx -y example-mcp`                                                                                  |
+| **VS Code**     | Add to `.vscode/mcp.json`: `{ "servers": { "example": { "type": "stdio", "command": "npx", "args": ["-y", "example-mcp"] } } }` |
+| **Cursor**      | Add to `.cursor/mcp.json`: `{ "mcpServers": { "example": { "command": "npx", "args": ["-y", "example-mcp"] } } }`               |
 
 ## HTTP servers
 

@@ -93,6 +93,22 @@ inputSchema: fromJsonSchema<{ name: string }>({
 });
 ```
 
+## Direct invocation & legacy routing
+
+```ts
+import { invoke, isLegacyRequest } from '@modelcontextprotocol/server';
+
+export default {
+  async fetch(request: Request): Promise<Response> {
+    if (isLegacyRequest(request)) {
+      return legacyHandler.fetch(request); // route 2025-era clients separately
+    }
+    const message = await request.json();
+    return invoke(server, message, { authInfo: getAuthInfo(request) }); // no transport needed
+  },
+};
+```
+
 ## Custom transports
 
 ```ts

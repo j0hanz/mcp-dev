@@ -22,7 +22,7 @@ Make and record all MCP design decisions before writing any code.
 **Goal:** Record decisions before coding.
 **Rule:** ONLY make decisions; never code.
 
-`Search -> Ask triggered questions -> Record 10 decisions -> Save docs/mcp-decisions.md`
+`Search -> Ask triggered questions -> Record 12 decisions -> Save docs/mcp-decisions.md`
 
 ### Rules
 
@@ -41,7 +41,7 @@ See [references/decisions.md](references/decisions.md) for the 10 decisions, saf
 1. **Search** project files.
 2. **Check** [decisions.md](references/decisions.md) for triggers.
 3. **Ask** triggered questions one at a time.
-4. **Record** all 10 decisions (`asked` or `default`).
+4. **Record** all 12 decisions (`asked` or `default`).
 5. **Save** to `docs/mcp-decisions.md` (append dated record; never delete old).
 6. **Show** final record.
 7. **Next Step**: Load [mcp-server-build] (server) or [mcp-client-build] (client).
