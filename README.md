@@ -34,20 +34,20 @@ copilot plugin install mcp-dev@mcp-dev
 
 `/mcp` is the single command: with no argument it lists the available jobs; `/mcp <job>` routes to the right skills in the right order.
 
-| Command                               | What it does                                                                      |
-| ------------------------------------- | --------------------------------------------------------------------------------- |
-| `/mcp`                                | List available jobs                                                               |
-| `/mcp plan`                           | Clarify requirements first — produces a Decision Record (`docs/mcp-decisions.md`) |
-| `/mcp new server` / `/mcp new client` | Build end to end: interview → scaffold → auth → test → ship                       |
-| `/mcp audit`                          | Read-only production-readiness audit of existing MCP code                         |
-| `/mcp migrate`                        | Upgrade SDK v1 code to v2                                                         |
-| `/mcp auth`                           | OAuth, bearer-token, or machine-to-machine auth                                   |
-| `/mcp test`                           | Debug connection failures, `ProtocolError`/`SdkError` codes, inspector sessions   |
-| `/mcp elicit`                         | Add progress reporting, cancellation, or mid-call user input                      |
-| `/mcp protocol`                       | Drop below `McpServer` for custom transports or raw protocol messages             |
-| `/mcp publish`                        | Package a server and register it with npm                                         |
+| Command                               | What it does                                                                     |
+| ------------------------------------- | -------------------------------------------------------------------------------- |
+| `/mcp`                                | List available jobs                                                              |
+| `/mcp plan`                           | Clarify requirements first: produces a Decision Record (`docs/mcp-decisions.md`) |
+| `/mcp new server` / `/mcp new client` | Build end to end: interview → scaffold → auth → test → ship                      |
+| `/mcp audit`                          | Read-only production-readiness audit of existing MCP code                        |
+| `/mcp migrate`                        | Upgrade SDK v1 code to v2                                                        |
+| `/mcp auth`                           | OAuth, bearer-token, or machine-to-machine auth                                  |
+| `/mcp test`                           | Debug connection failures, `ProtocolError`/`SdkError` codes, inspector sessions  |
+| `/mcp elicit`                         | Add progress reporting, cancellation, or mid-call user input                     |
+| `/mcp protocol`                       | Drop below `McpServer` for custom transports or raw protocol messages            |
+| `/mcp publish`                        | Package a server and register it with npm                                        |
 
-Knowledge skills load automatically when the work touches their territory — no command needed:
+Knowledge skills load automatically when the work touches their territory, without a command:
 
 `mcp-planning`, `mcp-server`, `mcp-client`, `mcp-auth`, `mcp-elicitation`, `mcp-test`, `mcp-protocol`, `mcp-migrate`
 
@@ -55,7 +55,7 @@ A SessionStart hook (`hooks/session-start.js`) injects the `/mcp` routing table 
 
 ## Agents
 
-Three subagents handle work that's autonomous or context-heavy rather than a single command. Claude Code and Copilot CLI dispatch them automatically when a task matches their description — no `/mcp` invocation needed.
+Three subagents handle work that's autonomous or context-heavy rather than a single command. Claude Code and Copilot CLI dispatch them automatically when a task matches their description. No `/mcp` invocation needed.
 
 | Agent          | Handles                                                                 | Tools                                      |
 | -------------- | ----------------------------------------------------------------------- | ------------------------------------------ |
@@ -67,11 +67,11 @@ Defined under `agents/*.md`; each loads the matching `mcp-*` skill for its check
 
 ## Contributing
 
-Issues and PRs are welcome at [j0hanz/mcp-dev](https://github.com/j0hanz/mcp-dev). Skills live under `skills/*/SKILL.md`, agents under `agents/*.md` — see [Maintenance](#maintenance) for what to keep in sync when the SDK version changes.
+Issues and PRs are welcome at [j0hanz/mcp-dev](https://github.com/j0hanz/mcp-dev). Skills live under `skills/*/SKILL.md`, agents under `agents/*.md`. See [Maintenance](#maintenance) for what to keep in sync when the SDK version changes.
 
 ## Maintenance
 
-The SDK version (`2.0.0-beta.2`) is targeted by the six SDK-facing skills — `mcp-server`, `mcp-client`, `mcp-auth`, `mcp-test`, `mcp-migrate`, `mcp-protocol`. It is explicitly pinned in `mcp-client`, `mcp-test`, and `mcp-server`'s distribution references. When bumping it, update these occurrences accordingly.
+The SDK version (`2.0.0-beta.2`) is targeted by the six SDK-facing skills: `mcp-server`, `mcp-client`, `mcp-auth`, `mcp-test`, `mcp-migrate`, `mcp-protocol`. It is explicitly pinned in `mcp-client`, `mcp-test`, and `mcp-server`'s distribution references. When bumping it, update these occurrences accordingly.
 
 ## License
 
