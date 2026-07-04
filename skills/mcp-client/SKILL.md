@@ -33,6 +33,8 @@ To consider a client implementation complete, you must verify:
 - [ ] Handshakes utilize the correct negotiation mode (`'auto'` or `'legacy'`). Avoid `'auto'` negotiation on spawn-per-invocation CLI tools to prevent legacy stalls.
 - [ ] Client declares capacities (elicitation, sampling, roots) in the constructor option BEFORE registering handler endpoints.
 - [ ] Execution success blocks check `result.isError` directly instead of catching exceptions on standard tool responses.
+- [ ] Sessions are terminated gracefully: `await transport.terminateSession()` and `await client.close()` run on shutdown/error paths, leaving no dangling connections.
+- [ ] Multi-user response cache stores set `cachePartition` so `'private'` cache entries never cross user/tenant boundaries.
 
 ## Reference Guides
 

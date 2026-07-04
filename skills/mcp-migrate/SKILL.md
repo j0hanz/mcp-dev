@@ -11,11 +11,11 @@ metadata:
 
 Upgrades from `@modelcontextprotocol/sdk` v1 to split v2 packages on Node ≥ 20. Official docs: https://ts.sdk.modelcontextprotocol.io/v2/
 
-Flow: `codemod` ➔ `errors` ➔ `renames` ➔ `removed` ➔ `deprecations` ➔ `manual` ➔ `verify`
+Flow: `scope` ➔ `codemod` ➔ `errors` ➔ `packages` ➔ `deprecations` ➔ `mcpserver` ➔ `tsconfig` ➔ `verify`
 
 ## Steps
 
-1. **Verify**: Ensure the codebase actually contains `@modelcontextprotocol` dependencies or legacy v1 imports.
+1. **Confirm Scope**: Ensure the codebase actually contains `@modelcontextprotocol` dependencies or legacy v1 imports.
 2. **Execute Codemod**: Run the official migrator codemod tool at the package root:
    ```sh
    npx @modelcontextprotocol/codemod@beta v1-to-v2 .

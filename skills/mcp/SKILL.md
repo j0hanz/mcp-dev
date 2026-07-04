@@ -17,7 +17,7 @@ metadata:
 ## Sub-Skills
 
 - **`/mcp plan`**: Runs planning workflows (requires [mcp-planning]).
-- **`/mcp build`**: Invokes server scaffolding or client setup workflows.
+- **`/mcp build`**: Invokes [mcp-server] scaffolding or [mcp-client] setup workflows.
 - **`/mcp audit`**: Dispatches the `mcp-auditor` agent to perform a read-only codebase readiness review.
 - **`/mcp migrate`**: Dispatches the `mcp-migrator` agent to convert MCP SDK v1 to v2.
 - **`/mcp auth`**: Routes to [mcp-auth] for authentication mechanisms.

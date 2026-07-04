@@ -32,6 +32,7 @@ To consider advanced implementation complete, you must verify:
 - [ ] Custom transport classes implement the standard life stages properly, triggering `onclose` on termination.
 - [ ] Hand-rolled custom connection transport objects NEVER invoke `.start()` manually; transport startup is delegated to `.connect()`.
 - [ ] Intercept gateways are backed by rigorous error controls to prevent uncaught network failures from interrupting long-lived streams.
+- [ ] Multi-client gateways route legacy vs modern handshakes via `isLegacyRequest()` instead of assuming a single protocol era.
 
 ## Reference Guides
 

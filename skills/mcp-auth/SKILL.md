@@ -35,6 +35,7 @@ To consider authentication implementation complete, you must verify:
 - [ ] Tool business failures due to failed authorization return `{ isError: true }` and reject tool calls without throwing transport exceptions.
 - [ ] Tool callbacks read tenant/user permissions via `ctx.http?.authInfo` instead of factory `ctx.authInfo`.
 - [ ] No raw HTTP headers are processed directly inside individual tool callback handlers.
+- [ ] Token revocation (where the IdP supports it) is handled via `revocationHandler()` rather than left unimplemented.
 
 ## Examples & References
 

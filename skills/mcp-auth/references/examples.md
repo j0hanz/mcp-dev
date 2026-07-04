@@ -121,6 +121,21 @@ The SDK's `auth()` orchestrator drives this provider through PKCE (`saveCodeVeri
 
 Registering a new client with the authorization server via Dynamic Client Registration (`registerClient`) is deprecated (SEP-991) — prefer a **Client ID Metadata Document**: host `clientMetadata` at a stable HTTPS URL and pass that URL as `clientId` instead of registering.
 
+## Token Revocation
+
+If the IdP supports revocation, expose it so a compromised or expired token can be invalidated immediately instead of waiting for TTL expiry:
+
+```ts
+import { revocationHandler } from '@modelcontextprotocol/express';
+
+app.post(
+  '/revoke',
+  revocationHandler({
+    verifier: { revokeToken: async (token) => idp.revoke(token) },
+  }),
+);
+```
+
 ## Error Reference
 
 | Error          | Raised to | Meaning                                                   |

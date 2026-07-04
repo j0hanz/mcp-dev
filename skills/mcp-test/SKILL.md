@@ -11,7 +11,7 @@ metadata:
 
 Covers testing and error diagnosis for `2.0.0-beta.2`. Reference: https://ts.sdk.modelcontextprotocol.io/v2/
 
-`in-process tests -> manual probe (inspector | curl) -> match error channel -> look up code`
+`in-process tests -> mock security -> manual probe (inspector | curl) -> match error channel & look up code`
 
 ## When to Use
 

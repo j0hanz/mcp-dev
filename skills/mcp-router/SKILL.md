@@ -65,13 +65,19 @@ To consider a router workflow phase complete, you must verify the corresponding 
 
 #### For Build Workflows:
 
-- [ ] Requirements and architectural designs are completed and stored inside `docs/mcp-decisions.md`.
-- [ ] The scaffolded codebase uses modern split v2 SDK dependencies under an ESM-only environment.
-- [ ] Mid-round elicitation, authentication, and custom transports are fully implemented and free of synchronous logs logic.
-- [ ] Unit or integration tests compile and run to completion successfully.
+- [ ] **Clarify**: Requirements and architectural decisions are recorded in `docs/mcp-decisions.md`.
+- [ ] **Scaffold**: The codebase uses modern split v2 SDK dependencies under an ESM-only environment.
+- [ ] **Auth/Interact** (*): HTTP/OAuth security and mid-round elicitation, progress, or cancellation are implemented where applicable.
+- [ ] **Test**: Unit or integration tests compile and run to completion successfully.
+- [ ] **Distribute** (*): Package setup / deployment is complete where applicable.
+- [ ] **Verify**: All prior phase checks above pass before the workflow is considered done.
 
 #### For Audit Workflows:
 
-- [ ] The codebase has been fully scanned for references to older `@modelcontextprotocol/sdk` imports.
-- [ ] Multi-tenant server routing, authorization extraction, and event registrations are evaluated and validated.
-- [ ] A final structured findings summary listing Blockers, Should Fix, and Nice to Have points is compiled and presented in the correct structure: `- [file:line] | [Issue details] | [Skill to fix]`.
+- [ ] **Locate/Version**: The codebase has been fully scanned for `@modelcontextprotocol/sdk` v1 imports; any v1 usage is flagged as a Blocker.
+- [ ] **Design**: Server/client structure is evaluated against [mcp-server]/[mcp-client] conventions.
+- [ ] **Security** (*): HTTP auth routing and authorization extraction are evaluated where applicable.
+- [ ] **Interact** (*): Prompts, progress, and cancellation handling are evaluated where applicable.
+- [ ] **Tests**: Test coverage is evaluated against [mcp-test] conventions.
+- [ ] **Intent**: Findings are validated against `docs/mcp-decisions.md`.
+- [ ] **Report**: A final structured findings summary listing Blockers, Should Fix, and Nice to Have points is compiled and presented in the correct structure: `- [file:line] | [Issue details] | [Skill to fix]`.

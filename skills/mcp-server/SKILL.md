@@ -11,7 +11,7 @@ metadata:
 
 Covers `@modelcontextprotocol/server` SDK v2 (protocol revision `2026-07-28`) on Node.js ≥ 20. Official reference: https://ts.sdk.modelcontextprotocol.io/v2/
 
-Flow: `McpServer` ➔ register (tools/resources/prompts) ➔ serve (stdio/HTTP) ➔ test ➔ distribute
+Flow: `ESM config` ➔ `McpServer` init ➔ register (tools/resources/prompts) ➔ sanitize paths ➔ transport (stdio/HTTP) — then [mcp-test], then distribute
 
 ## When to Use
 
