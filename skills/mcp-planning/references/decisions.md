@@ -22,5 +22,5 @@ This reference contains the 12 core decisions, safe defaults, triggers, and choi
 10. **Testing** (Default: `1 test/tool`): Never ask.
 11. **Session/Resumability** (Default: `Stateless (no session)`): Ask if HTTP + multi-request client state needed. Choices: Stateless | `EventStore`-backed resumable sessions (on 2026-07-28 era, state is per-request via `requestState`, not session-based)
 12. **Notifications** (Default: `None`): Ask if clients need list-change/data-change push updates. Choices: `subscriptions/listen` stream | None
-13. **Era / protocol revision** (Default: `legacy: 'stateless'`): Ask only if 2026-only is required. Choices: Both eras (`legacy: 'stateless'`) | 2026-07-28 only (`legacy: 'reject'`) | legacy-only. Sources: `Supporting protocol revision 2026-07-28.md`, `Support legacy clients.md`
+13. **Era / protocol revision** (Default: `legacy: 'stateless'`): Ask only if 2026-only is required. Choices: Both eras (`legacy: 'stateless'`) | 2026-07-28 only (`legacy: 'reject'`) | legacy-only.
 14. **Runtime** (Default: Node ≥ 20, ESM-first): Never ask. v2 is ESM-first but ships CJS too. Choices: Node ≥20 (fixed)
