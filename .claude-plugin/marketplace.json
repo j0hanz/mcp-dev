@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
-  "name": "mcp-dev",
+  "name": "mcp-hub",
   "description": "MCP development skills for TypeScript SDK v2",
   "owner": {
     "name": "j0hanz",
@@ -8,7 +8,7 @@
   },
   "plugins": [
     {
-      "name": "mcp-dev",
+      "name": "mcp-hub",
       "description": "MCP development skills for building, testing, auditing, distributing, and migrating MCP servers and clients with the TypeScript SDK v2.",
       "source": "./",
       "version": "1.3.0",
@@ -16,8 +16,8 @@
         "name": "j0hanz",
         "email": "l.johansson93@outlook.com"
       },
-      "homepage": "https://github.com/j0hanz/mcp-dev",
-      "repository": "https://github.com/j0hanz/mcp-dev",
+      "homepage": "https://github.com/j0hanz/mcp-hub",
+      "repository": "https://github.com/j0hanz/mcp-hub",
       "keywords": [
         "mcp",
         "model-context-protocol",

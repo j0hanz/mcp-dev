@@ -1,8 +1,8 @@
-# MCP Dev Plugin
+# MCP Hub Plugin
 
 <!-- docs-maintainer:START -->
 
-![Claude](https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=fff&style=for-the-badge) ![GitHub Copilot](https://img.shields.io/badge/GitHub_Copilot-000000?logo=githubcopilot&logoColor=fff&style=for-the-badge) ![Version](https://img.shields.io/github/v/tag/j0hanz/mcp-dev?label=version&style=for-the-badge) ![License](https://img.shields.io/github/license/j0hanz/mcp-dev?style=for-the-badge)
+![Claude](https://img.shields.io/badge/Claude-D97757?logo=claude&logoColor=fff&style=for-the-badge) ![GitHub Copilot](https://img.shields.io/badge/GitHub_Copilot-000000?logo=githubcopilot&logoColor=fff&style=for-the-badge) ![Version](https://img.shields.io/github/v/tag/j0hanz/mcp-hub?label=version&style=for-the-badge) ![License](https://img.shields.io/github/license/j0hanz/mcp-hub?style=for-the-badge)
 <!-- docs-maintainer:END -->
 
 A plugin for [Claude Code](https://claude.com/claude-code) and [GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli): skills and agents for building, testing, auditing, distributing, and migrating MCP servers and clients with the [MCP TypeScript SDK v2](https://ts.sdk.modelcontextprotocol.io/v2/) (`2.0.0-beta.2`, protocol revision `2026-07-28`).
@@ -12,22 +12,22 @@ A plugin for [Claude Code](https://claude.com/claude-code) and [GitHub Copilot C
 ### Claude Code
 
 ```bash
-/plugin marketplace add j0hanz/mcp-dev
-/plugin install mcp-dev@mcp-dev
+/plugin marketplace add j0hanz/mcp-hub
+/plugin install mcp-hub@mcp-hub
 ```
 
 ### GitHub Copilot CLI
 
 ```bash
-/plugin marketplace add j0hanz/mcp-dev
-/plugin install mcp-dev@mcp-dev
+/plugin marketplace add j0hanz/mcp-hub
+/plugin install mcp-hub@mcp-hub
 ```
 
 Or from a terminal:
 
 ```bash
-copilot plugin marketplace add j0hanz/mcp-dev
-copilot plugin install mcp-dev@mcp-dev
+copilot plugin marketplace add j0hanz/mcp-hub
+copilot plugin install mcp-hub@mcp-hub
 ```
 
 ## Usage
@@ -67,7 +67,7 @@ Defined under `agents/*.md`; each loads the matching `mcp-*` skill for its check
 
 ## Contributing
 
-Issues and PRs are welcome at [j0hanz/mcp-dev](https://github.com/j0hanz/mcp-dev). Skills live under `skills/*/SKILL.md`, agents under `agents/*.md`. See [Maintenance](#maintenance) for what to keep in sync when the SDK version changes.
+Issues and PRs are welcome at [j0hanz/mcp-hub](https://github.com/j0hanz/mcp-hub). Skills live under `skills/*/SKILL.md`, agents under `agents/*.md`. See [Maintenance](#maintenance) for what to keep in sync when the SDK version changes.
 
 ## Maintenance
 

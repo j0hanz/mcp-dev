@@ -1,4 +1,4 @@
-# Contributing to `mcp-dev`
+# Contributing to `mcp-hub`
 
 We welcome issues and pull requests to improve these MCP development skills.
 

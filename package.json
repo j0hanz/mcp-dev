@@ -1,5 +1,5 @@
 {
-  "name": "mcp-dev",
+  "name": "mcp-hub",
   "version": "1.3.0",
   "description": "MCP development skills for TypeScript SDK v2",
   "author": {
@@ -7,8 +7,8 @@
     "email": "l.johansson93@outlook.com"
   },
   "license": "MIT",
-  "homepage": "https://github.com/j0hanz/mcp-dev",
-  "repository": "https://github.com/j0hanz/mcp-dev",
+  "homepage": "https://github.com/j0hanz/mcp-hub",
+  "repository": "https://github.com/j0hanz/mcp-hub",
   "keywords": [
     "mcp",
     "model-context-protocol",

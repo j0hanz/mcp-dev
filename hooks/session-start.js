@@ -3,12 +3,12 @@ const path = require('path');
 
 const skillPath = path.join(__dirname, '..', 'skills', 'mcp-router', 'SKILL.md');
 
-console.log('<mcp-dev-router>');
+console.log('<mcp-hub-router>');
 console.log(
   'Scope: MCP (Model Context Protocol) TypeScript SDK work ONLY — ignore for everything else.',
 );
 console.log(
-  "Skill names below invoke via the Skill tool as 'mcp-dev:<name>' (e.g. /mcp-test -> mcp-dev:mcp-test).\n",
+  "Skill names below invoke via the Skill tool as 'mcp-hub:<name>' (e.g. /mcp-test -> mcp-hub:mcp-test).\n",
 );
 
 try {
@@ -26,4 +26,4 @@ try {
   console.error(`Error reading mcp router skill: ${err.message}`);
 }
 
-console.log('\n</mcp-dev-router>');
+console.log('\n</mcp-hub-router>');
