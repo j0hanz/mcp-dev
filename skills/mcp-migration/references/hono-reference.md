@@ -14,6 +14,8 @@ The `@modelcontextprotocol/hono` package provides an adapter for Hono, suitable 
 
 Install dependencies: `npm install @modelcontextprotocol/server @modelcontextprotocol/hono hono`
 
+> Node.js runner variant additionally requires `@hono/node-server`.
+
 ## Security Options
 
 Hono app factories enable Host/Origin verification by default on localhost to prevent DNS-rebinding and CSRF attacks.

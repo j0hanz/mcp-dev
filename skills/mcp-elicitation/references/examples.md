@@ -33,7 +33,7 @@ server.registerTool('deploy', { env: z.string() }, async ({ env }, ctx) => {
 ## Legacy Elicitation (Deprecated)
 
 > [!WARNING]
-> Blocking `elicitInput()` throws on 2026-era connections. Use only for legacy clients with `inputRequired.legacyShim` enabled.
+> Blocking `elicitInput()` throws on 2026-era connections. Use only on 2025-era connections; on 2026-era `elicitInput()` throws regardless of the shim. The `legacyShim` is unrelated — it serves `inputRequired(...)` returns to 2025-era clients by pushing real `elicitation/create` requests.
 
 ```ts
 const result = await ctx.mcpReq.elicitInput({
@@ -82,6 +82,8 @@ client.setRequestHandler('elicitation/create', async (req) => {
 });
 ```
 
+> Client-side `inputRequired.maxRounds` defaults to 10; the server-side `ServerOptions.inputRequired.maxRounds` defaults to **8** (tighter — the shim holds a live wire request open).
+
 ## Cross-round State (requestState)
 
 ```ts
@@ -111,6 +113,8 @@ server.registerPrompt(
       lang: completable(z.string(), (val) => ['ts', 'js', 'py'].filter((l) => l.startsWith(val))),
     }),
   },
-  ({ lang }) => ({}),
+  ({ lang }) => ({
+    messages: [{ role: 'user', content: { type: 'text', text: `Review ${lang}` } }],
+  }),
 );
 ```

@@ -19,26 +19,31 @@ metadata:
 | `@modelcontextprotocol/node`    | Node HTTP adapter: `toNodeHandler` & stream transport          |
 | `@modelcontextprotocol/codemod` | Migration CLI utility                                          |
 
+> `@modelcontextprotocol/core-internal` — private, never import directly.
+
 ### Adapters & Legacy
 
-| Package                               | Purpose                                      |
-| :------------------------------------ | :------------------------------------------- |
-| `@modelcontextprotocol/express`       | Express adapter and Bearer auth              |
-| `@modelcontextprotocol/hono`          | Hono adapter                                 |
-| `@modelcontextprotocol/fastify`       | Fastify adapter                              |
-| `@modelcontextprotocol/server-legacy` | Legacy v1 SSE transport and OAuth AS helpers |
+| Package                               | Purpose                                                                                            |
+| :------------------------------------ | :------------------------------------------------------------------------------------------------- |
+| `@modelcontextprotocol/express`       | Express adapter and Bearer auth                                                                    |
+| `@modelcontextprotocol/hono`          | Hono adapter                                                                                       |
+| `@modelcontextprotocol/fastify`       | Fastify adapter                                                                                    |
+| `@modelcontextprotocol/server-legacy` | Legacy v1 SSE transport and OAuth AS helpers — SSE at `/sse`, AS auth helpers at `/auth` subpaths. |
 
 ## Key Renames
 
 ### API & Type Renames
 
-| v1                                                     | v2                                                        |
-| :----------------------------------------------------- | :-------------------------------------------------------- |
-| `server.setRequestHandler(CallToolRequestSchema, ...)` | `server.registerTool(...)` (on high-level `McpServer`)    |
-| `McpError` / `ErrorCode`                               | `ProtocolError` / `ProtocolErrorCode` (or `SdkErrorCode`) |
-| `StreamableHTTPError`                                  | `SdkHttpError`                                            |
-| `SchemaInput<T>`                                       | `StandardSchemaWithJSON.InferInput<T>`                    |
-| `ResourceTemplate` wire type                           | `ResourceTemplateType`                                    |
+| v1                                                     | v2                                                                       |
+| :----------------------------------------------------- | :----------------------------------------------------------------------- |
+| `server.setRequestHandler(CallToolRequestSchema, ...)` | `server.setRequestHandler('tools/call', ...)` (low-level, method string) |
+| `.tool(...)` (variadic high-level)                     | `.registerTool(name, config, handler)` (high-level)                      |
+| `McpError` / `ErrorCode`                               | `ProtocolError` / `ProtocolErrorCode` (or `SdkErrorCode`)                |
+
+> Low-level `setRequestHandler(Schema)` becomes `setRequestHandler('method/string')`; high-level `.tool()` becomes `.registerTool()`. Don't conflate them.
+> | `StreamableHTTPError` | `SdkHttpError` |
+> | `SchemaInput<T>` | `StandardSchemaWithJSON.InferInput<T>` |
+> | `ResourceTemplate` wire type | `ResourceTemplateType` |
 
 ### Context & Property Renames
 
@@ -48,6 +53,8 @@ metadata:
 | `extra.signal` / `requestId` / `_meta`      | `ctx.mcpReq.signal` / `id` / `_meta`             |
 | `extra.sendRequest` / `sendNotification`    | `ctx.mcpReq.send` / `notify`                     |
 | `extra.authInfo` / `requestInfo`            | `ctx.http?.authInfo` / `req` (stdio = undefined) |
+| `extra.sessionId`                           | `ctx.sessionId`                                  |
+| `extra.closeSSEStream`                      | `ctx.http?.closeSSE`                             |
 | `server.sendLoggingMessage` / `elicitInput` | `ctx.mcpReq.log` / `elicitInput`                 |
 | `StreamableHTTPServerTransport`             | `Node/WebStandardStreamableHTTPServerTransport`  |
 

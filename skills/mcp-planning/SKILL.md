@@ -77,9 +77,9 @@ To consider the interview phase complete, you must verify:
 
 ### Anti-Rationalization Table
 
-| Rationalization / Excuse                                                       | Red Flag / Reality                                                                     |
-| :----------------------------------------------------------------------------- | :------------------------------------------------------------------------------------- |
-| "The user is in a hurry, so I'll ask all questions at once."                   | **Violates One-by-One.** You must ask exactly one question at a time.                  |
-| "I'll suggest three options to give the user more choices."                    | **Violates Two Choices.** You must offer exactly two options, or use the Safe Default. |
-| "I will write some boilerplate code to help them visualize."                   | **Violates ONLY make decisions.** Never write any code during the interview.           |
-| "There is no need to search project files first for `@modelcontextprotocol/`." | **Violates Search First.** You must always perform the initial search.                 |
+| Rationalization / Excuse                                                       | Red Flag / Reality                                                                                                                                                                                   |
+| :----------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "The user is in a hurry, so I'll ask all questions at once."                   | **Violates One-by-One.** You must ask exactly one question at a time.                                                                                                                                |
+| "I'll suggest three options to give the user more choices."                    | **Violates Two Choices.** You must offer exactly two options, or use the Safe Default.                                                                                                               |
+| "I will write some boilerplate code to help them visualize."                   | **Violates ONLY make decisions.** Never write any code during the interview.                                                                                                                         |
+| "There is no need to search project files first for `@modelcontextprotocol/`." | **Violates Search First.** You must always perform the initial search. (v2 splits into `@modelcontextprotocol/{server,client,core,…}` — a migrated codebase yields multiple scoped imports, not one) |

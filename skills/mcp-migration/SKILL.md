@@ -13,6 +13,8 @@ Upgrades from `@modelcontextprotocol/sdk` v1 to split v2 packages on Node ≥ 20
 
 Flow: `scope` ➔ `codemod` ➔ `errors` ➔ `packages` ➔ `deprecations` ➔ `mcpserver` ➔ `tsconfig` ➔ `verify`
 
+> For 2026-07-28 era adoption after migration, see `references/tables.md` → 'Adopting the 2026-07-28 Era'.
+
 ## Steps
 
 1. **Confirm Scope**: Ensure the codebase actually contains `@modelcontextprotocol` dependencies or legacy v1 imports.
@@ -21,13 +23,13 @@ Flow: `scope` ➔ `codemod` ➔ `errors` ➔ `packages` ➔ `deprecations` ➔ `
    npx @modelcontextprotocol/codemod@beta v1-to-v2 .
    ```
 3. **Resolve Flags**: Run `grep -rn '@mcp-codemod-error' .` and manually resolve all flagged inline comments in the code.
-4. **Update Packages**: Convert deprecated `@modelcontextprotocol/sdk` dependencies to appropriate v2 packages from [references/tables.md](references/tables.md). Load `@modelcontextprotocol/server-legacy` if using `SSEServerTransport`.
+4. **Update Packages**: Convert deprecated `@modelcontextprotocol/sdk` dependencies to appropriate v2 packages from [references/tables.md](references/tables.md). Load `@modelcontextprotocol/server-legacy/sse` (subpath) if using `SSEServerTransport`.
 5. **Modernize State & Flow**:
-   - Change `elicitInput` calls to stateless returning JSON-RPC `input_required` template definitions.
+   - Change `elicitInput` calls to stateless `inputRequired(...)` returns (import `inputRequired` from `@modelcontextprotocol/server`).
    - Employ `requestState` context properties for multi-round communication.
    - Replace legacy `list_changed` events with modern `subscriptions/listen` streams.
-6. **Adopt McpServer**: Change low-level `Server` implementations to modern `McpServer` where appropriate to automate capability registration, and transition to direct Zod schemas.
-7. **Transition TS Config**: Configure `tsconfig.json` modules to `"NodeNext"`, `"moduleResolution": "NodeNext"` and set `"type": "module"` in `package.json`.
+6. **Adopt McpServer**: Change low-level `Server` implementations to modern `McpServer` where appropriate to automate capability registration, and transition to Standard Schema objects (e.g. `z.object(...)` from zod ≥4.2.0; ArkType as-is; Valibot via `@valibot/to-json-schema`).
+7. **Transition TS Config**: Configure `tsconfig.json` modules to `"NodeNext"`, `"moduleResolution": "NodeNext"` and set `"type": "module"` in `package.json` for ESM (recommended). v2 is ESM-first but ships a CommonJS build too, so CommonJS projects can `require('@modelcontextprotocol/…')` directly — no dynamic `import()` shim required.
 8. **Verify with Tests**: Validate code functionality using [mcp-test] integration and unit assertions.
 
 ## Completion Criteria

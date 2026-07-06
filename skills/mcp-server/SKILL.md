@@ -29,10 +29,10 @@ See [Quickstart Examples](references/examples.md#quick-start) for complete setup
 
 ```ts
 const server = new McpServer({ name: 'app', version: '1.0.0' });
-server.registerTool('hello', { name: z.string() }, async ({ name }) => ({
+server.registerTool('hello', { inputSchema: z.object({ name: z.string() }) }, async ({ name }) => ({
   content: [{ type: 'text', text: `Hi ${name}` }],
 }));
-await serveStdio(() => server);
+serveStdio(() => server);
 ```
 
 ## Steps
@@ -40,11 +40,13 @@ await serveStdio(() => server);
 1. **Configure ESM**: Standardize project files to ESM-only (`"type": "module"` in `package.json`, `"NodeNext"` resolutions in `tsconfig.json`).
 2. **Initialize Server**: Instantiate `McpServer` with a suitable identifier.
 3. **Register Capabilities**:
-   - Register tools using `.registerTool()` passing a strict validation Zod schema.
+   - Register tools using `.registerTool()` passing a Standard Schema input schema (Zod, ArkType, Valibot, or raw JSON Schema — see `references/examples.md`).
    - Register dynamic templates using `.registerResource()` mapping dynamic parameters.
    - Register prompt layouts using `.registerPrompt()`.
 4. **Sanitize Access Paths**: Resolve and ensure resource paths using `realpath`, validating boundaries to protect against directory traversal.
 5. **Establish Transport**: Bind server dependencies to standard channels (`serveStdio` or HTTP interfaces per-request factories).
+
+> `inputSchema`/`outputSchema`/`argsSchema` accept any **Standard Schema** (Zod v4, ArkType, Valibot via `@modelcontextprotocol/server`, raw JSON Schema via `fromJsonSchema`). For gateway/proxy and custom (vendor-prefixed) JSON-RPC methods, see the `mcp.protocol` skill.
 
 ## Completion Criteria
 

@@ -22,7 +22,7 @@ Modern 2026-era connections use stateless, multi-round return patterns rather th
 Instead of blocking mid-call, the handler returns `inputRequired(...)` and the client re-runs the entire call from the top once the user answers.
 
 - **Check Responses First**: Check `ctx.mcpReq.inputResponses` before prompting. The handler re-runs from scratch, so answered fields must not be re-requested.
-- **Request Formats**: Build requests with `inputRequired.elicit()` (form fields), `inputRequired.elicitUrl()` (URL redirection), `inputRequired.createMessage()` (stateless replacement for legacy sampling — ask the client's model to complete a prompt), or `inputRequired.listRoots()` (stateless replacement for legacy roots — ask the client for its workspace paths).
+- **Request Formats**: Build requests with `inputRequired.elicit()` (form fields), `inputRequired.elicitUrl()` (URL redirection), `inputRequired.createMessage()` (deprecated embedded form of sampling per SEP-2577 — ask the client's model to complete a prompt) and `inputRequired.listRoots()` (deprecated embedded form of roots — ask the client for its workspace paths). Prefer `inputRequired.elicit()` / `elicitUrl()` for new code.
 - **Read Answers**: Read using `acceptedContent(ctx.mcpReq.inputResponses, key, schema)`, which returns `undefined` if missing, declined, or cancelled.
 - **Check Refusals**: Use `inputResponse(ctx.mcpReq.inputResponses, key)` to inspect action states (`accept`, `decline`, `cancel`) and prevent infinite prompting loops.
 

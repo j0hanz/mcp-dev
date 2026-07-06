@@ -96,18 +96,19 @@ inputSchema: fromJsonSchema<{ name: string }>({
 ## Direct invocation & legacy routing
 
 ```ts
-import { invoke, isLegacyRequest } from '@modelcontextprotocol/server';
+import { isLegacyRequest } from '@modelcontextprotocol/server';
 
 export default {
   async fetch(request: Request): Promise<Response> {
-    if (isLegacyRequest(request)) {
+    if (await isLegacyRequest(request)) {
       return legacyHandler.fetch(request); // route 2025-era clients separately
     }
-    const message = await request.json();
-    return invoke(server, message, { authInfo: getAuthInfo(request) }); // no transport needed
+    return handler.fetch(request, { authInfo: getAuthInfo(request) }); // modern handler dispatch
   },
 };
 ```
+
+> `isLegacyRequest()` returns a Promise — always `await` it. There is no `invoke()` export in `@modelcontextprotocol/server`; dispatch via the handler's `fetch`.
 
 ## Custom transports
 

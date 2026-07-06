@@ -20,7 +20,7 @@ Entry point and canonical workflows for MCP SDK v2. Load sub-skills only when ne
 - **Auth**: [mcp-auth]
 - **Interaction**: [mcp-elicitation]
 - **Protocol**: [mcp-protocol]
-- **Migrate**: `mcp-migrator` agent (codemods)
+- **Migrate**: `mcp-migrator` agent (runs codemods) — for reference material load [mcp-migration]
 - **Test/Debug**: `mcp-debugger` agent or [mcp-test]
 - **Audit**: `mcp-auditor` agent (read-only)
 - **Publish**: [mcp-server] `references/distribution.md`
@@ -35,9 +35,9 @@ Entry point and canonical workflows for MCP SDK v2. Load sub-skills only when ne
 [Clarify] ---> [Scaffold] ---> [Auth]* ---> [Interact]* ---> [Test] ---> [Distribute]* ---> [Verify]
 ```
 
-1. **Clarify**: Run [mcp-planning] -> output `docs/mcp-decisions.md`.
+1. **Clarify**: Run [mcp-planning] -> output `docs/mcp-decisions.md` (includes era/protocol-revision posture — 2026-07-28 modern vs. legacy support).
 2. **Scaffold**: Load [mcp-server] or [mcp-client] to scaffold.
-3. **Auth** (*): HTTP/SSE/OAuth security. Load [mcp-auth].
+3. **Auth** (*): HTTP/OAuth (Streamable HTTP) security. Load [mcp-auth].
 4. **Interact** (*): Prompts, progress, cancellation. Load [mcp-elicitation].
 5. **Test**: Load [mcp-test] to implement tests.
 6. **Distribute** (*): Package setup / deployment. See [mcp-server] `references/distribution.md`.
@@ -49,11 +49,12 @@ Entry point and canonical workflows for MCP SDK v2. Load sub-skills only when ne
 [Locate] ---> [Version] ---> [Design] ---> [Security]* ---> [Interact]* ---> [Tests] ---> [Intent] ---> [Report]
 ```
 
-1. **Locate**: Scan for `@modelcontextprotocol/` imports.
+1. **Locate**: Scan for `@modelcontextprotocol/sdk` (v1 single-package) imports.
 2. **Version**: If SDK v1, load [mcp-migration] (flag as Blocker).
+   - **Version (deprecated APIs)**: Grep for SEP-2577-deprecated subsystems (`listRoots`, `sendLoggingMessage`, `createMessage`, `setLoggingLevel`) and the removed variadic `.tool()`/`.prompt()`/`.resource()` registration — flag as Should Fix. Sources: `Roots (deprecated SEP-2577).md`, `_COMMUNITY_Migration & error taxonomy.md`.
 3. **Design**: Check structure via [mcp-server] / [mcp-client].
 4. **Security** (*): Audit auth (HTTP). Load [mcp-auth].
-5. **Interact** (*): Audit prompts/progress. Load [mcp-elicitation].
+5. **Interact** (*): Audit prompts/progress/cancellation. Load [mcp-elicitation].
 6. **Tests**: Check test coverage via [mcp-test].
 7. **Intent**: Validate code matches `docs/mcp-decisions.md`.
 8. **Report**: Rank findings: Blockers, Should Fix, Nice to Have. Formatted as:
@@ -68,7 +69,7 @@ To consider a router workflow phase complete, you must verify the corresponding 
 #### For Build Workflows:
 
 - [ ] **Clarify**: Requirements and architectural decisions are recorded in `docs/mcp-decisions.md`.
-- [ ] **Scaffold**: The codebase uses modern split v2 SDK dependencies under an ESM-only environment.
+- [ ] **Scaffold**: The codebase uses modern split v2 SDK dependencies under an ESM-first environment (CommonJS also shipped — `require('@modelcontextprotocol/…')` resolves natively).
 - [ ] **Auth/Interact** (*): HTTP/OAuth security and mid-round elicitation, progress, or cancellation are implemented where applicable.
 - [ ] **Test**: Unit or integration tests compile and run to completion successfully.
 - [ ] **Distribute** (*): Package setup / deployment is complete where applicable.

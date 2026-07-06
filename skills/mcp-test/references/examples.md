@@ -17,7 +17,7 @@ The SDK's own canonical pattern for testing an `McpServer` directly against a `C
 ```ts
 import assert from 'node:assert/strict';
 import { Client } from '@modelcontextprotocol/client';
-import { InMemoryTransport } from '@modelcontextprotocol/core';
+import { InMemoryTransport } from '@modelcontextprotocol/client';
 
 const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
 
@@ -31,6 +31,8 @@ await client.close();
 ```
 
 Prefer this over mocking `handler.fetch` when you don't need to exercise HTTP-specific behavior (headers, auth middleware, Host/Origin checks) — for those, use the `handler.fetch` harness below.
+
+> `InMemoryTransport` lives in `@modelcontextprotocol/client`, not `core` (which exports Zod schemas only).
 
 ### HTTP handler harness
 

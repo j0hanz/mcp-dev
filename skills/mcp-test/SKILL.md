@@ -24,7 +24,7 @@ Covers testing and error diagnosis for `2.0.0-beta.2`. Reference: https://ts.sdk
 
 ## Steps
 
-1. **Verify Sandbox**: Confirm test isolation. Prefer `InMemoryTransport.createLinkedPair()` to pair a `Client` and `McpServer` directly, avoiding real ports or subprocesses.
+1. **Verify Sandbox**: Confirm test isolation. Prefer `InMemoryTransport.createLinkedPair()` to pair a `Client` and `McpServer` directly (connects 2025-era instances only; use the `handler.fetch` harness for 2026-07-28 coverage — see `references/examples.md`), avoiding real ports or subprocesses.
 2. **Mock Security**: If testing auth-protected endpoints, pass mock `authInfo` payloads following [mcp-auth] policies to test 401/403 controls.
 3. **Execute Probe**: For stdio servers, launch the MCP inspector to probe commands interactively. For HTTP servers, direct post raw JSON-RPC requests via `curl` to the `/mcp` endpoints.
 4. **Assert Correct Channel**:

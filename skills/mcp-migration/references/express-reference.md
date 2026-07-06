@@ -65,7 +65,8 @@ const handler = createMcpHandler(() => {
   return server;
 });
 const app = createMcpExpressApp();
-app.all('/mcp', (req, res) => void toNodeHandler(handler)(req, res, req.body));
+const node = toNodeHandler(handler);
+app.all('/mcp', (req, res) => void node(req, res, req.body));
 app.listen(3000);
 ```
 

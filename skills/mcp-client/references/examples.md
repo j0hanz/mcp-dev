@@ -17,7 +17,7 @@ const client = new Client(
   { name: 'my-client', version: '1.0.0' },
   {
     // Options
-    capabilities: { elicitation: { form: {}, url: {} }, sampling: {} },
+    capabilities: { elicitation: { form: {}, url: {} }, sampling: {} // deprecated per SEP-2577 — use only if you need legacy sampling },
     versionNegotiation: { mode: 'auto' },
     listChanged: { tools: { onChanged } },
     inputRequired: { maxRounds: 10, autoFulfill: true },
@@ -30,6 +30,10 @@ const client = new Client(
 
 await client.connect(new StreamableHTTPClientTransport(new URL('http://localhost:3000/mcp')));
 ```
+
+> `sampling` is deprecated per SEP-2577; prefer elicitation. `roots` likewise deprecated.
+
+> **Other transports:** `StdioClientTransport` (from `@modelcontextprotocol/client/stdio`) for local servers; `SSEClientTransport` (from `@modelcontextprotocol/client`) as a fallback for SSE-only servers — try `StreamableHTTPClientTransport` first, retry with `SSEClientTransport` on failure.
 
 ## Calling Tools and Resources
 

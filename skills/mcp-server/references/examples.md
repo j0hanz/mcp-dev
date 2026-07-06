@@ -26,7 +26,7 @@ const server = new McpServer(
 ```ts
 import { McpServer } from '@modelcontextprotocol/server';
 import { serveStdio } from '@modelcontextprotocol/server/stdio';
-import { z } from 'zod';
+import * as z from 'zod/v4';
 const server = new McpServer({ name: 'weather', version: '1.0.0' });
 server.registerTool(
   'get-forecast',
@@ -35,6 +35,8 @@ server.registerTool(
 );
 serveStdio(() => server);
 ```
+
+> **Standard Schema:** `inputSchema`/`outputSchema` also accept ArkType schemas as-is, Valibot via `@valibot/to-json-schema` + `fromJsonSchema` from `@modelcontextprotocol/server`, or raw JSON Schema via `fromJsonSchema`.
 
 ## Tool Registration
 

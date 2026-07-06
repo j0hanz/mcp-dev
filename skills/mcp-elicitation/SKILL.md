@@ -23,7 +23,7 @@ Mid-call communication between server and user, and prompt autocomplete.
 2. **Handle Stateless Return**: Store multi-round session parameters in the `requestState` object so callbacks can resume seamlessly once the responses are accepted.
 3. **Emit Progress**: Emit operation updates using `notify()` in the handler's execution.
 4. **Guard Cancellation**: Pass `signal` to database or HTTP calls, and verify `signal.aborted` within recursive functions or loop conditions.
-5. **Autocompletion**: Wrap input properties within standard `completable(...)` schema builders to allow prompt suggestions dynamically.
+5. **Autocompletion**: Wrap prompt arguments (fields of a prompt's `argsSchema`; resource template variables use the template's `complete` map, not `completable`) within standard `completable(...)` schema builders to allow prompt suggestions dynamically.
 
 ## Completion Criteria
 
@@ -33,7 +33,7 @@ To consider elicitation and mid-call interaction complete, you must verify:
 - [ ] All forms, input widgets, and prompt arguments are clear, validated, and do NOT request credentials or access key secrets.
 - [ ] The engine verifies `signal.aborted` on every iteration of loops or long database inquiries.
 - [ ] All 2026-era interaction flows return modern `inputRequired` descriptors instead of invoking deprecated `elicitInput()`.
-- [ ] Deprecated stateful push APIs (such as push sampling, roots, or logging) are replaced with modern alternatives (e.g. `inputRequired.createMessage()`, `inputRequired.listRoots()`).
+- [ ] Deprecated stateful push APIs (sampling, roots, logging — SEP-2577) are replaced with modern elicitation builders: `inputRequired.elicit()` and `inputRequired.elicitUrl()`. (Note: `inputRequired.createMessage()` and `inputRequired.listRoots()` are the _deprecated embedded forms_ of sampling/roots, not the recommended migration target — reach for the elicitation builders first.)
 
 ## Reference Guides
 

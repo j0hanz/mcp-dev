@@ -22,7 +22,7 @@ Prefer `McpServer`. Only use `Server` for custom features. Docs: https://ts.sdk.
 2. **Define Custom Methods**: Prefix custom extension methods with distinct namespace identifiers (e.g. `acme/search`) and parameterize explicit schemas.
 3. **Register Custom Capabilities**: Declare extension support details explicitly by registering capabilities properties in the server metadata structure.
 4. **Implement Custom Transport**: When creating custom connections, build out `start()`, `send()`, and `close()`. Throw exceptions explicitly on send failures and trigger standard error callbacks.
-5. **Route Version Boundaries**: Use `isLegacyRequest()` to intercept 2025-era handshakes and branch message delivery between legacy and modern clients in multi-client gateways.
+5. **Route Version Boundaries**: Use `isLegacyRequest()` to intercept 2025-era requests (any request lacking a per-request `_meta` envelope) and branch message delivery between legacy and modern clients in multi-client gateways.
 
 ## Completion Criteria
 

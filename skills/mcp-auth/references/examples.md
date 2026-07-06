@@ -48,6 +48,7 @@ import {
   Client,
   StreamableHTTPClientTransport,
   UnauthorizedError,
+  IssuerMismatchError,
 } from '@modelcontextprotocol/client';
 
 const transport = new StreamableHTTPClientTransport(url, { authProvider });
@@ -61,9 +62,19 @@ try {
 // Redirect callback:
 const params = new URL(callbackUrl).searchParams;
 if (params.get('state') !== authProvider.lastState) throw new Error('state mismatch');
-await transport.finishAuth(params); // exchanges code, saves tokens
-await client.connect(new StreamableHTTPClientTransport(url, { authProvider }));
+try {
+  await transport.finishAuth(params); // exchanges code, saves tokens
+  await client.connect(new StreamableHTTPClientTransport(url, { authProvider }));
+} catch (e) {
+  if (e instanceof IssuerMismatchError) {
+    // RFC 9207 `iss` mismatch — possible mix-up attack. NEVER render error_description (attacker-controlled).
+    throw new Error('Authorization server mismatch');
+  }
+  throw e;
+}
 ```
+
+> **`IssuerMismatchError`** signals an RFC 9207 `iss` mismatch (possible mix-up attack). Never render `error_description` to the user — it is attacker-controlled.
 
 ### B. Machine-to-machine (client_credentials)
 
@@ -85,6 +96,8 @@ const authProvider = {
 };
 ```
 
+> `expectedIssuer` pins the credential; if discovery resolves a different issuer, `AuthorizationServerMismatchError` is thrown.
+
 ### C. Cross-app access
 
 For a user already authenticated in the host app. Exchanges the host session for MCP access.
@@ -92,7 +105,14 @@ For a user already authenticated in the host app. Exchanges the host session for
 ```ts
 import { CrossAppAccessProvider } from '@modelcontextprotocol/client';
 
-new CrossAppAccessProvider({ assertion, clientId, clientSecret });
+new CrossAppAccessProvider({
+  assertion: async (ctx) => {
+    const grant = await discoverAndRequestJwtAuthGrant({/* issuer/audience params */});
+    return grant.jwtAuthGrant;
+  },
+  clientId,
+  clientSecret,
+});
 ```
 
 ### D. Custom `OAuthClientProvider` + Discovery
@@ -100,7 +120,9 @@ new CrossAppAccessProvider({ assertion, clientId, clientSecret });
 Write a custom provider when no prebuilt provider fits (e.g. a browser app storing tokens itself). Implement:
 
 ```ts
-import type { OAuthClientProvider } from '@modelcontextprotocol/client';
+import type { OAuthClientProvider, ClientInformation } from '@modelcontextprotocol/client';
+
+const creds = new Map<string, ClientInformation>();
 
 const authProvider: OAuthClientProvider = {
   redirectUrl: 'https://app.example.com/callback',
@@ -110,12 +132,33 @@ const authProvider: OAuthClientProvider = {
   },
   tokens: () => readFromSessionStorage('tokens'),
   saveTokens: (tokens) => writeToSessionStorage('tokens', tokens),
-  clientInformation: () => readFromSessionStorage('client'),
-  saveClientInformation: (info) => writeToSessionStorage('client', info),
+  clientInformation(ctx) {
+    // SEP-2352: key credentials by issuer so a client_id from one AS is never sent to another
+    if (!ctx) return undefined;
+    return creds.get(ctx.issuer);
+  },
+  saveClientInformation(info, ctx) {
+    if (ctx) creds.set(ctx.issuer, info);
+  },
   codeVerifier: () => readFromSessionStorage('pkce_verifier'),
   saveCodeVerifier: (verifier) => writeToSessionStorage('pkce_verifier', verifier),
+  state() {
+    return crypto.randomUUID();
+  },
+  redirectToAuthorization(url) {
+    window.location.href(url.toString());
+  },
+  saveDiscoveryState(state) {
+    sessionStorage.setItem('mcp:discovery', JSON.stringify(state));
+  },
+  discoveryState() {
+    const s = sessionStorage.getItem('mcp:discovery');
+    return s ? JSON.parse(s) : undefined;
+  },
 };
 ```
+
+> **SEP-2352:** Credentials must be keyed by `ctx.issuer` — a `client_id` registered with one AS must not be sent to another.
 
 The SDK's `auth()` orchestrator drives this provider through PKCE (`saveCodeVerifier` before redirect, verified on token exchange) and discovery: it fetches `.well-known/oauth-protected-resource` (RFC 9728) off the MCP server URL, then follows the returned issuer to `.well-known/oauth-authorization-server` (RFC 8414) via `discoverOAuthServerInfo`.
 
@@ -125,8 +168,10 @@ Registering a new client with the authorization server via Dynamic Client Regist
 
 If the IdP supports revocation, expose it so a compromised or expired token can be invalidated immediately instead of waiting for TTL expiry:
 
+> **Deprecated v1 Authorization Server helper.** `revocationHandler` is a v1 AS function frozen in `@modelcontextprotocol/server-legacy/auth`. An MCP Resource Server does not revoke tokens — that is the IdP's job. Shown only for legacy AS support.
+
 ```ts
-import { revocationHandler } from '@modelcontextprotocol/express';
+import { revocationHandler } from '@modelcontextprotocol/server-legacy/auth';
 
 app.post(
   '/revoke',
@@ -138,7 +183,13 @@ app.post(
 
 ## Error Reference
 
-| Error          | Raised to | Meaning                                                   |
-| :------------- | :-------- | :-------------------------------------------------------- |
-| `Unauthorized` | Client    | HTTP 401: Token missing or expired — re-run auth flow.    |
-| `Forbidden`    | Client    | HTTP 403: Token valid but lacks required endpoint scopes. |
+| Error                    | Raised to | Meaning                                                                        |
+| :----------------------- | :-------- | :----------------------------------------------------------------------------- |
+| `UnauthorizedError`      | Client    | HTTP 401 `invalid_token`: Token missing or expired — re-run auth flow.         |
+| `InsufficientScopeError` | Client    | HTTP 403 `insufficient_scope`: Token valid but lacks required endpoint scopes. |
+
+## Notes
+
+> - `verifyAccessToken` must populate `expiresAt` on the returned `AuthInfo`, else `requireBearerAuth` answers `401 invalid_token`.
+> - To reject a token from `verifyAccessToken`, throw `OAuthError` with `OAuthErrorCode.InvalidToken` — other exceptions become `500`.
+> - For non-Express `fetch` hosts (Cloudflare Workers, Deno, Hono), use the web-standard `requireBearerAuth` from `@modelcontextprotocol/server`.
