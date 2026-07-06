@@ -1,10 +1,10 @@
 ---
 name: mcp-test
-description: Use when an MCP server or client needs tests or is misbehaving — connection failures, ProtocolError/SdkError codes, or inspector sessions in the TypeScript SDK v2.
+description: Use when writing or running tests for an MCP server or client in the TypeScript SDK v2 — test setup, inspector sessions, and coverage/assertion patterns. For diagnosing runtime misbehavior (connection failures, ProtocolError/SdkError), dispatch the mcp-debugger agent.
 user-invocable: false
 metadata:
   category: technique
-  triggers: mcp test, connection failures, ProtocolError, SdkError, inspector sessions, debug mcp
+  triggers: mcp test, test setup, inspector sessions, coverage, assertion patterns, test scaffolding
 ---
 
 # Testing & Debugging MCP (TypeScript SDK v2)
@@ -16,9 +16,9 @@ Covers testing and error diagnosis for `2.0.0-beta.2`. Reference: https://ts.sdk
 ## When to Use
 
 - Writing tests for MCP servers/clients in TS/JS.
-- Troubleshooting connection failures or ProtocolError/SdkError.
-- Running inspector sessions or manual HTTP/stdio probes.
-- Deprecated APIs / mismatched SDKs: load [mcp-migrate].
+- Diagnosing runtime misbehavior (connection failures, ProtocolError/SdkError): dispatch the `mcp-debugger` agent instead.
+- Running inspector sessions for test scaffolding.
+- Deprecated APIs / mismatched SDKs: load [mcp-migration].
 - Server config (stderr logging, custom schemas): see [mcp-server].
 - Client connection testing: see [mcp-client].
 

@@ -9,6 +9,8 @@ metadata:
 
 # MCP Router & Workflows
 
+<!-- Twin of mcp (user-invocable /mcp slash entry). This skill is model-invoked and injected by the SessionStart hook. -->
+
 Entry point and canonical workflows for MCP SDK v2. Load sub-skills only when needed (never upfront or twice).
 
 ## Routing Map
@@ -48,7 +50,7 @@ Entry point and canonical workflows for MCP SDK v2. Load sub-skills only when ne
 ```
 
 1. **Locate**: Scan for `@modelcontextprotocol/` imports.
-2. **Version**: If SDK v1, load [mcp-migrate] (flag as Blocker).
+2. **Version**: If SDK v1, load [mcp-migration] (flag as Blocker).
 3. **Design**: Check structure via [mcp-server] / [mcp-client].
 4. **Security** (*): Audit auth (HTTP). Load [mcp-auth].
 5. **Interact** (*): Audit prompts/progress. Load [mcp-elicitation].

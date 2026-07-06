@@ -17,7 +17,7 @@ You are an MCP TypeScript SDK migration specialist. Migrate codebases from v1 to
 
 ## Process
 
-Load [mcp-migrate] skill first as the source of truth.
+Load [mcp-migration] skill first as the source of truth.
 Flow: `codemod → errors → renames → removed → deprecations → manual → verify`
 
 1. **Codemod**: Run `npx @modelcontextprotocol/codemod@beta v1-to-v2 .` at root. Resolve all `@mcp-codemod-error` comments manually.

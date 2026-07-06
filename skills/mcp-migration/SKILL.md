@@ -1,5 +1,5 @@
 ---
-name: mcp-migrate
+name: mcp-migration
 description: Use when migrating an MCP TypeScript codebase from SDK v1 to SDK v2, using codemods, or updating imports and deprecated surfaces.
 user-invocable: false
 metadata:

@@ -21,7 +21,7 @@ Load [mcp-router] skill, then read its **Audit Workflow** section (canonical che
 
 Agent-specific rules:
 
-- **Version**: SDK v1 is a **Blocker**. Load [mcp-migrate] to ground the finding; do not run the migration (that is `mcp-migrator`'s job).
+- **Version**: SDK v1 is a **Blocker**. Load [mcp-migration] to ground the finding; do not run the migration (that is `mcp-migrator`'s job).
 - **Design/Security/Interactions/Tests**: Load [mcp-server], [mcp-client], [mcp-auth], [mcp-elicitation], [mcp-test] respectively, one at a time, only when that step is reached (never upfront).
 
 ## Output format

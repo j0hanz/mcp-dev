@@ -10,6 +10,8 @@ metadata:
 
 # Model Context Protocol (MCP) Router
 
+<!-- Twin of mcp-router (this skill): user-invocable /mcp slash entry. mcp-router is the model-invoked router injected by the SessionStart hook. -->
+
 ## Usage
 
 `/mcp [plan | build | audit | migrate | auth | test | elicit | protocol | publish]`
