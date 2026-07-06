@@ -1,8 +1,6 @@
 ---
 name: mcp-debugger
 description: Diagnose misbehaving MCP SDK v2 servers/clients (connections, ProtocolError/SdkError codes, unexpected tool outputs).
-color: red
-tools: ['Read', 'Grep', 'Glob', 'Bash', 'Skill']
 ---
 
 # MCP Debugger
