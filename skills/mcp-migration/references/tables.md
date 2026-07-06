@@ -39,24 +39,25 @@ metadata:
 | `server.setRequestHandler(CallToolRequestSchema, ...)` | `server.setRequestHandler('tools/call', ...)` (low-level, method string) |
 | `.tool(...)` (variadic high-level)                     | `.registerTool(name, config, handler)` (high-level)                      |
 | `McpError` / `ErrorCode`                               | `ProtocolError` / `ProtocolErrorCode` (or `SdkErrorCode`)                |
+| `StreamableHTTPError`                                  | `SdkHttpError`                                                           |
+| `SchemaInput<T>`                                       | `StandardSchemaWithJSON.InferInput<T>`                                   |
+| `ResourceTemplate` wire type                           | `ResourceTemplateType`                                                   |
 
 > Low-level `setRequestHandler(Schema)` becomes `setRequestHandler('method/string')`; high-level `.tool()` becomes `.registerTool()`. Don't conflate them.
-> | `StreamableHTTPError` | `SdkHttpError` |
-> | `SchemaInput<T>` | `StandardSchemaWithJSON.InferInput<T>` |
-> | `ResourceTemplate` wire type | `ResourceTemplateType` |
 
 ### Context & Property Renames
 
-| v1                                          | v2                                               |
-| :------------------------------------------ | :----------------------------------------------- |
-| `RequestHandlerExtra` (`extra`)             | `ServerContext` / `ClientContext` (`ctx`)        |
-| `extra.signal` / `requestId` / `_meta`      | `ctx.mcpReq.signal` / `id` / `_meta`             |
-| `extra.sendRequest` / `sendNotification`    | `ctx.mcpReq.send` / `notify`                     |
-| `extra.authInfo` / `requestInfo`            | `ctx.http?.authInfo` / `req` (stdio = undefined) |
-| `extra.sessionId`                           | `ctx.sessionId`                                  |
-| `extra.closeSSEStream`                      | `ctx.http?.closeSSE`                             |
-| `server.sendLoggingMessage` / `elicitInput` | `ctx.mcpReq.log` / `elicitInput`                 |
-| `StreamableHTTPServerTransport`             | `Node/WebStandardStreamableHTTPServerTransport`  |
+| v1                                       | v2                                                                                |
+| :--------------------------------------- | :-------------------------------------------------------------------------------- |
+| `RequestHandlerExtra` (`extra`)          | `ServerContext` / `ClientContext` (`ctx`)                                         |
+| `extra.signal` / `requestId` / `_meta`   | `ctx.mcpReq.signal` / `id` / `_meta`                                              |
+| `extra.sendRequest` / `sendNotification` | `ctx.mcpReq.send` / `notify`                                                      |
+| `extra.authInfo` / `requestInfo`         | `ctx.http?.authInfo` / `req` (stdio = undefined)                                  |
+| `extra.sessionId`                        | `ctx.sessionId`                                                                   |
+| `extra.closeSSEStream`                   | `ctx.http?.closeSSE`                                                              |
+| `server.sendLoggingMessage`              | `ctx.mcpReq.log`                                                                  |
+| `elicitInput`                            | `inputRequired` (survives rename; superseded — use the Step 5 inputRequired flow) |
+| `StreamableHTTPServerTransport`          | `Node/WebStandardStreamableHTTPServerTransport`                                   |
 
 ## Adopting the 2026-07-28 Era
 
@@ -74,7 +75,7 @@ metadata:
 
 | Axis                    | 2025 Era (Legacy)          | 2026 Era (Modern)             |
 | :---------------------- | :------------------------- | :---------------------------- |
-| Server->client requests | `ctx.mcpReq.elicitInput`   | `return inputRequired(...)`   |
+| Server->client requests | `ctx.mcpReq.send`          | `return inputRequired(...)`   |
 | Change notifications    | `list_changed` / `updated` | `subscriptions/listen` stream |
 | `ctx.mcpReq.log()`      | Session `logging/setLevel` | Per-request `_meta.logLevel`  |
 | HTTP 400 JSON-RPC error | `SdkHttpError`             | `ProtocolError` (in-band)     |

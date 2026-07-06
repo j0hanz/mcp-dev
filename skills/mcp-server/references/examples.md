@@ -16,7 +16,6 @@ const server = new McpServer(
     capabilities: { logging: {}, resources: { subscribe: true } },
     instructions: 'Call list-trips before book-trip.',
     enforceStrictCapabilities: true,
-    cacheHints: { 'tools/list': { ttlMs: 60_000, cacheScope: 'public' } },
   },
 );
 ```

@@ -80,3 +80,5 @@ import app from './app'; // app exported above
 
 serve({ fetch: app.fetch, port: 3000 });
 ```
+
+> Node.js runner variant additionally requires `@hono/node-server`.

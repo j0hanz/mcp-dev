@@ -27,7 +27,7 @@ Required `package.json` setup:
 ```
 
 - The entry file's first line must be exactly `#!/usr/bin/env node`.
-- Pin the SDK version exactly (`"2.0.0-beta.2"`, no `^`) — beta releases can break between minors.
+- Pin the SDK version exactly (the current beta, no `^`) — beta releases can break between minors.
 - Smoke-test the packed artifact before publishing:
 
 ```sh
@@ -45,7 +45,7 @@ npx @modelcontextprotocol/inspector npx -y ./example-mcp-0.1.0.tgz
 
 ## HTTP servers
 
-Deploy like any web service — [serving-http.md](serving-http.md) and [scaling.md](scaling.md) cover handlers, adapters, and scaling. Never expose a public endpoint without auth (the [mcp-auth] skill).
+Deploy like any web service — [serving-http.md](serving-http.md) and [scaling.md](scaling.md) cover handlers, adapters, and scaling. Never expose a public endpoint without auth (the [mcp-auth](../../mcp-auth/SKILL.md) skill).
 
 ## Versioning
 

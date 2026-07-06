@@ -14,9 +14,17 @@ The `@modelcontextprotocol/express` package provides middleware, routers, and ap
 
 Install dependencies: `npm install @modelcontextprotocol/server @modelcontextprotocol/express express @modelcontextprotocol/node`
 
-## Security Options
+## Security Concepts
 
-Express app factories enable Host/Origin verification by default on localhost to prevent DNS-rebinding and CSRF attacks.
+MCP servers binding to localhost are vulnerable to DNS Rebinding and CSRF. Express app factories enable Host/Origin verification by default on localhost to prevent these attacks.
+
+### DNS Rebinding Protection
+
+All adapters check the incoming `Host` header against allowed hostnames (e.g. `localhost`, `127.0.0.1`, `[::1]`). Unlisted hosts are rejected with `400 Bad Request` or `403 Forbidden`.
+
+### Browser Origin Validation
+
+Adapters check the `Origin` header against an allowed origins list. Requests with no `Origin` pass (allowing local non-browser clients), while cross-origin browser requests are rejected with `403 Forbidden`.
 
 ## API Reference
 

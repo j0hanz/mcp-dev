@@ -1,6 +1,6 @@
 ---
 description: >-
-  Code examples showing linked in-process transports and child-process stdio harnesses for automated testing.
+  Code examples showing linked in-process transports (InMemoryTransport) and handler.fetch HTTP harnesses for automated testing, plus manual curl/inspector dispatch.
 metadata:
   tags: [examples, testing, in-process, mock]
   source: internal
@@ -12,7 +12,9 @@ metadata:
 
 ### Zero-transport-mocking: `InMemoryTransport.createLinkedPair()`
 
-The SDK's own canonical pattern for testing an `McpServer` directly against a `Client` — no HTTP mocking, no `handler.fetch` shim:
+The SDK's own canonical pattern for testing an `McpServer` directly against a `Client` — no HTTP mocking, no `handler.fetch` shim.
+
+> Era caveat: `InMemoryTransport` is the 2025-era in-process pattern; for 2026-07-28 server coverage use the `handler.fetch` harness below.
 
 ```ts
 import assert from 'node:assert/strict';

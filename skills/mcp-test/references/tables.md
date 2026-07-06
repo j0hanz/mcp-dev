@@ -1,5 +1,5 @@
 ---
-description: Debugging reference tables comparing common error symptoms with their respective root causes and solutions.
+description: Debugging reference tables — ProtocolErrorCode wire codes, SdkErrorCode local codes, and common error symptoms with their respective root causes and solutions.
 metadata:
   tags: [debugging-tables, troubleshooting, errors]
   source: internal

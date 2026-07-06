@@ -1,6 +1,6 @@
 ---
 description: >-
-  Reference mapping for the 12 core MCP design decisions, safe defaults, trigger conditions, and choices.
+  Reference mapping for the 14 core MCP design decisions, safe defaults, trigger conditions, and choices.
 metadata:
   tags: [decisions, planning, defaults, triggers]
   source: internal
@@ -8,7 +8,7 @@ metadata:
 
 # MCP Decisions & Safe Defaults
 
-This reference contains the 12 core decisions, safe defaults, triggers, and choices for the MCP interview.
+This reference contains the 14 core decisions, safe defaults, triggers, and choices for the MCP interview.
 
 1. **Scope** (Default: `server`): Ask if unclear. Choices: Server | Client
 2. **Transport** (Default: `stdio`): Ask if remote/multi-user/deploy. Choices: stdio | HTTP
@@ -22,5 +22,7 @@ This reference contains the 12 core decisions, safe defaults, triggers, and choi
 10. **Testing** (Default: `1 test/tool`): Never ask.
 11. **Session/Resumability** (Default: `Stateless (no session)`): Ask if HTTP + multi-request client state needed. Choices: Stateless | `EventStore`-backed resumable sessions (on 2026-07-28 era, state is per-request via `requestState`, not session-based)
 12. **Notifications** (Default: `None`): Ask if clients need list-change/data-change push updates. Choices: `subscriptions/listen` stream | None
-13. **Era / protocol revision** (Default: `legacy: 'stateless'`): Ask only if 2026-only is required. Choices: Both eras (`legacy: 'stateless'`) | 2026-07-28 only (`legacy: 'reject'`) | legacy-only.
+13. **Era / protocol revision** (Default: `legacy: 'stateless'`): Ask only if the modern (2026) spec is required. Choices: Both eras (`legacy: 'stateless'`) | modern (2026) spec only (`legacy: 'reject'`) | legacy-only.
 14. **Runtime** (Default: Node ≥ 20, ESM-first): Never ask. v2 is ESM-first but ships CJS too. Choices: Node ≥20 (fixed)
+
+> Two-Choices rule: offer exactly two options unless the reference specifies a third load-bearing choice (items 3 and 13).

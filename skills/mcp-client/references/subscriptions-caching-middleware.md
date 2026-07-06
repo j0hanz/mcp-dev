@@ -9,7 +9,26 @@ metadata:
 
 ## Subscriptions (change notifications)
 
-On 2026-07-28, change notifications arrive via `subscriptions/listen`. Register handlers, then listen (see [example](examples.md#subscriptions-and-listen)).
+On 2026-07-28, change notifications arrive via `subscriptions/listen`. Register handlers, then listen:
+
+```ts
+client.setNotificationHandler('notifications/tools/list_changed', async () => {
+  const { tools } = await client.listTools();
+});
+client.setNotificationHandler('notifications/resources/updated', async (n) => {
+  const { contents } = await client.readResource({ uri: n.params.uri });
+});
+
+const subscription = await client.listen({
+  toolsListChanged: true, // + promptsListChanged, resourcesListChanged
+  resourceSubscriptions: ['config://app'], // per-resource updates
+});
+subscription.honoredFilter; // the capability-gated subset the server granted
+
+await subscription.close();
+const reason = await subscription.closed; // resolves once, never rejects:
+// 'local' (you closed) | 'graceful' (server ended) | 'remote' (re-listen only on 'remote')
+```
 
 **Managed mode** — `listChanged` opens the stream, re-fetches on change, and exposes `client.autoOpenedSubscription`:
 
@@ -30,7 +49,7 @@ new Client(
 
 > `listChanged` registers handlers during `connect()`; manual `setNotificationHandler` calls override them.
 
-**2025-era fallback:** `subscribeResource/unsubscribeResource`. `listen()` on legacy (or `subscribeResource` on modern) throws `METHOD_NOT_SUPPORTED_BY_PROTOCOL_VERSION`.
+**Legacy fallback (pre-2026-07-28):** `subscribeResource/unsubscribeResource`. `listen()` on legacy (or `subscribeResource` on modern) throws `METHOD_NOT_SUPPORTED_BY_PROTOCOL_VERSION`.
 
 ## Response caching
 
@@ -46,12 +65,31 @@ await client.readResource({ uri }, { cacheMode: 'bypass' }); // Bypass cache
 - Cache `ttlMs` caps at 24 h (`MAX_CACHE_TTL_MS`).
 - `responseCacheStore` swaps storage (default: `InMemoryResponseCacheStore`, max 512 entries).
 - **`cachePartition` is required if one store serves multiple users** — `'private'` entries do not cross partitions.
-- `defaultCacheTtlMs` sets default TTL for servers lacking hints (e.g. 2025-era).
+- `defaultCacheTtlMs` sets default TTL for servers lacking hints (e.g. pre-2026-07-28 servers).
 - Change notifications auto-evict matching entries.
 
 ## HTTP middleware
 
-Wrap transport `fetch` (see [example](examples.md#http-middleware)).
+Wrap transport `fetch`:
+
+```ts
+import {
+  applyMiddlewares,
+  createMiddleware,
+  withLogging,
+  withOAuth,
+} from '@modelcontextprotocol/client';
+
+const tagRequests = createMiddleware(async (next, input, init) => {
+  const headers = new Headers(init?.headers);
+  headers.set('X-Request-Source', 'reports-cli');
+  return next(input, { ...init, headers });
+});
+
+const transport = new StreamableHTTPClientTransport(url, {
+  fetch: applyMiddlewares(tagRequests, withLogging({ statusLevel: 400 }))(fetch),
+});
+```
 
 - **Order**: Last middleware is outermost (sees request first, response last). Retries belong first (closest to network).
 - `withLogging()`: Pass a custom `logger` to avoid stdout polluting stdio processes.
