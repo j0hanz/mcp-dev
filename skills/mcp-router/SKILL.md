@@ -1,7 +1,8 @@
 ---
 name: mcp-router
-description: Use when an MCP SDK v2 task needs routing to the matching sub-skill or agent (server/client/auth/protocol/test/migration/audit/debug) — not when the target is already known, and not to do the work directly.
+description: Use when an MCP SDK v2 task needs routing to the matching sub-skill or agent (server/client/auth/protocol/test/migration/audit/debug); skip if the target is already known or this content was already injected at session start.
 user-invocable: false
+disable-model-invocation: true
 metadata:
   category: technique
 ---

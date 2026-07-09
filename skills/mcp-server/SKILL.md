@@ -11,19 +11,9 @@ metadata:
 
 Covers `@modelcontextprotocol/server` SDK v2 (protocol revision `2026-07-28`) on Node.js ≥ 20. Official reference: https://ts.sdk.modelcontextprotocol.io/v2/
 
-Flow: `ESM config` ➔ `McpServer` init ➔ register (tools/resources/prompts) ➔ sanitize paths ➔ transport (stdio/HTTP) — then [mcp-test](../mcp-test/SKILL.md), then distribute
+Flow: `ESM config` ➔ `McpServer` init ➔ register (tools/resources/prompts) ➔ sanitize paths ➔ transport (stdio/HTTP) — then [mcp-test], then distribute
 
-## When to Use
-
-- Building a TypeScript/JavaScript MCP server.
-- Registering tools, resources, prompts, or autocompletion.
-- Wiring stdio or HTTP transports (Express, Hono, Fastify, Serverless).
-- Packaging servers for deployment or npm.
-- For testing and error codes, load [mcp-test](../mcp-test/SKILL.md).
-
-## How It Works
-
-### Stdio Quickstart
+## Stdio Quickstart
 
 See [Quickstart Examples](references/examples.md#quick-start) for complete setups. Minimal stub:
 
@@ -46,7 +36,7 @@ serveStdio(() => server);
 - [ ]: Server `name` and `version` are stable identifiers matching `package.json`.
 
 3. **Register Capabilities**:
-   - Register tools using `.registerTool()` passing a Standard Schema input schema (Zod, ArkType, Valibot, or raw JSON Schema — see `references/examples.md`).
+   - Register tools using `.registerTool()` passing a Standard Schema input schema (see the note after Steps and `references/examples.md`).
    - Register dynamic templates using `.registerResource()` mapping dynamic parameters.
    - Register prompt layouts using `.registerPrompt()`.
 
@@ -62,7 +52,7 @@ serveStdio(() => server);
 - [ ]: Stdio servers NEVER use `console.log()` to prevent JSON-RPC wire corruption. All debug messages are output on `console.error()`.
 - [ ]: Factory setups for HTTP endpoints instantiate fresh servers per-request without accumulating heavy persistent DB connections.
 
-> `inputSchema`/`outputSchema`/`argsSchema` accept any **Standard Schema** (Zod v4, ArkType, Valibot via `@valibot/to-json-schema` + `fromJsonSchema` from `@modelcontextprotocol/server`, raw JSON Schema via `fromJsonSchema`). For gateway/proxy and custom (vendor-prefixed) JSON-RPC methods, see the `mcp.protocol` skill.
+> `inputSchema`/`outputSchema`/`argsSchema` accept any **Standard Schema** (Zod v4, ArkType, Valibot via `@valibot/to-json-schema` + `fromJsonSchema` from `@modelcontextprotocol/server`, raw JSON Schema via `fromJsonSchema`). For gateway/proxy and custom (vendor-prefixed) JSON-RPC methods, see [mcp-protocol].
 
 ## Reference Guides & Adapters
 

@@ -34,7 +34,7 @@ To consider authentication implementation complete, you must verify:
 - [ ] Tool business failures due to failed authorization return `{ isError: true }` and reject tool calls without throwing transport exceptions.
 - [ ] Tool callbacks read tenant/user permissions via `ctx.http?.authInfo` instead of factory `ctx.authInfo`.
 - [ ] No raw HTTP headers are processed directly inside individual tool callback handlers.
-- [ ] Token revocation belongs on the IdP/Authorization Server, not the MCP Resource Server (the server acts as RS only). `revocationHandler` is a deprecated v1 AS helper in `@modelcontextprotocol/server-legacy/auth`.
+- [ ] No token revocation endpoint is implemented on the MCP server — revocation is delegated to the IdP/Authorization Server.
 - [ ] `verifyAccessToken` populates `expiresAt` on `AuthInfo`, else `requireBearerAuth` answers `401 invalid_token`.
 - [ ] Token rejection throws `OAuthError` with `OAuthErrorCode.InvalidToken` (other exceptions become `500`).
 - [ ] Non-Express `fetch` hosts (Cloudflare Workers, Deno, Hono) use the web-standard `requireBearerAuth` from `@modelcontextprotocol/server`.

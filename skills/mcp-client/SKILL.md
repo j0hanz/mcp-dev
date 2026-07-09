@@ -11,10 +11,6 @@ metadata:
 
 Covers `@modelcontextprotocol/client` `2.0.0-beta.2`. SDK: https://ts.sdk.modelcontextprotocol.io/v2/
 
-## When to Use
-
-- Connection troubleshooting or tests (load [mcp-test]).
-
 ## Steps
 
 1. **Configure ESM**: Standardize to ESM-only (`"type": "module"` in `package.json`, `"NodeNext"` resolutions in `tsconfig.json`). v2 ships a CommonJS build too, so CJS projects can `require('@modelcontextprotocol/client')` directly — no dynamic `import()` shim required.
@@ -38,7 +34,7 @@ Covers `@modelcontextprotocol/client` `2.0.0-beta.2`. SDK: https://ts.sdk.modelc
 To consider a client implementation complete, you must verify:
 
 - [ ] ESM-only config is active in `tsconfig.json` (or CJS `require` resolves natively).
-- [ ] Handshakes use the correct negotiation mode: `'auto'` for long-lived connections; `{ pin: '2026-07-28' }` or `'legacy'` for spawn-per-invocation stdio CLI (never `'auto'` there — it stalls).
+- [ ] Negotiation mode matches connection lifetime per Step 3 (`'auto'` only for long-lived connections).
 - [ ] Client declares capacities (elicitation mandatory; sampling/roots only if used) in the constructor BEFORE registering handlers.
 - [ ] Success checks read `result.isError` directly instead of catching exceptions for standard tool responses.
 - [ ] Sessions terminate gracefully on shutdown AND error paths: `terminateSession()` + `close()` always run.
@@ -48,3 +44,4 @@ To consider a client implementation complete, you must verify:
 
 - Connection, tools, resources, prompts: [references/examples.md](references/examples.md)
 - Subscriptions, caching, middleware, roots: [references/subscriptions-caching-middleware.md](references/subscriptions-caching-middleware.md)
+- Connection troubleshooting or tests: [mcp-test]

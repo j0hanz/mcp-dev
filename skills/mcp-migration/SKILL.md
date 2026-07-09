@@ -1,6 +1,6 @@
 ---
 name: mcp-migration
-description: Reference material for MCP SDK v1→v2 migration — load alongside the mcp-migrator agent (which runs the codemod), or when applying codemods/renames manually.
+description: Use when migrating an MCP codebase from SDK v1 to v2 or applying codemods/renames manually — typically loaded alongside the mcp-migrator agent, which runs the codemod.
 user-invocable: false
 metadata:
   category: technique
@@ -49,17 +49,7 @@ Flow: `scope` ➔ `codemod` ➔ `errors` ➔ `packages` ➔ `deprecations` ➔ `
 
 8. **Verify with Tests**: Validate code functionality using [mcp-test] integration and unit assertions.
 
-- [ ]: Tests via [mcp-test] compile and pass against the migrated code.
-
-## Completion Criteria
-
-To consider a migration complete, you must verify:
-
-- [ ] No remaining references to the single legacy `@modelcontextprotocol/sdk` library exist in `package.json` or source files.
-- [ ] All instances of `@mcp-codemod-error` comments are resolved and removed from the codebase.
-- [ ] Low-level manual capabilities setup is migrated to Zod-backed `McpServer` calls where applicable.
-- [ ] Deprecated stateful push APIs (such as older roots sampling or logging mechanisms) are swapped for modern stateless alternatives.
-- [ ] The test suite compiled by [mcp-test] executes and passes successfully.
+- [ ]: Tests via [mcp-test] compile and pass against the migrated code; no references to the legacy `@modelcontextprotocol/sdk` package remain in `package.json` or source files.
 
 ## References
 
