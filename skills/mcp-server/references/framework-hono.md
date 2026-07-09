@@ -36,8 +36,6 @@ Creates a Hono application pre-configured with JSON body parsing and default DNS
 - `originValidation(allowedOrigins: string[]): MiddlewareHandler`
 - `localhostOriginValidation(): MiddlewareHandler`
 
----
-
 ## Usage Examples
 
 ### Web Standard Routing (Cloudflare Workers / Deno / Bun)

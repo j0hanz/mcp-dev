@@ -36,8 +36,6 @@ Initializes a Fastify application with integrated DNS-rebinding protection and O
 - `originValidation(allowedOrigins: string[]): onRequestHook`
 - `localhostOriginValidation(): onRequestHook`
 
----
-
 ## Usage Examples
 
 ### Stateless Per-Request Integration

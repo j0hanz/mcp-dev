@@ -1,6 +1,6 @@
 ---
 name: mcp-test
-description: Use when writing or running tests for an MCP server or client in the TypeScript SDK v2 — test setup, inspector sessions, and coverage/assertion patterns. For diagnosing runtime misbehavior (connection failures, ProtocolError/SdkError), dispatch the mcp-debugger agent.
+description: Use when writing or running tests for an MCP server or client in the TypeScript SDK v2 — test setup, inspector sessions, and coverage/assertion patterns. For diagnosing runtime misbehavior (connection failures, ProtocolError/SdkError), see the mcp-debugger agent.
 user-invocable: false
 metadata:
   category: technique
@@ -24,10 +24,10 @@ Covers testing and error diagnosis for `2.0.0-beta.2`. Reference: https://ts.sdk
 
 ## Steps
 
-1. **Verify Sandbox**: Confirm test isolation. Prefer `InMemoryTransport.createLinkedPair()` to pair a `Client` and `McpServer` directly (connects 2025-era instances only; use the `handler.fetch` harness for 2026-07-28 coverage — see `references/examples.md`), avoiding real ports or subprocesses.
+1. **Verify Sandbox**: Confirm test isolation. Prefer `InMemoryTransport.createLinkedPair()` to pair a `Client` and `McpServer` directly (era-specific; see `references/examples.md`), avoiding real ports or subprocesses.
 2. **Mock Security**: If testing auth-protected endpoints, pass mock `authInfo` payloads following [mcp-auth] policies to test 401/403 controls.
 3. **Execute Probe**: For stdio servers, launch the MCP inspector to probe commands interactively. For HTTP servers, direct post raw JSON-RPC requests via `curl` to the `/mcp` endpoints.
-4. **Assert Correct Channel**: See [references/error-codes.md](references/error-codes.md) for error channel matching and `isError` checks.
+4. **Assert Correct Channel**: See [references/tables.md](references/tables.md) for error classes/codes and `isError` checks; error channels in [mcp-server errors](../mcp-server/references/errors.md).
 
 ## Completion Criteria
 
@@ -41,4 +41,4 @@ To consider testing implementation complete, you must verify:
 ## Examples & References
 
 - In-process/manual test harness setup: [references/examples.md](references/examples.md)
-- Protocol Error codes and lookups: [references/error-codes.md](references/error-codes.md) and [references/tables.md](references/tables.md)
+- Error classes, codes & lookups: [references/tables.md](references/tables.md); error channels: [../mcp-server/references/errors.md](../mcp-server/references/errors.md)

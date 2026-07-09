@@ -72,4 +72,4 @@ serveStdio(() => server);
 - [HTTP Serving](references/serving-http.md): Setup, Host/Origin security, and legacy clients.
 - [Scaling & Notifications](references/scaling.md): Caching, state, Event Bus, and pub/sub.
 - [Distribution](references/distribution.md): Npm publishing and host installation (`mcp.json`).
-- Adapters: [Express](references/framework-express.md) \| [Fastify](references/framework-fastify.md) \| [Hono](references/framework-hono.md).
+- Adapters: [Express](references/framework-express.md) \| [Fastify](references/framework-fastify.md) \| [Hono](references/framework-hono.md) — pick by web stack (Hono for edge/serverless, Fastify for schema validation, Express for ecosystem/OAuth helpers).

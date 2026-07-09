@@ -13,7 +13,6 @@ Covers `@modelcontextprotocol/client` `2.0.0-beta.2`. SDK: https://ts.sdk.modelc
 
 ## When to Use
 
-- Building/running MCP clients (connecting, tools, resources, caching, middleware).
 - Connection troubleshooting or tests (load [mcp-test]).
 
 ## Steps
@@ -47,11 +46,5 @@ To consider a client implementation complete, you must verify:
 
 ## Reference Guides
 
-- Connection, tools, subscriptions, middleware: [references/examples.md](references/examples.md)
+- Connection, tools, resources, prompts: [references/examples.md](references/examples.md)
 - Subscriptions, caching, middleware, roots: [references/subscriptions-caching-middleware.md](references/subscriptions-caching-middleware.md)
-
-## Common Mistakes
-
-- **Exception Traps**: Catching standard exceptions for tool-side errors (check `result.isError` instead).
-- **Spawn Negotiation**: Using `'auto'` version negotiation on stdio CLI wrappers (stalls connections — pin the era).
-- **Haphazard Registration**: Registering capability handlers before declaring those capacities in client options.

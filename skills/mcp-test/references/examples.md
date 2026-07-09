@@ -76,11 +76,7 @@ await handler.close(); // clean up transport
 
 ### stdio server
 
-Run the inspector on a local TS/JS stdio server:
-
-```sh
-npx @modelcontextprotocol/inspector npx tsx src/index.ts
-```
+Run the inspector on a local TS/JS stdio server: `npx @modelcontextprotocol/inspector npx tsx src/index.ts`.
 
 ### HTTP server
 

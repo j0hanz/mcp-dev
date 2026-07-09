@@ -67,7 +67,6 @@ try {
   await client.connect(new StreamableHTTPClientTransport(url, { authProvider }));
 } catch (e) {
   if (e instanceof IssuerMismatchError) {
-    // RFC 9207 `iss` mismatch — possible mix-up attack. NEVER render error_description (attacker-controlled).
     throw new Error('Authorization server mismatch');
   }
   throw e;
@@ -183,13 +182,5 @@ app.post(
 
 ## Error Reference
 
-| Error                    | Raised to | Meaning                                                                        |
-| :----------------------- | :-------- | :----------------------------------------------------------------------------- |
-| `UnauthorizedError`      | Client    | HTTP 401 `invalid_token`: Token missing or expired — re-run auth flow.         |
-| `InsufficientScopeError` | Client    | HTTP 403 `insufficient_scope`: Token valid but lacks required endpoint scopes. |
-
-## Notes
-
-> - `verifyAccessToken` must populate `expiresAt` on the returned `AuthInfo`, else `requireBearerAuth` answers `401 invalid_token`.
-> - To reject a token from `verifyAccessToken`, throw `OAuthError` with `OAuthErrorCode.InvalidToken` — other exceptions become `500`.
-> - For non-Express `fetch` hosts (Cloudflare Workers, Deno, Hono), use the web-standard `requireBearerAuth` from `@modelcontextprotocol/server`.
+- `UnauthorizedError` (client): HTTP 401 `invalid_token` — token missing or expired; re-run auth flow.
+- `InsufficientScopeError` (client): HTTP 403 `insufficient_scope` — token valid but lacks required endpoint scopes.

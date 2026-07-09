@@ -1,10 +1,9 @@
 ---
 name: mcp-router
-description: Use when starting any MCP SDK v2 task (building, auditing, migrating, or testing a server/client) to pick the right sub-skill or agent — not to do the work directly.
+description: Use when an MCP SDK v2 task needs routing to the matching sub-skill or agent (server/client/auth/protocol/test/migration/audit/debug) — not when the target is already known, and not to do the work directly.
 user-invocable: false
 metadata:
   category: technique
-  triggers: mcp sdk v2, building server, migrating server, auditing mcp, debugging client, mcp workflow
 ---
 
 # MCP Router & Workflows
@@ -19,7 +18,7 @@ Entry point and canonical workflows for MCP SDK v2. Load sub-skills only when ne
 - **Interaction**: [mcp-elicitation]
 - **Protocol**: [mcp-protocol]
 - **Migrate**: `mcp-migrator` agent (runs codemods) — for reference material load [mcp-migration]
-- **Test**: [mcp-test] (Build phase 5)
+- **Test**: [mcp-test]
 - **Debug**: `mcp-debugger` agent (on failure)
 - **Audit**: `mcp-auditor` agent (read-only)
 - **Publish**: [mcp-server] `references/distribution.md`
@@ -28,11 +27,7 @@ Entry point and canonical workflows for MCP SDK v2. Load sub-skills only when ne
 
 ### Build Workflow
 
-```
-[Clarify] ---> [Scaffold] ---> [Auth]* ---> [Interact]* ---> [Test] ---> [Distribute]* ---> [Verify]
-```
-
-1. **Clarify**: Run [mcp-planning] -> output `docs/mcp-decisions.md` (includes era/protocol-revision posture — 2026-07-28 modern vs. legacy support).
+1. **Clarify**: Run [mcp-planning] -> output `docs/mcp-decisions.md`.
 2. **Scaffold**: Load [mcp-server] or [mcp-client]. Modern split v2 SDK deps, ESM-first (CommonJS also shipped — `require('@modelcontextprotocol/…')` resolves natively).
 3. **Auth** (*): HTTP/OAuth (Streamable HTTP) security. Load [mcp-auth].
 4. **Interact** (*): Prompts, progress, cancellation. Load [mcp-elicitation].
@@ -41,10 +36,6 @@ Entry point and canonical workflows for MCP SDK v2. Load sub-skills only when ne
 7. **Verify**: All prior phase checks pass.
 
 ### Audit Workflow
-
-```
-[Locate] ---> [Version] ---> [Design] ---> [Security]* ---> [Interact]* ---> [Tests] ---> [Intent] ---> [Report]
-```
 
 1. **Locate**: Scan for `@modelcontextprotocol/sdk` (v1 single-package) imports.
 2. **Version**: If SDK v1, load [mcp-migration] (flag as Blocker).
@@ -59,10 +50,6 @@ Entry point and canonical workflows for MCP SDK v2. Load sub-skills only when ne
 
 ### Migrate Workflow
 
-```
-[Locate] ---> [Codemod] ---> [Errors] ---> [Packages] ---> [Deprecations] ---> [Era] ---> [Verify]
-```
-
 1. **Locate**: Scan for `@modelcontextprotocol/sdk` v1 imports.
 2. **Codemod**: Run the `mcp-migrator` agent (`npx @modelcontextprotocol/codemod@beta v1-to-v2 .`).
 3. **Errors**: Fix renamed error taxonomy (`ErrorCode → ProtocolErrorCode`; `RequestTimeout`/`ConnectionClosed → SdkErrorCode`).
@@ -73,11 +60,7 @@ Entry point and canonical workflows for MCP SDK v2. Load sub-skills only when ne
 
 ### Debug Workflow
 
-```
-[Reproduce] ---> [Classify] ---> [Isolate] ---> [Fix]
-```
-
 1. **Reproduce**: Capture the failing request/response or error code.
-2. **Classify**: Match the error against [mcp-test] `references/error-codes.md` / `tables.md` (`ProtocolErrorCode` / `SdkErrorCode`).
+2. **Classify**: Match the error against [mcp-test] `references/tables.md` (`ProtocolErrorCode` / `SdkErrorCode`).
 3. **Isolate**: Narrow to transport, protocol, auth, or application layer; reload the matching skill ([mcp-client] / [mcp-protocol] / [mcp-auth] / [mcp-server]).
 4. **Fix**: Apply the fix; re-run the reproducer.

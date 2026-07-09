@@ -1,6 +1,6 @@
 ---
 name: mcp-planning
-description: Use when planning a new MCP server or client before writing any code to make and record architectural design decisions.
+description: Use when planning a new MCP server or client before writing any code to make and record architectural design decisions; not for general MCP routing/workflows (use mcp-router).
 user-invocable: false
 metadata:
   category: technique
@@ -12,14 +12,10 @@ Make and record all MCP design decisions before writing any code.
 
 ## When to Use
 
-- Planning new MCP server/client.
 - "Clarify" step of `/mcp build`.
 - Designing transport, auth, tools, or distribution.
 
 ## How It Works
-
-**Goal:** Record decisions before coding.
-**Rule:** ONLY make decisions; never code.
 
 `Search -> Ask triggered questions -> Record 14 decisions -> Save docs/mcp-decisions.md`
 
@@ -71,7 +67,6 @@ To consider the interview phase complete, you must verify:
 
 ## Common Mistakes
 
-- Coding during interview/Clarify.
 - Asking untriggered questions.
 - Leaving decisions blank in `docs/mcp-decisions.md`.
 

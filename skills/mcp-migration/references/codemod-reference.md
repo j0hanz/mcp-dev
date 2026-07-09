@@ -33,8 +33,6 @@ If a safe refactoring rule cannot be determined, the tool injects an inline erro
 
 Find files with warnings: `grep -rn '@mcp-codemod-error' .`
 
----
-
 ## Programmatic API Reference
 
 Import and trigger migrations using `ts-morph` and the runner API.

@@ -17,11 +17,10 @@ Covers server-side HTTP auth and client credentials in TypeScript SDK v2. Refere
 
 - Protecting MCP server endpoints with bearer tokens.
 - Configuring client credentials, OAuth, or machine-to-machine auth.
-- Loaded via [mcp-server] or [mcp-client].
 
 ## Steps
 
-1. **Verify**: supply `verifyAccessToken` to `requireBearerAuth` — the helper extracts the Authorization header and forwards the verified `AuthInfo`.
+1. **Wire**: supply `verifyAccessToken` to `requireBearerAuth` — the helper extracts the Authorization header and forwards the verified `AuthInfo`.
 2. **Verify**: Check token validity against IdP/external verification keys (return 401/403 directly if invalid).
 3. **Populate**: the helper attaches `AuthInfo` to `req.auth`; `toNodeHandler` forwards it so handlers read `ctx.http.authInfo` (no manual population).
 4. **Enforce**: Within tool callbacks, verify `ctx.http?.authInfo` and return `{ isError: true, content: [...] }` if unauthorized.
@@ -35,7 +34,10 @@ To consider authentication implementation complete, you must verify:
 - [ ] Tool business failures due to failed authorization return `{ isError: true }` and reject tool calls without throwing transport exceptions.
 - [ ] Tool callbacks read tenant/user permissions via `ctx.http?.authInfo` instead of factory `ctx.authInfo`.
 - [ ] No raw HTTP headers are processed directly inside individual tool callback handlers.
-- [ ] Token revocation belongs on the IdP/Authorization Server, not the MCP Resource Server (the server acts as RS only — see line 14). `revocationHandler` is a deprecated v1 AS helper in `@modelcontextprotocol/server-legacy/auth`.
+- [ ] Token revocation belongs on the IdP/Authorization Server, not the MCP Resource Server (the server acts as RS only). `revocationHandler` is a deprecated v1 AS helper in `@modelcontextprotocol/server-legacy/auth`.
+- [ ] `verifyAccessToken` populates `expiresAt` on `AuthInfo`, else `requireBearerAuth` answers `401 invalid_token`.
+- [ ] Token rejection throws `OAuthError` with `OAuthErrorCode.InvalidToken` (other exceptions become `500`).
+- [ ] Non-Express `fetch` hosts (Cloudflare Workers, Deno, Hono) use the web-standard `requireBearerAuth` from `@modelcontextprotocol/server`.
 
 ## Examples & References
 

@@ -51,8 +51,6 @@ Creates an Express app with pre-configured JSON body parsing and Host/Origin val
 - `mcpAuthMetadataRouter(options: AuthMetadataOptions): Router` (exposes RFC 9728 and RFC 8414 metadata)
 - `getOAuthProtectedResourceMetadataUrl(serverUrl: URL): string`
 
----
-
 ## Usage Examples
 
 ### Stateless Per-Request Integration

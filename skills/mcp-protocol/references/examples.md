@@ -46,7 +46,7 @@ const SearchParams = z.object({
 });
 const SearchResult = z.object({ items: z.array(z.string()) });
 
-server.server.setRequestHandler(
+server.setRequestHandler(
   'acme/search',
   { params: SearchParams, result: SearchResult },
   async ({ query, limit }, ctx) => {

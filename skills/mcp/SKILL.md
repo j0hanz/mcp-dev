@@ -1,6 +1,6 @@
 ---
 name: mcp
-description: Use when starting any MCP SDK v2 task — `/mcp <job>` routes to the matching skill or agent; no argument lists the available jobs.
+description: Use when starting any MCP SDK v2 task — `/mcp <job>` selects the matching skill or agent; no argument lists the available jobs.
 user-invocable: true
 disable-model-invocation: true
 argument-hint: '[plan|build|audit|migrate|auth|test|elicit|protocol|publish]'
@@ -12,11 +12,9 @@ metadata:
 
 <!-- Twin of mcp-router (this skill): user-invocable /mcp slash entry. mcp-router is the model-invoked router injected by the SessionStart hook. -->
 
-## Usage
+## Dispatch
 
-`/mcp [plan | build | audit | migrate | auth | test | elicit | protocol | publish]`
-
-## Sub-Skills
+Match the `<job>` argument to a sub-skill or agent below and invoke it; confirm it loaded before continuing.
 
 - **`/mcp plan`**: Runs planning workflows (requires [mcp-planning]).
 - **`/mcp build`**: Invokes [mcp-server] scaffolding or [mcp-client] setup workflows.

@@ -1,7 +1,7 @@
 ---
-description: Detailed explanation of MCP mid-call interaction mechanics (input required, progress, cancellation, client setup, and autocomplete).
+description: Detailed explanation of MCP mid-call interaction mechanics (input required, progress, cancellation, client setup, autocomplete, cross-round state, and deprecated surfaces).
 metadata:
-  tags: [mcp, mechanics, input-required, autocomplete]
+  tags: [mcp, mechanics, input-required, autocomplete, request-state]
   source: internal
 ---
 
@@ -11,11 +11,7 @@ metadata:
 
 Modern 2026-era connections use stateless, multi-round return patterns rather than blocking the execution thread. The SDK transparently handles legacy clients if `inputRequired.legacyShim` is enabled (default `true`).
 
-| Feature  | Legacy (2025)                    | Modern (2026)               |
-| :------- | :------------------------------- | :-------------------------- |
-| Ask User | `await ctx.mcpReq.elicitInput()` | `return inputRequired(...)` |
-| Progress | `ctx.mcpReq.notify(...)`         | `ctx.mcpReq.notify(...)`    |
-| Cancel   | `ctx.mcpReq.signal`              | `ctx.mcpReq.signal`         |
+Only the ask-user mechanism changed across eras (`elicitInput()` → `inputRequired(...)`); progress (`notify`) and cancellation (`signal`) APIs are identical in both.
 
 ## 2. Asking for Input: `input_required` (Modern)
 
@@ -45,3 +41,16 @@ Clients must register the `elicitation/create` handler at construction. Configur
 ## 6. Prompt Autocompletion (`completable`)
 
 While `input_required` handles mid-call interaction, gathering prompt arguments beforehand uses `completable` schemas. Use the `completable` wrapper on Zod schemas to register autocomplete suggestion handlers.
+
+## 7. Cross-round state — `requestState`
+
+For sequential `input_required` flows, return an opaque string the client echoes byte-for-byte; read it back with `ctx.mcpReq.requestState<State>()`. It round-trips through the client, so it is **attacker-controlled** — protect it with the HMAC codec and mint only what earlier rounds already proved.
+
+See [Cross-round State (requestState) example](examples.md#cross-round-state-requeststate).
+
+Tampered or expired state answers `-32602 Invalid or expired requestState` and never reaches the handler. The codec is **signed, not encrypted** — keep secrets out of the payload.
+
+## 8. Deprecated: sampling and MCP logging (SEP-2577)
+
+- **Sampling** (`ctx.mcpReq.requestSampling`) routed an LLM call through the client. Migrate: call the LLM provider's API directly from the server. Functional ≥ 12 months on 2025-era connections; throws on 2026-era.
+- **MCP logging** (`ctx.mcpReq.log(level, data)`) is deprecated — prefer stderr or OpenTelemetry.
