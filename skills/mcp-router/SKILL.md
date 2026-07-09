@@ -1,6 +1,6 @@
 ---
 name: mcp-router
-description: Use when building, auditing, migrating, or testing MCP SDK v2 servers and clients. Also for planning workflows, authentication, and publishing.
+description: Use when starting any MCP SDK v2 task (building, auditing, migrating, or testing a server/client) to pick the right sub-skill or agent — not to do the work directly.
 user-invocable: false
 metadata:
   category: technique

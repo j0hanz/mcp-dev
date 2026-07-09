@@ -1,6 +1,6 @@
 ---
 name: mcp-server
-description: Use when building, serving, testing, or publishing a Model Context Protocol (MCP) server using the TypeScript SDK v2 (@modelcontextprotocol/server).
+description: Use when building, serving, or publishing an MCP server with the TypeScript SDK v2 (@modelcontextprotocol/server); for testing, load [mcp-test].
 user-invocable: false
 metadata:
   category: technique
