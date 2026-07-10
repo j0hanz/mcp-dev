@@ -47,17 +47,17 @@ metadata:
 
 ### Context & Property Renames
 
-| v1                                       | v2                                                                                |
-| :--------------------------------------- | :-------------------------------------------------------------------------------- |
-| `RequestHandlerExtra` (`extra`)          | `ServerContext` / `ClientContext` (`ctx`)                                         |
-| `extra.signal` / `requestId` / `_meta`   | `ctx.mcpReq.signal` / `id` / `_meta`                                              |
-| `extra.sendRequest` / `sendNotification` | `ctx.mcpReq.send` / `notify`                                                      |
-| `extra.authInfo` / `requestInfo`         | `ctx.http?.authInfo` / `req` (stdio = undefined)                                  |
-| `extra.sessionId`                        | `ctx.sessionId`                                                                   |
-| `extra.closeSSEStream`                   | `ctx.http?.closeSSE`                                                              |
-| `server.sendLoggingMessage`              | `ctx.mcpReq.log`                                                                  |
-| `elicitInput`                            | `inputRequired` (survives rename; superseded — use the Step 5 inputRequired flow) |
-| `StreamableHTTPServerTransport`          | `Node/WebStandardStreamableHTTPServerTransport`                                   |
+| v1                                       | v2                                                                                                   |
+| :--------------------------------------- | :--------------------------------------------------------------------------------------------------- |
+| `RequestHandlerExtra` (`extra`)          | `ServerContext` / `ClientContext` (`ctx`)                                                            |
+| `extra.signal` / `requestId` / `_meta`   | `ctx.mcpReq.signal` / `id` / `_meta`                                                                 |
+| `extra.sendRequest` / `sendNotification` | `ctx.mcpReq.send` / `notify`                                                                         |
+| `extra.authInfo` / `requestInfo`         | `ctx.http?.authInfo` / `req` (stdio = undefined)                                                     |
+| `extra.sessionId`                        | `ctx.sessionId`                                                                                      |
+| `extra.closeSSEStream`                   | `ctx.http?.closeSSE`                                                                                 |
+| `server.sendLoggingMessage`              | `ctx.mcpReq.log`                                                                                     |
+| `elicitInput`                            | `ctx.mcpReq.elicitInput` (2025-era only — throws on 2026-era; prefer returning `inputRequired(...)`) |
+| `StreamableHTTPServerTransport`          | `Node/WebStandardStreamableHTTPServerTransport`                                                      |
 
 ## Adopting the 2026-07-28 Era
 

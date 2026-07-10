@@ -34,7 +34,7 @@ server.registerTool(
 );
 ```
 
-## Legacy Elicitation (Deprecated)
+## Legacy Elicitation (2025-era only)
 
 > [!WARNING]
 > Blocking `elicitInput()` throws on 2026-era connections. Use only on 2025-era connections; on 2026-era `elicitInput()` throws regardless of the shim. The `legacyShim` is unrelated — it serves `inputRequired(...)` returns to 2025-era clients by pushing real `elicitation/create` requests.

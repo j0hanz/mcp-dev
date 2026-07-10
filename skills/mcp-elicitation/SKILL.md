@@ -31,7 +31,7 @@ To consider elicitation and mid-call interaction complete, you must verify:
 - [ ] The `requestState` codec is wired (HMAC-verified) and no secrets are placed in the attacker-controlled `requestState` payload.
 - [ ] All forms, input widgets, and prompt arguments are clear, validated, and do NOT request credentials or access key secrets.
 - [ ] The engine verifies `signal.aborted` on every iteration of loops or long database inquiries.
-- [ ] All 2026-era interaction flows return modern `inputRequired` descriptors instead of invoking deprecated `elicitInput()`.
+- [ ] All 2026-era interaction flows return modern `inputRequired` descriptors instead of the legacy `elicitInput()` (2025-era only; throws on 2026-era).
 - [ ] No deprecated sampling/roots/logging builder is used; replacements per `references/mechanics.md`.
 
 ## Reference Guides

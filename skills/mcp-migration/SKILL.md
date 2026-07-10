@@ -33,7 +33,7 @@ Flow: `scope` ➔ `codemod` ➔ `errors` ➔ `packages` ➔ `deprecations` ➔ `
 - [ ]: Deprecated `@modelcontextprotocol/sdk` deps converted to split v2 packages; SSE uses `@modelcontextprotocol/server-legacy/sse`.
 
 5. **Modernize State & Flow**:
-   - Change `elicitInput` calls to stateless `inputRequired(...)` returns — `elicitInput` survives the rename but is superseded (import `inputRequired` from `@modelcontextprotocol/server`).
+   - Change blocking `elicitInput` calls to stateless `inputRequired(...)` returns — `elicitInput` still exists as `ctx.mcpReq.elicitInput` for 2025-era connections but throws on 2026-era (import `inputRequired` from `@modelcontextprotocol/server`).
    - Employ `requestState` context properties for multi-round communication.
    - Replace legacy `list_changed` events with modern `subscriptions/listen` streams.
 

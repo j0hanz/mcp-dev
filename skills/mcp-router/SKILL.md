@@ -55,7 +55,7 @@ Entry point and canonical workflows for MCP SDK v2. Load sub-skills only when ne
 2. **Codemod**: Run the `mcp-migrator` agent (`npx @modelcontextprotocol/codemod@beta v1-to-v2 .`).
 3. **Errors**: Fix renamed error taxonomy (`ErrorCode → ProtocolErrorCode`; `RequestTimeout`/`ConnectionClosed → SdkErrorCode`).
 4. **Packages**: Move to split packages (`@modelcontextprotocol/server` / `…/client`); SSE server → `@modelcontextprotocol/server-legacy/sse`.
-5. **Deprecations**: Replace SEP-2577-deprecated roots/sampling/logging with elicitation; convert variadic `.tool()`/`.prompt()`/`.resource()` → `registerTool`/`registerPrompt`/`registerResource`.
+5. **Deprecations**: Replace SEP-2577-deprecated surfaces with their successors (sampling → call the LLM provider directly; roots → pass paths as tool arguments/config; logging → stderr/OpenTelemetry); convert variadic `.tool()`/`.prompt()`/`.resource()` → `registerTool`/`registerPrompt`/`registerResource`.
 6. **Era**: Adopt 2026-07-28 era posture (`legacy: 'stateless'|'reject'`) per [mcp-planning].
 7. **Verify**: Tests pass; no `@modelcontextprotocol/sdk` v1 imports remain.
 
