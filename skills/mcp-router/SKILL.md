@@ -16,11 +16,11 @@ Entry point and canonical workflows for MCP SDK v2. Load sub-skills only when ne
 - **Plan**: [mcp-planning]
 - **Build**: [mcp-server] (server) or [mcp-client] (client)
 - **Auth**: [mcp-auth]
-- **Interaction**: [mcp-elicitation]
+- **Elicit**: [mcp-elicitation]
 - **Protocol**: [mcp-protocol]
 - **Migrate**: `mcp-migrator` agent (runs codemods) — for reference material load [mcp-migration]
 - **Test**: [mcp-test]
-- **Debug**: `mcp-debugger` agent (on failure)
+- **Debug** (via `/mcp test`): `mcp-debugger` agent (on failure)
 - **Audit**: `mcp-auditor` agent (read-only)
 - **Publish**: [mcp-server] `references/distribution.md`
 
@@ -51,13 +51,7 @@ Entry point and canonical workflows for MCP SDK v2. Load sub-skills only when ne
 
 ### Migrate Workflow
 
-1. **Locate**: Scan for `@modelcontextprotocol/sdk` v1 imports.
-2. **Codemod**: Run the `mcp-migrator` agent (`npx @modelcontextprotocol/codemod@beta v1-to-v2 .`).
-3. **Errors**: Fix renamed error taxonomy (`ErrorCode → ProtocolErrorCode`; `RequestTimeout`/`ConnectionClosed → SdkErrorCode`).
-4. **Packages**: Move to split packages (`@modelcontextprotocol/server` / `…/client`); SSE server → `@modelcontextprotocol/server-legacy/sse`.
-5. **Deprecations**: Replace SEP-2577-deprecated surfaces with their successors (sampling → call the LLM provider directly; roots → pass paths as tool arguments/config; logging → stderr/OpenTelemetry); convert variadic `.tool()`/`.prompt()`/`.resource()` → `registerTool`/`registerPrompt`/`registerResource`.
-6. **Era**: Adopt 2026-07-28 era posture (`legacy: 'stateless'|'reject'`) per [mcp-planning].
-7. **Verify**: Tests pass; no `@modelcontextprotocol/sdk` v1 imports remain.
+Canonical steps live in [mcp-migration] (scope → codemod → flags → packages → modernize → mcpserver → tsconfig → verify → era). Dispatch the `mcp-migrator` agent to execute; load [mcp-migration] for reference tables (renames, package split, era adoption).
 
 ### Debug Workflow
 

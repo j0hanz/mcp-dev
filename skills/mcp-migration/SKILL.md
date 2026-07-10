@@ -10,9 +10,7 @@ metadata:
 
 Upgrades from `@modelcontextprotocol/sdk` v1 to split v2 packages on Node ≥ 20. Official docs: https://ts.sdk.modelcontextprotocol.io/v2/
 
-Flow: `scope` ➔ `codemod` ➔ `errors` ➔ `packages` ➔ `deprecations` ➔ `mcpserver` ➔ `tsconfig` ➔ `verify`
-
-> For 2026-07-28 era adoption after migration, see `references/tables.md` → 'Adopting the 2026-07-28 Era'.
+Flow: `scope → codemod → flags → packages → modernize → mcpserver → tsconfig → verify → era`
 
 ## Steps
 
@@ -50,6 +48,10 @@ Flow: `scope` ➔ `codemod` ➔ `errors` ➔ `packages` ➔ `deprecations` ➔ `
 8. **Verify with Tests**: Validate code functionality using [mcp-test] integration and unit assertions.
 
 - [ ]: Tests via [mcp-test] compile and pass against the migrated code; no references to the legacy `@modelcontextprotocol/sdk` package remain in `package.json` or source files.
+
+9. **Adopt Era Posture**: Choose the 2026-07-28 posture (`legacy: 'stateless'` to serve both eras, `'reject'` for modern-only) per [mcp-planning] decision 13; mappings in [references/tables.md](references/tables.md#adopting-the-2026-07-28-era).
+
+- [ ]: Era posture chosen and configured (`legacy: 'stateless'` or `'reject'`).
 
 ## References
 
