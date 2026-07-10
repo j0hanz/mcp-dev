@@ -52,7 +52,7 @@ serveStdio(() => server);
 - [ ]: Stdio servers NEVER use `console.log()` to prevent JSON-RPC wire corruption. All debug messages are output on `console.error()`.
 - [ ]: Factory setups for HTTP endpoints instantiate fresh servers per-request without accumulating heavy persistent DB connections.
 
-> `inputSchema`/`outputSchema`/`argsSchema` accept any **Standard Schema** (Zod v4, ArkType, Valibot via `@valibot/to-json-schema` + `fromJsonSchema` from `@modelcontextprotocol/server`, raw JSON Schema via `fromJsonSchema`). For gateway/proxy and custom (vendor-prefixed) JSON-RPC methods, see [mcp-protocol].
+> `inputSchema`/`outputSchema`/`argsSchema` accept any **Standard Schema** (Zod v4, ArkType, Valibot via `toStandardJsonSchema` from `@valibot/to-json-schema` (passed directly), raw JSON Schema via `fromJsonSchema`). For gateway/proxy and custom (vendor-prefixed) JSON-RPC methods, see [mcp-protocol].
 
 ## Reference Guides & Adapters
 

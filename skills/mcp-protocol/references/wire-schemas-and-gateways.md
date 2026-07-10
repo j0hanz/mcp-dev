@@ -48,4 +48,4 @@ await worker.connect(new StreamableHTTPClientTransport(url), { prior: JSON.parse
 - `await client.discover()` re-probes; default connects don't probe (`getDiscoverResult()` is `undefined`).
 - **Do not share `DiscoverResult` across principals** — key by authorization context.
 - Prior-connected clients are request-only until `listen()` is called; `listChanged` stays silent.
-- Incompatible `prior` rejects with `SdkError(ERA_NEGOTIATION_FAILED)` before transport starts — fall back to probe and re-persist.
+- Incompatible `prior` rejects with an `SdkError` whose code is `SdkErrorCode.EraNegotiationFailed` before transport starts — fall back to probe and re-persist.

@@ -108,11 +108,12 @@ export default {
 };
 ```
 
-> `isLegacyRequest()` returns a Promise — always `await` it. There is no `invoke()` export in `@modelcontextprotocol/server`; dispatch via the handler's `fetch`.
+> `isLegacyRequest()` returns a Promise — always `await` it. For single-message in-process dispatch, `@modelcontextprotocol/server` exports `invoke(server, message, ctx)`; most servers should still route through the handler's `fetch`.
 
 ## Custom transports
 
 ```ts
+// abbreviated — add imports for ReadBuffer, serializeMessage (SDK) and Socket (node:net)
 import type { JSONRPCMessage, Transport, TransportSendOptions } from '@modelcontextprotocol/server';
 
 class SocketTransport implements Transport {

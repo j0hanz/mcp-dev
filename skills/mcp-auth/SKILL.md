@@ -51,3 +51,4 @@ To consider authentication implementation complete, you must verify:
 - **Wrong Auth Context**: Reading `ctx.authInfo` inside a tool callback (which only exists on factory context) instead of reading `ctx.http?.authInfo`.
 - **Dynamic Clients**: Registering OAuth clients via deprecated `registerClient` dynamic registrations instead of Client ID Metadata Documents.
 - **Test Tokens**: Generating real tokens inside test tools rather than using mock external token issuers paired with [mcp-test].
+- **Decode-only JWT checks**: Validating tokens by decoding without verifying signature, issuer, and audience — always verify against IdP keys.

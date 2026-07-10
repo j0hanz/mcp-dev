@@ -17,7 +17,10 @@ const client = new Client(
   { name: 'my-client', version: '1.0.0' },
   {
     // Options
-    capabilities: { elicitation: { form: {}, url: {} }, sampling: {} // deprecated — use only if you need legacy sampling },
+    capabilities: {
+      elicitation: { form: {}, url: {} },
+      sampling: {}, // deprecated — declare only if you need legacy sampling
+    },
     versionNegotiation: { mode: 'auto' },
     listChanged: { tools: { onChanged } },
     inputRequired: { maxRounds: 10, autoFulfill: true },

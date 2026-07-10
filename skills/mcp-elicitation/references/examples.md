@@ -12,22 +12,26 @@ metadata:
 Mid-call user input is handled statelessly via `input_required` responses.
 
 ```ts
-server.registerTool('deploy', { env: z.string() }, async ({ env }, ctx) => {
-  const confirmed = acceptedContent(
-    ctx.mcpReq.inputResponses,
-    'confirm',
-    z.object({ confirm: z.boolean() }),
-  )?.confirm;
-  if (confirmed) return { content: [{ type: 'text', text: 'Deployed' }] };
-  return inputRequired({
-    inputRequests: {
-      confirm: inputRequired.elicit({
-        message: `Deploy?`,
-        requestedSchema: { type: 'object', properties: { confirm: { type: 'boolean' } } },
-      }),
-    },
-  });
-});
+server.registerTool(
+  'deploy',
+  { inputSchema: z.object({ env: z.string() }) },
+  async ({ env }, ctx) => {
+    const confirmed = acceptedContent(
+      ctx.mcpReq.inputResponses,
+      'confirm',
+      z.object({ confirm: z.boolean() }),
+    )?.confirm;
+    if (confirmed) return { content: [{ type: 'text', text: 'Deployed' }] };
+    return inputRequired({
+      inputRequests: {
+        confirm: inputRequired.elicit({
+          message: `Deploy?`,
+          requestedSchema: { type: 'object', properties: { confirm: { type: 'boolean' } } },
+        }),
+      },
+    });
+  },
+);
 ```
 
 ## Legacy Elicitation (Deprecated)

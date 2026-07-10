@@ -119,7 +119,7 @@ app.post(
     resourceMetadataUrl: getOAuthProtectedResourceMetadataUrl(resourceUrl),
   }),
   (req, res) => {
-    res.json({ status: 'authenticated', info: req.auth });
+    res.json({ status: 'authenticated', clientId: req.auth?.clientId });
   },
 );
 ```

@@ -119,9 +119,12 @@ new CrossAppAccessProvider({
 Write a custom provider when no prebuilt provider fits (e.g. a browser app storing tokens itself). Implement:
 
 ```ts
-import type { OAuthClientProvider, ClientInformation } from '@modelcontextprotocol/client';
+import type {
+  OAuthClientProvider,
+  StoredOAuthClientInformation,
+} from '@modelcontextprotocol/client';
 
-const creds = new Map<string, ClientInformation>();
+const creds = new Map<string, StoredOAuthClientInformation>();
 
 const authProvider: OAuthClientProvider = {
   redirectUrl: 'https://app.example.com/callback',
@@ -145,7 +148,7 @@ const authProvider: OAuthClientProvider = {
     return crypto.randomUUID();
   },
   redirectToAuthorization(url) {
-    window.location.href(url.toString());
+    window.location.href = url.toString();
   },
   saveDiscoveryState(state) {
     sessionStorage.setItem('mcp:discovery', JSON.stringify(state));
@@ -175,7 +178,7 @@ import { revocationHandler } from '@modelcontextprotocol/server-legacy/auth';
 app.post(
   '/revoke',
   revocationHandler({
-    verifier: { revokeToken: async (token) => idp.revoke(token) },
+    provider: { revokeToken: async (token) => idp.revoke(token) },
   }),
 );
 ```

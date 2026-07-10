@@ -35,7 +35,7 @@ server.registerTool(
 serveStdio(() => server);
 ```
 
-> **Standard Schema:** `inputSchema`/`outputSchema` also accept ArkType schemas as-is, Valibot via `@valibot/to-json-schema` + `fromJsonSchema` from `@modelcontextprotocol/server`, or raw JSON Schema via `fromJsonSchema`.
+> **Standard Schema:** `inputSchema`/`outputSchema` also accept ArkType schemas as-is, Valibot via `toStandardJsonSchema` from `@valibot/to-json-schema` (passed directly), or raw JSON Schema via `fromJsonSchema`.
 
 ## Tool Registration
 
