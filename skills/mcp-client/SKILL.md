@@ -9,7 +9,7 @@ metadata:
 
 # Building MCP Clients (TypeScript SDK v2)
 
-Covers `@modelcontextprotocol/client` `2.0.0-beta.2`. SDK: https://ts.sdk.modelcontextprotocol.io/v2/
+Covers `@modelcontextprotocol/client` `2.0.0-beta.3`. SDK: https://ts.sdk.modelcontextprotocol.io/v2/
 
 ## Steps
 
