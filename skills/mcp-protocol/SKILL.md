@@ -1,10 +1,10 @@
 ---
 name: mcp-protocol
 description: Use when working with low-level MCP v2 protocol, custom transports, raw wire messages, gateways, or the low-level Server class — not the high-level McpServer (see mcp-server).
+when_to_use: Custom methods, custom transports, raw wire messages, MCP gateways, MCP proxies, low-level server.
 user-invocable: false
 metadata:
   category: technique
-  triggers: custom methods, custom transports, raw wire messages, mcp gateway, mcp proxy, low-level server
 ---
 
 # MCP Protocol

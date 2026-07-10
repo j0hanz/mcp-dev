@@ -1,10 +1,10 @@
 ---
 name: mcp-elicitation
 description: Use when implementing mid-call user interaction, prompt autocomplete, progress tracking, or cancellation in the TypeScript SDK v2.
+when_to_use: Elicitation, progress tracking, cancellation, autocomplete, completable fields, inputRequired.
 user-invocable: false
 metadata:
   category: technique
-  triggers: elicitation, progress, cancellation, autocomplete, completable, inputRequired
 ---
 
 # MCP Elicitation

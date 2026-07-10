@@ -1,5 +1,4 @@
 {
-  "version": 1,
   "description": "Inject the mcp router skill into context at session start.",
   "hooks": {
     "SessionStart": [
