@@ -34,34 +34,34 @@ copilot plugin install mcp-hub@mcp-hub
 
 `/mcp` is the single command: with no argument it lists the available jobs; `/mcp <job>` routes to the right skills in the right order.
 
-| Command                               | What it does                                                                     |
-| ------------------------------------- | -------------------------------------------------------------------------------- |
-| `/mcp`                                | List available jobs                                                              |
-| `/mcp plan`                           | Clarify requirements first: produces a Decision Record (`docs/mcp-decisions.md`) |
-| `/mcp new server` / `/mcp new client` | Build end to end: interview → scaffold → auth → test → ship                      |
-| `/mcp audit`                          | Read-only production-readiness audit of existing MCP code                        |
-| `/mcp migrate`                        | Upgrade SDK v1 code to v2                                                        |
-| `/mcp auth`                           | OAuth, bearer-token, or machine-to-machine auth                                  |
-| `/mcp test`                           | Debug connection failures, `ProtocolError`/`SdkError` codes, inspector sessions  |
-| `/mcp elicit`                         | Add progress reporting, cancellation, or mid-call user input                     |
-| `/mcp protocol`                       | Drop below `McpServer` for custom transports or raw protocol messages            |
-| `/mcp publish`                        | Package a server and register it with npm                                        |
+| Command         | What it does                                                                                             |
+| --------------- | -------------------------------------------------------------------------------------------------------- |
+| `/mcp`          | List available jobs                                                                                      |
+| `/mcp plan`     | Clarify requirements first: produces a Decision Record (`docs/mcp-decisions.md`)                         |
+| `/mcp build`    | Build end to end: interview → scaffold → auth → test → ship                                              |
+| `/mcp audit`    | Read-only production-readiness audit of existing MCP code                                                |
+| `/mcp migrate`  | Upgrade SDK v1 code to v2                                                                                |
+| `/mcp auth`     | OAuth, bearer-token, or machine-to-machine auth                                                          |
+| `/mcp test`     | Write and run MCP tests; debug connection failures, `ProtocolError`/`SdkError` codes, inspector sessions |
+| `/mcp elicit`   | Add progress reporting, cancellation, or mid-call user input                                             |
+| `/mcp protocol` | Drop below `McpServer` for custom transports or raw protocol messages                                    |
+| `/mcp publish`  | Package a server for npm/npx and register it with MCP hosts                                              |
 
 Knowledge skills load automatically when the work touches their territory, without a command:
 
 `mcp-planning`, `mcp-server`, `mcp-client`, `mcp-auth`, `mcp-elicitation`, `mcp-test`, `mcp-protocol`, `mcp-migration`
 
-A SessionStart hook (`hooks/session-start.js`) injects the `/mcp` routing table into context at session start and after `/clear` or compaction (~4.2KB), so MCP work routes to the right skill without typing `/mcp`. Runs natively and cross-platform via Node.js (supported on Windows, macOS, and Linux).
+A SessionStart hook (`hooks/session-start.js`) injects the `/mcp` routing table into context at session start and after `/clear` or compaction (~3.1KB), so MCP work routes to the right skill without typing `/mcp`. Runs natively and cross-platform via Node.js (supported on Windows, macOS, and Linux).
 
 ## Agents
 
 Three subagents handle work that's autonomous or context-heavy rather than a single command. Claude Code and Copilot CLI dispatch them automatically when a task matches their description. No `/mcp` invocation needed.
 
-| Agent          | Handles                                                                 | Tools                                      |
-| -------------- | ----------------------------------------------------------------------- | ------------------------------------------ |
-| `mcp-auditor`  | Read-only production-readiness audit of existing MCP server/client code | Read, Grep, Glob, Bash, Skill              |
-| `mcp-migrator` | Runs the SDK v1 → v2 migration (codemod through verify) end to end      | Read, Write, Edit, Bash, Grep, Glob, Skill |
-| `mcp-debugger` | Diagnoses connection failures and `ProtocolError`/`SdkError` codes      | Read, Grep, Glob, Bash, Skill              |
+| Agent          | Handles                                                                 | Write access                             |
+| -------------- | ----------------------------------------------------------------------- | ---------------------------------------- |
+| `mcp-auditor`  | Read-only production-readiness audit of existing MCP server/client code | Instructed read-only (not tool-enforced) |
+| `mcp-migrator` | Runs the SDK v1 → v2 migration (codemod through verify) end to end      | Edits files                              |
+| `mcp-debugger` | Diagnoses connection failures and `ProtocolError`/`SdkError` codes      | Instructed read-only (not tool-enforced) |
 
 Defined under `agents/*.md`; each loads the matching `mcp-*` skill for its checklist instead of duplicating it.
 
@@ -71,7 +71,7 @@ Issues and PRs are welcome at [j0hanz/mcp-hub](https://github.com/j0hanz/mcp-hub
 
 ## Maintenance
 
-The SDK version (`2.0.0-beta.2`) is targeted by the six SDK-facing skills: `mcp-server`, `mcp-client`, `mcp-auth`, `mcp-test`, `mcp-migration`, `mcp-protocol`. It is explicitly pinned in `mcp-client`, `mcp-test`, and `mcp-server`'s distribution references. When bumping it, update these occurrences accordingly.
+The SDK version (`2.0.0-beta.3`) is targeted by the six SDK-facing skills: `mcp-server`, `mcp-client`, `mcp-auth`, `mcp-test`, `mcp-migration`, `mcp-protocol`. The literal version string appears in this README (intro) and in `skills/mcp-client/SKILL.md` and `skills/mcp-test/SKILL.md`; `skills/mcp-server/references/distribution.md` pins by policy ("the current beta, no `^`") without a literal. The protocol revision (`2026-07-28`) is referenced across the skills — when either changes, grep the repo for the old string and review every hit.
 
 ## License
 
