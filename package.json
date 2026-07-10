@@ -26,7 +26,11 @@
     "check:hooks": "node --check hooks/session-start.js",
     "check": "npm run format:check && npm run check:refs && npm run check:hooks"
   },
+  "engines": {
+    "node": ">=20"
+  },
   "devDependencies": {
     "prettier": "^3.8.4"
-  }
+  },
+  "private": true
 }

@@ -11,7 +11,7 @@ We welcome issues and pull requests to improve these MCP development skills.
 2. **Setup**: Clone the repository and install dev dependencies:
 
    ```bash
-   npm install
+   npm ci
    ```
 
 ## Development Workflow
