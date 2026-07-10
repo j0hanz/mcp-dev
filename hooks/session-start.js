@@ -18,7 +18,11 @@ try {
     // Strip YAML frontmatter:
     // It starts with --- and ends with ---
     const cleaned = rawContent.replace(/^---[\s\S]*?---\r?\n/, '');
-    process.stdout.write(cleaned);
+    if (cleaned.includes('</mcp-hub-router>') || cleaned.includes('<system-reminder')) {
+      console.error('mcp-hub: refusing to inject router content containing reserved sentinels');
+    } else {
+      process.stdout.write(cleaned);
+    }
   } else {
     console.error(`Error reading mcp router skill: ${skillPath} not readable`);
   }
