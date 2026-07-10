@@ -21,7 +21,10 @@
   "scripts": {
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "validate": "claude plugin validate . --strict"
+    "validate": "claude plugin validate . --strict",
+    "check:refs": "node scripts/check-refs.mjs",
+    "check:hooks": "node --check hooks/session-start.js",
+    "check": "npm run format:check && npm run check:refs && npm run check:hooks"
   },
   "devDependencies": {
     "prettier": "^3.8.4"

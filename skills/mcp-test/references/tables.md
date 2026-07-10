@@ -21,7 +21,7 @@ metadata:
 
 ## Error Channels
 
-See [../mcp-server/references/errors.md](../mcp-server/references/errors.md) for the tool vs protocol error channel distinction.
+See [../../mcp-server/references/errors.md](../../mcp-server/references/errors.md) for the tool vs protocol error channel distinction.
 
 ## ProtocolErrorCode (wire codes)
 
