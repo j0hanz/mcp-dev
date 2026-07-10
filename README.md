@@ -57,11 +57,11 @@ A SessionStart hook (`hooks/session-start.js`) injects the `/mcp` routing table 
 
 Three subagents handle work that's autonomous or context-heavy rather than a single command. Claude Code and Copilot CLI dispatch them automatically when a task matches their description. No `/mcp` invocation needed.
 
-| Agent          | Handles                                                                 | Write access                             |
-| -------------- | ----------------------------------------------------------------------- | ---------------------------------------- |
-| `mcp-auditor`  | Read-only production-readiness audit of existing MCP server/client code | Instructed read-only (not tool-enforced) |
-| `mcp-migrator` | Runs the SDK v1 → v2 migration (codemod through verify) end to end      | Edits files                              |
-| `mcp-debugger` | Diagnoses connection failures and `ProtocolError`/`SdkError` codes      | Instructed read-only (not tool-enforced) |
+| Agent          | Handles                                                                 | Write access                                         |
+| -------------- | ----------------------------------------------------------------------- | ---------------------------------------------------- |
+| `mcp-auditor`  | Read-only production-readiness audit of existing MCP server/client code | Tool-enforced read-only (Read, Grep, Glob, Skill)    |
+| `mcp-migrator` | Runs the SDK v1 → v2 migration (codemod through verify) end to end      | Edits files                                          |
+| `mcp-debugger` | Diagnoses connection failures and `ProtocolError`/`SdkError` codes      | Restricted (no Write/Edit; Bash retained for probes) |
 
 Defined under `agents/*.md`; each loads the matching `mcp-*` skill for its checklist instead of duplicating it.
 
