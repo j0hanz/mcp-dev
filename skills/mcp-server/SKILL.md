@@ -1,10 +1,10 @@
 ---
 name: mcp-server
 description: Use when building, serving, or publishing an MCP server with the TypeScript SDK v2 (@modelcontextprotocol/server); for testing, load [mcp-test].
+when_to_use: Building an MCP server, registering tools/resources/prompts, resource or prompt templates, transport gateways.
 user-invocable: false
 metadata:
   category: technique
-  triggers: build server, register tools, resource templates, prompt templates, transport gateways, mcp server
 ---
 
 # Building MCP Servers

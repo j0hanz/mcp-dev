@@ -1,6 +1,6 @@
 ---
 name: mcp-router
-description: Use when an MCP SDK v2 task needs routing to the matching sub-skill or agent (server/client/auth/protocol/test/migration/audit/debug); skip if the target is already known or this content was already injected at session start.
+description: Hook-injected routing map for MCP SDK v2 work — not invocable; hooks/session-start.js injects the body (frontmatter stripped) at session start.
 user-invocable: false
 disable-model-invocation: true
 metadata:
@@ -8,6 +8,8 @@ metadata:
 ---
 
 # MCP Router & Workflows
+
+If this content already appears earlier in the session, skip re-reading it.
 
 Entry point and canonical workflows for MCP SDK v2. Load sub-skills only when needed (never upfront or twice).
 

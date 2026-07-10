@@ -1,10 +1,10 @@
 ---
 name: mcp-test
 description: Use when writing or running tests for an MCP server or client in the TypeScript SDK v2 — test setup, inspector sessions, and coverage/assertion patterns. For diagnosing runtime misbehavior (connection failures, ProtocolError/SdkError), see the mcp-debugger agent.
+when_to_use: MCP testing, test setup, inspector sessions, coverage, assertion patterns, test scaffolding.
 user-invocable: false
 metadata:
   category: technique
-  triggers: mcp test, test setup, inspector sessions, coverage, assertion patterns, test scaffolding
 ---
 
 # Testing & Debugging MCP (TypeScript SDK v2)

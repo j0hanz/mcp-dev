@@ -1,10 +1,10 @@
 ---
 name: mcp-client
 description: Use when building MCP clients using TypeScript SDK v2 (@modelcontextprotocol/client), managing connections, calling tools/resources, subscribing to changes, caching, or configuring middleware.
+when_to_use: Building an MCP client, client connections, registering capabilities, calling tools, reading resources, progress handlers.
 user-invocable: false
 metadata:
   category: technique
-  triggers: mcp client, client connection, register capabilities, call tools, read resources, progress handler
 ---
 
 # Building MCP Clients (TypeScript SDK v2)

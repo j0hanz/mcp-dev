@@ -1,10 +1,10 @@
 ---
 name: mcp-auth
 description: Use when an MCP server or endpoint needs protection or an MCP client needs credentials — bearer-token verification, OAuth flows, or machine-to-machine auth in the TypeScript SDK v2.
+when_to_use: Bearer-token verification, OAuth flows, machine-to-machine authentication, MCP authentication, token validation, security.
 user-invocable: false
 metadata:
   category: technique
-  triggers: bearer-token verification, oauth flows, machine-to-machine auth, mcp authentication, token validation, security
 ---
 
 # MCP Authorization (TypeScript SDK v2)
