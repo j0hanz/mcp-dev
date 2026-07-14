@@ -20,7 +20,7 @@ Flow: `codemod → renames → removed → deprecations → manual → mcpserver
 
 1. **Codemod**: Run `npx @modelcontextprotocol/codemod@beta v1-to-v2 .` at root. Resolve all `@mcp-codemod-error` comments manually.
 2. **Renames**: Map imports via `../skills/mcp-migration/references/tables.md` package/rename table.
-3. **Removed**: OAuth and `SSEServerTransport` belong to `@modelcontextprotocol/server-legacy`. `WebSocketClientTransport` is removed.
+3. **Removed**: Authorization Server OAuth helpers (`mcpAuthRouter`, `OAuthServerProvider`) and `SSEServerTransport` belong to `@modelcontextprotocol/server-legacy` (AS helpers in `/auth`, SSE in `/sse`); Resource Server helpers (`requireBearerAuth`, `mcpAuthMetadataRouter`) moved to `@modelcontextprotocol/express`. `WebSocketClientTransport` is removed.
 4. **Deprecations**: Sampling calls LLM directly; roots are passed as arguments; log via stderr/OpenTelemetry.
 5. **Manual updates**: Apply changes from `../skills/mcp-migration/references/tables.md#adopting-the-2026-07-28-era` (entrypoints, prompts, cross-round state, ESM module settings, `headers.get()`).
 6. **Adopt `McpServer`**: Use `McpServer` unless custom methods require low-level `Server` (if so, hand off to [mcp-protocol]).

@@ -1,7 +1,6 @@
 ---
 name: mcp-debugger
 description: Diagnose misbehaving MCP SDK v2 servers/clients (connections, ProtocolError/SdkError codes, unexpected tool outputs).
-tools: Read, Grep, Glob, Bash, Skill
 ---
 
 # MCP Debugger
@@ -22,7 +21,7 @@ Load [mcp-test] skill first to use the error-channel model and probe commands.
 2. **Probe manually**: Stdio: run MCP inspector; HTTP: send JSON-RPC POSTs via `curl`. See `../skills/mcp-test/references/examples.md#manual-testing`.
 3. **Classify error channel**:
    - Tool failure with `isError: true` inside results is working as designed (model should self-correct).
-   - Match `ProtocolError`/`SdkError` by `.code` or SDK constant, never `instanceof`.
+   - Match `ProtocolError`/`SdkError` by `.code`/`data` shape or the static `.isInstance()` guard — bare `instanceof` only matches within a single bundled SDK copy and fails cross-realm / cross-bundle.
    - Lookup code in `../skills/mcp-test/references/tables.md`.
 4. **Trace to source**: Grep all callers of the failing function to catch shared transport/middleware bugs at their convergence.
 5. **Version drift**: If root cause is deprecated/removed v1 surface, declare it and refer to [mcp-migrator] agent.

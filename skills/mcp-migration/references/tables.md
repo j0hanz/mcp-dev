@@ -55,7 +55,7 @@ metadata:
 | `extra.authInfo` / `requestInfo`         | `ctx.http?.authInfo` / `req` (stdio = undefined)                                                     |
 | `extra.sessionId`                        | `ctx.sessionId`                                                                                      |
 | `extra.closeSSEStream`                   | `ctx.http?.closeSSE`                                                                                 |
-| `server.sendLoggingMessage`              | `ctx.mcpReq.log`                                                                                     |
+| `server.sendLoggingMessage`              | `ctx.mcpReq.log` (deprecated — SEP-2577; prefer stderr / OpenTelemetry)                              |
 | `elicitInput`                            | `ctx.mcpReq.elicitInput` (2025-era only — throws on 2026-era; prefer returning `inputRequired(...)`) |
 | `StreamableHTTPServerTransport`          | `Node/WebStandardStreamableHTTPServerTransport`                                                      |
 
@@ -73,9 +73,9 @@ metadata:
 
 ### Runtime Features
 
-| Axis                    | 2025 Era (Legacy)          | 2026 Era (Modern)             |
-| :---------------------- | :------------------------- | :---------------------------- |
-| Server->client requests | `ctx.mcpReq.send`          | `return inputRequired(...)`   |
-| Change notifications    | `list_changed` / `updated` | `subscriptions/listen` stream |
-| `ctx.mcpReq.log()`      | Session `logging/setLevel` | Per-request `_meta.logLevel`  |
-| HTTP 400 JSON-RPC error | `SdkHttpError`             | `ProtocolError` (in-band)     |
+| Axis                                       | 2025 Era (Legacy)          | 2026 Era (Modern)             |
+| :----------------------------------------- | :------------------------- | :---------------------------- |
+| Server->client requests                    | `ctx.mcpReq.send`          | `return inputRequired(...)`   |
+| Change notifications                       | `list_changed` / `updated` | `subscriptions/listen` stream |
+| `ctx.mcpReq.log()` (deprecated — SEP-2577) | Session `logging/setLevel` | Per-request `_meta.logLevel`  |
+| HTTP 400 JSON-RPC error                    | `SdkHttpError`             | `ProtocolError` (in-band)     |

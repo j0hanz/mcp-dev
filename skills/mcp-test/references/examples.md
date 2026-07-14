@@ -18,8 +18,14 @@ The SDK's own canonical pattern for testing an `McpServer` directly against a `C
 
 ```ts
 import assert from 'node:assert/strict';
-import { Client } from '@modelcontextprotocol/client';
-import { InMemoryTransport } from '@modelcontextprotocol/client';
+import { Client, InMemoryTransport } from '@modelcontextprotocol/client';
+import { McpServer } from '@modelcontextprotocol/server';
+import * as z from 'zod/v4';
+
+const server = new McpServer({ name: 'test-server', version: '1.0.0' });
+server.registerTool('greet', { inputSchema: z.object({ name: z.string() }) }, async ({ name }) => ({
+  content: [{ type: 'text', text: `Hello ${name}` }],
+}));
 
 const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
 

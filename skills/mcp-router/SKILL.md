@@ -42,7 +42,7 @@ Entry point and canonical workflows for MCP SDK v2. Load sub-skills only when ne
 
 1. **Locate**: Scan for `@modelcontextprotocol/sdk` (v1 single-package) imports.
 2. **Version**: If SDK v1, load [mcp-migration] (flag as Blocker).
-   - **Version (deprecated APIs)**: Grep for SEP-2577-deprecated subsystems (`listRoots`, `sendLoggingMessage`, `createMessage`, `setLoggingLevel`) and the removed variadic `.tool()`/`.prompt()`/`.resource()` registration — flag as Should Fix.
+   - **Version (deprecated APIs)**: Grep for SEP-2577-deprecated subsystems (`listRoots`, `sendRootsListChanged`, `sendLoggingMessage`, `createMessage`, `setLoggingLevel`), deprecated `registerClient` (SEP-991), and the removed variadic `.tool()`/`.prompt()`/`.resource()` registration — flag as Should Fix.
 3. **Design**: Check structure via [mcp-server] / [mcp-client].
 4. **Security** (*): Audit auth (HTTP). Load [mcp-auth].
 5. **Interact** (*): Audit prompts/progress/cancellation. Load [mcp-elicitation].

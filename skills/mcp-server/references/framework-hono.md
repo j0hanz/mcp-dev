@@ -49,7 +49,7 @@ Hono operates natively with Web Standard request/responses. Direct call to `hand
 import { createMcpHonoApp } from '@modelcontextprotocol/hono';
 import { createMcpHandler, McpServer } from '@modelcontextprotocol/server';
 import type { Context } from 'hono';
-import { z } from 'zod';
+import * as z from 'zod/v4';
 
 const mcpHandler = createMcpHandler(() => {
   const server = new McpServer({ name: 'hono-example', version: '1.0.0' });

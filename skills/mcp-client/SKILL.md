@@ -21,13 +21,13 @@ Covers `@modelcontextprotocol/client` `2.0.0-beta.3`. SDK: https://ts.sdk.modelc
    - **Streamable HTTP** (default): `StreamableHTTPClientTransport`.
    - **stdio**: `StdioClientTransport` from the `@modelcontextprotocol/client/stdio` subpath.
    - **SSE-only legacy server**: `SSEClientTransport` — only after StreamableHTTP fails; SSE is a fallback, not a first choice.
-   - **Negotiation footgun**: For spawn-per-invocation stdio CLI wrappers, pin the era with `{ pin: '2026-07-28' }` (modern-only) or `'legacy'` — **never `'auto'`**, which stalls on cold spawns. `'auto'` is fine for long-lived connections.
+   - **Negotiation footgun**: For spawn-per-invocation stdio CLI wrappers, pin the era with `versionNegotiation: { mode: { pin: '2026-07-28' } }` (modern-only) or `{ mode: 'legacy' }` — **never `{ mode: 'auto' }`**, which stalls on cold spawns. `{ mode: 'auto' }` is fine for long-lived connections.
 
 4. **Register Hook Interceptors**: After `connect`, register handlers via `setRequestHandler('elicitation/create', …)` for auto-fulfillment. Register `sampling/createMessage` / `roots/list` handlers only if you declared those (deprecated) capacities in Step 2.
 
 5. **Manage Calls**: Call tools with `.callTool()` and paginate; check execution status on the `result.isError` payload — do **not** catch standard tool exceptions as business failures.
 
-6. **Graceful Terminate**: On every shutdown **and** error path, run `await transport.terminateSession()` then `await client.close()` to avoid dangling connections.
+6. **Graceful Terminate**: On every shutdown **and** error path, tear down cleanly to avoid dangling connections. Over **Streamable HTTP**, run `await transport.terminateSession()` (a no-op when the server issued no session ID) then `await client.close()`. Over **stdio** or in-memory, `await client.close()` alone is the whole teardown — there is no server-side session to terminate.
 
 ## Completion Criteria
 
@@ -37,7 +37,7 @@ To consider a client implementation complete, you must verify:
 - [ ] Negotiation mode matches connection lifetime per Step 3 (`'auto'` only for long-lived connections).
 - [ ] Client declares capacities (elicitation mandatory; sampling/roots only if used) in the constructor BEFORE registering handlers.
 - [ ] Success checks read `result.isError` directly instead of catching exceptions for standard tool responses.
-- [ ] Sessions terminate gracefully on shutdown AND error paths: `terminateSession()` + `close()` always run.
+- [ ] Sessions terminate gracefully on shutdown AND error paths: Streamable HTTP runs `terminateSession()` + `close()`; stdio/in-memory run `close()` alone.
 - [ ] Multi-user response caches set `cachePartition` so `'private'` entries never cross user/tenant boundaries.
 
 ## Reference Guides

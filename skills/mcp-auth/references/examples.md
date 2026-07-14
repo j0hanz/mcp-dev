@@ -102,7 +102,10 @@ const authProvider = {
 For a user already authenticated in the host app. Exchanges the host session for MCP access.
 
 ```ts
-import { CrossAppAccessProvider } from '@modelcontextprotocol/client';
+import {
+  CrossAppAccessProvider,
+  discoverAndRequestJwtAuthGrant,
+} from '@modelcontextprotocol/client';
 
 new CrossAppAccessProvider({
   assertion: async (ctx) => {
@@ -126,7 +129,8 @@ import type {
 
 const creds = new Map<string, StoredOAuthClientInformation>();
 
-const authProvider: OAuthClientProvider = {
+const authProvider: OAuthClientProvider & { lastState?: string } = {
+  lastState: undefined,
   redirectUrl: 'https://app.example.com/callback',
   clientMetadata: {
     client_name: 'Example App',
@@ -145,7 +149,8 @@ const authProvider: OAuthClientProvider = {
   codeVerifier: () => readFromSessionStorage('pkce_verifier'),
   saveCodeVerifier: (verifier) => writeToSessionStorage('pkce_verifier', verifier),
   state() {
-    return crypto.randomUUID();
+    this.lastState = crypto.randomUUID();
+    return this.lastState;
   },
   redirectToAuthorization(url) {
     window.location.href = url.toString();
@@ -163,6 +168,8 @@ const authProvider: OAuthClientProvider = {
 > **SEP-2352:** Credentials must be keyed by `ctx.issuer` — a `client_id` registered with one AS must not be sent to another.
 
 The SDK's `auth()` orchestrator drives this provider through PKCE (`saveCodeVerifier` before redirect, verified on token exchange) and discovery: it fetches `.well-known/oauth-protected-resource` (RFC 9728) off the MCP server URL, then follows the returned issuer to `.well-known/oauth-authorization-server` (RFC 8414) via `discoverOAuthServerInfo`.
+
+> **RFC 8707 resource pinning:** override `validateResourceURL(url, ctx)` on a custom `OAuthClientProvider` to pin the `resource` parameter sent on the token request, binding the access token to a specific resource server.
 
 Registering a new client with the authorization server via Dynamic Client Registration (`registerClient`) is deprecated (SEP-991) — prefer a **Client ID Metadata Document**: host `clientMetadata` at a stable HTTPS URL and pass that URL as `clientId` instead of registering.
 
@@ -187,3 +194,4 @@ app.post(
 
 - `UnauthorizedError` (client): HTTP 401 `invalid_token` — token missing or expired; re-run auth flow.
 - `InsufficientScopeError` (client): HTTP 403 `insufficient_scope` — token valid but lacks required endpoint scopes.
+- **`onInsufficientScope`** (client transport option, SEP-2350): `'reauthorize'` (default) steps up scopes automatically; `'throw'` raises `InsufficientScopeError` for the caller to handle.

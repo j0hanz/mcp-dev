@@ -1,9 +1,8 @@
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve, dirname, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = resolve(
-  dirname(new URL(import.meta.url).pathname.replace(/^\//, '')).replace(/scripts$/, ''),
-);
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 function collectMarkdown(dir, acc = []) {
   for (const entry of readdirSync(dir)) {
@@ -128,6 +127,7 @@ function checkFile(filePath, failures) {
 const files = [
   ...collectMarkdown(join(ROOT, 'skills')),
   ...collectMarkdown(join(ROOT, 'agents')),
+  ...collectMarkdown(join(ROOT, '.claude', 'skills')),
   join(ROOT, 'README.md'),
   join(ROOT, 'CONTRIBUTING.md'),
 ].filter((f) => existsSync(f));

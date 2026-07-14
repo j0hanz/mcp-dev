@@ -18,7 +18,7 @@ metadata:
 ## Steps
 
 1. **Elicit Input**: Return `inputRequired(...)` from your tool callback when user input is needed.
-2. **Handle Stateless Return**: Store multi-round session parameters in the `requestState` object so callbacks can resume seamlessly once the responses are accepted. Note: `requestState` is attacker-controlled — keep it opaque and HMAC-verified, never secrets (see `references/mechanics.md`).
+2. **Handle Stateless Return**: Store multi-round session parameters in the opaque `requestState` string so callbacks can resume seamlessly once the responses are accepted. Note: `requestState` is attacker-controlled — keep it opaque and HMAC-verified, never secrets (see `references/mechanics.md`).
 3. **Emit Progress**: Emit operation updates using `notify()` in the handler's execution.
 4. **Guard Cancellation**: Pass `signal` to database or HTTP calls, and verify `signal.aborted` within recursive functions or loop conditions.
 5. **Autocompletion**: Wrap prompt arguments (fields of a prompt's `argsSchema`; resource template variables use the template's `complete` map, not `completable`) within standard `completable(...)` schema builders to allow prompt suggestions dynamically.

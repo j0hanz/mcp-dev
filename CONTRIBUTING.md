@@ -22,11 +22,14 @@ We welcome issues and pull requests to improve these MCP development skills.
 
 ### Validation
 
-Before submitting a pull request, format all files and run the plugin validation script to ensure the marketplace manifest and configuration are correct:
+Before submitting a pull request, format the codebase and run the same gate CI enforces (`check` = `format:check` + `check:refs` + `check:hooks`) plus the plugin validation script:
 
 ```bash
 # Format codebase files
 npm run format
+
+# Verify (matches CI): format:check + check:refs + check:hooks
+npm run check
 
 # Run plugin validation
 npm run validate
@@ -48,7 +51,7 @@ restart the session) to pick up changes.
 
 1. Bump the version in **all three** manifests to the same value: `package.json`,
    `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`.
-2. Run `npm run format:check` and `npm run validate` (and `npm run check`, if present).
+2. Run `npm run check` and `npm run validate`.
 3. Commit as `chore: bump version to X.Y.Z`, then tag:
    `git tag vX.Y.Z && git push origin master --tags`.
 

@@ -1,7 +1,6 @@
 ---
 name: mcp-auditor
 description: Diagnose existing MCP SDK v2 server or client code for read-only production-readiness review ( Locate -> Report sweep).
-tools: Read, Grep, Glob, Skill
 ---
 
 # MCP Auditor
@@ -29,8 +28,8 @@ Ranked list, most severe first. Name skipped steps and why (e.g., "Security: ski
 
 Categories:
 
-- **Blockers**: Broken/unsafe for production (v1 SDK, unauthenticated HTTP, `instanceof` for protocol errors).
-- **Should Fix**: Breaks a design rule from loaded skill or contradicts `docs/mcp-decisions.md`.
+- **Blockers**: Broken/unsafe for production (v1 SDK, unauthenticated HTTP).
+- **Should Fix**: Breaks a design rule from loaded skill or contradicts `docs/mcp-decisions.md`; bare `instanceof` for protocol errors (use `.code`/`data` or `.isInstance()` — `instanceof` fails cross-bundle).
 - **Nice to Have**: Missing but non-critical (no decision record, low test coverage).
 
 Format: `- [file:line] | [Issue] | [Fixing skill]`

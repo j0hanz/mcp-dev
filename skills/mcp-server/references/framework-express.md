@@ -59,7 +59,7 @@ Creates an Express app with pre-configured JSON body parsing and Host/Origin val
 import { createMcpExpressApp } from '@modelcontextprotocol/express';
 import { toNodeHandler } from '@modelcontextprotocol/node';
 import { createMcpHandler, McpServer } from '@modelcontextprotocol/server';
-import { z } from 'zod';
+import * as z from 'zod/v4';
 
 const mcpHandler = createMcpHandler(() => {
   const server = new McpServer({ name: 'express-example', version: '1.0.0' });
@@ -88,11 +88,17 @@ import {
   mcpAuthMetadataRouter,
   getOAuthProtectedResourceMetadataUrl,
 } from '@modelcontextprotocol/express';
+import { OAuthError, OAuthErrorCode } from '@modelcontextprotocol/server';
 
 const tokenVerifier = {
   async verifyAccessToken(token: string) {
-    if (token !== 'valid') throw new Error('Invalid');
-    return { sub: 'user-123', scopes: ['mcp:read'], expiresAt: new Date(Date.now() + 3600_000) };
+    if (token !== 'valid') throw new OAuthError(OAuthErrorCode.InvalidToken, 'Invalid token');
+    return {
+      token,
+      clientId: 'user-123',
+      scopes: ['mcp:read'],
+      expiresAt: new Date(Date.now() + 3600_000),
+    };
   },
 };
 

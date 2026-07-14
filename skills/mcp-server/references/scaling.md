@@ -13,7 +13,7 @@ metadata:
 - **Sessions (2025-era only)**: Hand-wire `NodeStreamableHTTPServerTransport` with `sessionIdGenerator` and keep a `Map<sessionId, transport>`.
   > Sessions (`Mcp-Session-Id`, `eventStore` replay) belong only to the 2025-era hand-wired transport. The 2026-07-28 revision is per-request — state lives in `requestState`, not a session.
 - **Resumability**: Pass an `eventStore` (`storeEvent(streamId, message)` and `replayEventsAfter(lastEventId, { send })`) to allow clients to reconnect via `Last-Event-ID`.
-- **Cross-node Notifications**: Implement a custom `ServerEventBus` (`publish`, `subscribe`) over external pub/sub (e.g. Redis) and pass the instance to Hono/Express/Fastify: `createMcpHandler(buildServer, { bus: redisBus })`.
+- **Cross-node Notifications**: Implement a custom `ServerEventBus` (`publish`, `subscribe`) over external pub/sub (e.g. Redis) and pass the instance to `createMcpHandler`: `createMcpHandler(buildServer, { bus: redisBus })`.
 
 ## Notifications
 

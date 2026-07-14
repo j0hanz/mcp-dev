@@ -20,19 +20,23 @@ const server = new McpServer(
 );
 ```
 
+> `capabilities: { logging: {} }` enables the **deprecated** MCP logging subsystem (SEP-2577); prefer `console.error` (stderr) or OpenTelemetry for new servers. `resources: { subscribe: true }` is not deprecated.
+
 ## Quick Start
 
 ```ts
 import { McpServer } from '@modelcontextprotocol/server';
 import { serveStdio } from '@modelcontextprotocol/server/stdio';
 import * as z from 'zod/v4';
-const server = new McpServer({ name: 'weather', version: '1.0.0' });
-server.registerTool(
-  'get-forecast',
-  { description: 'Get forecast', inputSchema: z.object({ city: z.string() }) },
-  async ({ city }) => ({ content: [{ type: 'text', text: `Sunny in ${city}` }] }),
-);
-serveStdio(() => server);
+serveStdio(() => {
+  const server = new McpServer({ name: 'weather', version: '1.0.0' });
+  server.registerTool(
+    'get-forecast',
+    { description: 'Get forecast', inputSchema: z.object({ city: z.string() }) },
+    async ({ city }) => ({ content: [{ type: 'text', text: `Sunny in ${city}` }] }),
+  );
+  return server;
+});
 ```
 
 > **Standard Schema:** `inputSchema`/`outputSchema` also accept ArkType schemas as-is, Valibot via `toStandardJsonSchema` from `@valibot/to-json-schema` (passed directly), or raw JSON Schema via `fromJsonSchema`.

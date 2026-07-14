@@ -44,7 +44,7 @@ Initializes a Fastify application with integrated DNS-rebinding protection and O
 import { createMcpFastifyApp } from '@modelcontextprotocol/fastify';
 import { toNodeHandler } from '@modelcontextprotocol/node';
 import { createMcpHandler, McpServer } from '@modelcontextprotocol/server';
-import { z } from 'zod';
+import * as z from 'zod/v4';
 
 const mcpHandler = createMcpHandler(() => {
   const server = new McpServer({ name: 'fastify-example', version: '1.0.0' });

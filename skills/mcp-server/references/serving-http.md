@@ -26,7 +26,7 @@ const handler = createMcpHandler(factory, {
 - App factories arm Host/Origin validation by default on localhost.
 - **Binding beyond localhost**: configure allowed hosts: `createMcp*App({ host: '0.0.0.0', allowedHosts: ['api.example.com'], allowedOrigins: [...] })`.
 - Bare fetch runtimes: use `hostHeaderValidationResponse(request, allowedHosts)` and `originValidationResponse(request, allowedOrigins)` from `@modelcontextprotocol/server`.
-- Native middleware: use `hostHeaderValidation(allowedHostnames)`, `localhostHostValidation()`, `originValidation(allowedOrigins)` from framework packages.
+- Native middleware: use `hostHeaderValidation(allowedHostnames)`, `localhostHostValidation()`, `originValidation(allowedOrigins)` from `@modelcontextprotocol/express` (or the `fastify` / `hono` equivalents).
 - Auth is pass-through: verify bearer token in front and pass to `fetch`: `handler.fetch(request, { authInfo })`.
 
 ## Cache Hints (SEP-2549)
@@ -79,4 +79,4 @@ Serving 2025-era clients:
 
 - `createMcpHandler(factory, { legacy: 'stateless' })` — stateless per-request serving of legacy calls.
 - `serveStdio(factory, { legacy: 'serve' })` — decide once per stdio connection.
-- **SSE**: Migrate to Streamable HTTP. A frozen v1 SSE transport is in `@modelcontextprotocol/server-legacy/sse`.
+- **SSE (deprecated, migration only)**: Migrate to Streamable HTTP. A frozen v1 SSE transport is in `@modelcontextprotocol/server-legacy/sse`.

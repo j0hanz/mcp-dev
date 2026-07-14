@@ -33,7 +33,7 @@ Covers testing and error diagnosis for `2.0.0-beta.3`. Reference: https://ts.sdk
 
 To consider testing implementation complete, you must verify:
 
-- [ ] Stdio and HTTP adapters are tested using isolated custom memory pairs or mock fetch calls.
+- [ ] HTTP adapters are tested in-process via the `handler.fetch` mock (no real port); stdio coverage spawns the real process with `StdioClientTransport` (no in-process shortcut); `InMemoryTransport.createLinkedPair()` pairs 2025-era instances directly.
 - [ ] No real network ports are spawned in the standard unit test execution workflows.
 - [ ] Tool business failures return structured `isError: true` bodies in the success payload, not protocol-level crashes.
 - [ ] Test suite executes successfully with no hanging tasks or loose connections.
