@@ -9,46 +9,44 @@ metadata:
 
 # MCP Authorization (TypeScript SDK v2)
 
-Covers server-side HTTP auth and client credentials in TypeScript SDK v2. Reference: https://ts.sdk.modelcontextprotocol.io/v2/
+Server-side HTTP auth and client credentials for TypeScript SDK v2. Ref: https://ts.sdk.modelcontextprotocol.io/v2/
 
-**Server acts as Resource Server only; it never issues tokens.**
+**Server is Resource Server only — never issues tokens.**
 
 ## When to Use
 
-- Protecting MCP server endpoints with bearer tokens.
+- Protecting MCP endpoints with bearer tokens.
 - Configuring client credentials, OAuth, or machine-to-machine auth.
 
 ## Steps
 
-1. **Wire**: supply `verifyAccessToken` to `requireBearerAuth` — the helper extracts the Authorization header and forwards the verified `AuthInfo`.
-2. **Verify**: Check token validity against IdP/external verification keys (return 401/403 directly if invalid).
-3. **Populate**: the helper attaches `AuthInfo` to `req.auth`; `toNodeHandler` forwards it so handlers read `ctx.http.authInfo` (no manual population).
-4. **Enforce**: Within tool callbacks, verify `ctx.http?.authInfo` and return `{ isError: true, content: [...] }` if unauthorized.
+1. **Wire**: supply `verifyAccessToken` to `requireBearerAuth` — extracts Authorization header, forwards verified `AuthInfo`.
+2. **Verify**: check token against IdP/external keys (return 401/403 if invalid).
+3. **Populate**: helper attaches `AuthInfo` to `req.auth`; `toNodeHandler` forwards it → handlers read `ctx.http.authInfo` (no manual setup).
+4. **Enforce**: in tool callbacks, verify `ctx.http?.authInfo`; return `{ isError: true, content: [...] }` if unauthorized.
 
 ## Completion Criteria
 
-To consider authentication implementation complete, you must verify:
-
-- [ ] Direct token generation, JWT issuing, or credential database checks are omitted from the server (Resource Server only).
-- [ ] Token validation fails cleanly with standard HTTP 401/403 errors outside/before tool dispatch.
-- [ ] Tool business failures due to failed authorization return `{ isError: true }` and reject tool calls without throwing transport exceptions.
-- [ ] Tool callbacks read tenant/user permissions via `ctx.http?.authInfo` instead of factory `ctx.authInfo`.
-- [ ] No raw HTTP headers are processed directly inside individual tool callback handlers.
-- [ ] No token revocation endpoint is implemented on the MCP server — revocation is delegated to the IdP/Authorization Server.
-- [ ] `verifyAccessToken` populates `expiresAt` on `AuthInfo`, else `requireBearerAuth` answers `401 invalid_token`.
-- [ ] Token rejection throws `OAuthError` with `OAuthErrorCode.InvalidToken` (other exceptions become `500`).
-- [ ] Non-Express `fetch` hosts (Cloudflare Workers, Deno, Hono) use the web-standard `requireBearerAuth` from `@modelcontextprotocol/server`.
+- [ ] No token generation, JWT issuing, or credential DB checks on the server (Resource Server only).
+- [ ] Token validation fails with standard 401/403 outside/before tool dispatch.
+- [ ] Auth failures in tools return `{ isError: true }` — no transport exceptions.
+- [ ] Tool callbacks read tenant/user permissions via `ctx.http?.authInfo`, not factory `ctx.authInfo`.
+- [ ] No raw HTTP header processing inside individual tool callbacks.
+- [ ] No token revocation endpoint on the MCP server — delegate to IdP/Authorization Server.
+- [ ] `verifyAccessToken` populates `expiresAt` on `AuthInfo`, else `requireBearerAuth` returns `401 invalid_token`.
+- [ ] Token rejection throws `OAuthError` with `OAuthErrorCode.InvalidToken` (other exceptions → `500`).
+- [ ] Non-Express `fetch` hosts (Cloudflare Workers, Deno, Hono) use web-standard `requireBearerAuth` from `@modelcontextprotocol/server`.
 
 ## Examples & References
 
-- [examples.md](references/examples.md): server-side verification, prebuilt client providers, and a custom `OAuthClientProvider` for browser/SPA flows.
+- [examples.md](references/examples.md): server verification, prebuilt client providers, custom `OAuthClientProvider` for browser/SPA flows.
 
 ## Common Mistakes
 
-- **Token Generation**: Issuing tokens or generating JWT keys from the MCP server instead of verifying external ones using an IdP.
-- **Header Extraction**: Expecting the SDK to automatically extract bearer tokens without configuring custom middleware.
-- **Tool Exceptions**: Throwing HTTP/transport errors inside a tool (always return `{ isError: true, content: [...] }` instead).
-- **Wrong Auth Context**: Reading `ctx.authInfo` inside a tool callback (which only exists on factory context) instead of reading `ctx.http?.authInfo`.
-- **Dynamic Clients**: Registering OAuth clients via deprecated `registerClient` dynamic registrations instead of Client ID Metadata Documents.
-- **Test Tokens**: Generating real tokens inside test tools rather than using mock external token issuers paired with [mcp-test].
-- **Decode-only JWT checks**: Validating tokens by decoding without verifying signature, issuer, and audience — always verify against IdP keys.
+- **Token Generation**: issuing tokens/JWT keys from the server instead of verifying via IdP.
+- **Header Extraction**: expecting SDK to auto-extract bearer tokens without middleware config.
+- **Tool Exceptions**: throwing HTTP/transport errors in tools (return `{ isError: true, content: [...] }` instead).
+- **Wrong Auth Context**: reading `ctx.authInfo` (factory-only) instead of `ctx.http?.authInfo`.
+- **Dynamic Clients**: using deprecated `registerClient` instead of Client ID Metadata Documents.
+- **Test Tokens**: generating real tokens in tests — use mock issuers with [mcp-test].
+- **Decode-only JWT**: decoding without verifying signature/issuer/audience — always verify against IdP keys.

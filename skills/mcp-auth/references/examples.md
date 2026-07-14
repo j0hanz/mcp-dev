@@ -37,11 +37,11 @@ app.use(mcpAuthMetadataRouter({ oauthMetadata, resourceServerUrl: mcpServerUrl }
 
 ## Client-Side Authentication Flows
 
-Client-side auth depends on the transport, typically requiring authorization headers in HTTP/SSE requests.
+Client-side auth requires authorization headers in HTTP/SSE requests.
 
 ### A. End-user OAuth (authorization_code)
 
-For a human browser login. The client handles the OAuth flow and token storage, attaching the acquired token as a Bearer token in the Authorization header.
+Browser login. Client handles OAuth flow, attaches token as Bearer header.
 
 ```ts
 import {
@@ -77,7 +77,7 @@ try {
 
 ### B. Machine-to-machine (client_credentials)
 
-For service-to-service auth without user interaction. The service requests a token from the auth server and injects it into the transport headers.
+Service-to-service auth, no user interaction. Service requests token and injects into transport headers.
 
 ```ts
 import { ClientCredentialsProvider, PrivateKeyJwtProvider } from '@modelcontextprotocol/client';
@@ -99,7 +99,7 @@ const authProvider = {
 
 ### C. Cross-app access
 
-For a user already authenticated in the host app. Exchanges the host session for MCP access.
+For users authenticated in the host app. Exchanges host session for MCP access.
 
 ```ts
 import {
@@ -119,7 +119,7 @@ new CrossAppAccessProvider({
 
 ### D. Custom `OAuthClientProvider` + Discovery
 
-Write a custom provider when no prebuilt provider fits (e.g. a browser app storing tokens itself). Implement:
+Custom provider when no prebuilt fits (e.g. browser app storing tokens). Implement:
 
 ```ts
 import type {
@@ -167,15 +167,15 @@ const authProvider: OAuthClientProvider & { lastState?: string } = {
 
 > **SEP-2352:** Credentials must be keyed by `ctx.issuer` — a `client_id` registered with one AS must not be sent to another.
 
-The SDK's `auth()` orchestrator drives this provider through PKCE (`saveCodeVerifier` before redirect, verified on token exchange) and discovery: it fetches `.well-known/oauth-protected-resource` (RFC 9728) off the MCP server URL, then follows the returned issuer to `.well-known/oauth-authorization-server` (RFC 8414) via `discoverOAuthServerInfo`.
+`auth()` orchestrator handles PKCE (`saveCodeVerifier` before redirect, verified on token exchange) and discovery: fetches `.well-known/oauth-protected-resource` (RFC 9728), follows issuer to `.well-known/oauth-authorization-server` (RFC 8414) via `discoverOAuthServerInfo`.
 
-> **RFC 8707 resource pinning:** override `validateResourceURL(url, ctx)` on a custom `OAuthClientProvider` to pin the `resource` parameter sent on the token request, binding the access token to a specific resource server.
+> **RFC 8707 resource pinning:** override `validateResourceURL(url, ctx)` on a custom `OAuthClientProvider` to pin the `resource` parameter on the token request, binding the access token to a specific resource server.
 
-Registering a new client with the authorization server via Dynamic Client Registration (`registerClient`) is deprecated (SEP-991) — prefer a **Client ID Metadata Document**: host `clientMetadata` at a stable HTTPS URL and pass that URL as `clientId` instead of registering.
+Dynamic Client Registration (`registerClient`) is deprecated (SEP-991). Prefer a **Client ID Metadata Document**: host `clientMetadata` at a stable HTTPS URL, pass that URL as `clientId`.
 
 ## Token Revocation
 
-If the IdP supports revocation, expose it so a compromised or expired token can be invalidated immediately instead of waiting for TTL expiry:
+IdP revocation lets you invalidate compromised/expired tokens immediately instead of waiting for TTL:
 
 > **Deprecated v1 Authorization Server helper.** `revocationHandler` is a v1 AS function frozen in `@modelcontextprotocol/server-legacy/auth`. An MCP Resource Server does not revoke tokens — that is the IdP's job. Shown only for legacy AS support.
 
@@ -192,6 +192,6 @@ app.post(
 
 ## Error Reference
 
-- `UnauthorizedError` (client): HTTP 401 `invalid_token` — token missing or expired; re-run auth flow.
-- `InsufficientScopeError` (client): HTTP 403 `insufficient_scope` — token valid but lacks required endpoint scopes.
-- **`onInsufficientScope`** (client transport option, SEP-2350): `'reauthorize'` (default) steps up scopes automatically; `'throw'` raises `InsufficientScopeError` for the caller to handle.
+- `UnauthorizedError` (client): HTTP 401 `invalid_token` — token missing/expired; re-run auth.
+- `InsufficientScopeError` (client): HTTP 403 `insufficient_scope` — token valid but lacks required scopes.
+- **`onInsufficientScope`** (client transport, SEP-2350): `'reauthorize'` (default) auto-steps-up scopes; `'throw'` raises `InsufficientScopeError`.
