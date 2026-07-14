@@ -17,8 +17,8 @@ const handler = createMcpHandler(factory, {
 });
 ```
 
-- `handler.fetch` is a web-standard `(Request) => Promise<Response>`.
-- `responseMode`: `'auto'` answers with a single JSON body, upgrading to SSE only when a notification precedes the result; `'json'` never streams; `'sse'` always streams.
+- `handler.fetch` is web-standard `(Request) => Promise<Response>`.
+- `responseMode`: `'auto'` answers with single JSON body, upgrading to SSE only when notification precedes result; `'json'` never streams; `'sse'` always streams.
 - `handler.close()` aborts in-flight exchanges.
 
 ## Host/Origin Security
@@ -26,7 +26,7 @@ const handler = createMcpHandler(factory, {
 - App factories arm Host/Origin validation by default on localhost.
 - **Binding beyond localhost**: configure allowed hosts: `createMcp*App({ host: '0.0.0.0', allowedHosts: ['api.example.com'], allowedOrigins: [...] })`.
 - Bare fetch runtimes: use `hostHeaderValidationResponse(request, allowedHosts)` and `originValidationResponse(request, allowedOrigins)` from `@modelcontextprotocol/server`.
-- Native middleware: use `hostHeaderValidation(allowedHostnames)`, `localhostHostValidation()`, `originValidation(allowedOrigins)` from `@modelcontextprotocol/express` (or the `fastify` / `hono` equivalents).
+- Native middleware: use `hostHeaderValidation(allowedHostnames)`, `localhostHostValidation()`, `originValidation(allowedOrigins)` from `@modelcontextprotocol/express` (or `fastify` / `hono` equivalents).
 - Auth is pass-through: verify bearer token in front and pass to `fetch`: `handler.fetch(request, { authInfo })`.
 
 ## Cache Hints (SEP-2549)
@@ -47,7 +47,7 @@ new McpServer(
 
 ## Bare Web-Standard Runtimes (Cloudflare Workers / Deno / Bun)
 
-With no framework adapter, `handler.fetch` is the entire server — no app factory runs, so Host/Origin protection is **not** armed automatically. Wire it in yourself:
+With no framework adapter, `handler.fetch` is entire server — no app factory runs, so Host/Origin protection is **not** armed automatically. Wire it in yourself:
 
 ```ts
 import {
@@ -71,7 +71,7 @@ export default {
 };
 ```
 
-Skipping this on a bare runtime leaves the server open to DNS-rebinding and cross-origin attacks that a framework adapter (Express/Fastify/Hono) would otherwise block by default.
+Skipping this on bare runtime leaves server open to DNS-rebinding and cross-origin attacks that framework adapter (Express/Fastify/Hono) would otherwise block by default.
 
 ## Legacy Clients
 
@@ -79,4 +79,4 @@ Serving 2025-era clients:
 
 - `createMcpHandler(factory, { legacy: 'stateless' })` — stateless per-request serving of legacy calls.
 - `serveStdio(factory, { legacy: 'serve' })` — decide once per stdio connection.
-- **SSE (deprecated, migration only)**: Migrate to Streamable HTTP. A frozen v1 SSE transport is in `@modelcontextprotocol/server-legacy/sse`.
+- **SSE (deprecated, migration only)**: Migrate to Streamable HTTP. Frozen v1 SSE transport in `@modelcontextprotocol/server-legacy/sse`.

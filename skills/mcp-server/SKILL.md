@@ -33,32 +33,32 @@ serveStdio(() => {
 
 ## Steps
 
-1. **Configure ESM**: Standardize project files to ESM-only (`"type": "module"` in `package.json`, `"NodeNext"` resolutions in `tsconfig.json`).
+1. **Configure ESM**: Standardize project to ESM-only (`"type": "module"` in `package.json`, `"NodeNext"` resolutions in `tsconfig.json`).
 
 - [ ]: Codebase operates exclusively with modern ESM resolutions.
 
-2. **Initialize Server**: Instantiate `McpServer` with a suitable identifier.
+2. **Initialize Server**: Instantiate `McpServer` with suitable identifier.
 
 - [ ]: Server `name` and `version` are stable identifiers matching `package.json`.
 
 3. **Register Capabilities**:
-   - Register tools using `.registerTool()` passing a Standard Schema input schema (see the note after Steps and `references/examples.md`).
+   - Register tools using `.registerTool()` passing Standard Schema input schema (see note after Steps and `references/examples.md`).
    - Register dynamic templates using `.registerResource()` mapping dynamic parameters.
    - Register prompt layouts using `.registerPrompt()`.
 
-- [ ]: Each capability is registered via the matching `.registerTool()` / `.registerResource()` / `.registerPrompt()` method with a Standard Schema.
-- [ ]: Normal tool exceptions let the SDK automatically wrap failures into standard `{ isError: true }` responses.
+- [ ]: Each capability registered via matching `.registerTool()` / `.registerResource()` / `.registerPrompt()` method with Standard Schema.
+- [ ]: Normal tool exceptions let SDK automatically wrap failures into standard `{ isError: true }` responses.
 
 4. **Sanitize Access Paths**: Resolve and ensure resource paths using `realpath`, validating boundaries to protect against directory traversal.
 
-- [ ]: Resource template targets resolve securely and cannot exit their root directories.
+- [ ]: Resource template targets resolve securely and cannot exit root directories.
 
 5. **Establish Transport**: Bind server dependencies to standard channels (`serveStdio` or HTTP interfaces per-request factories).
 
-- [ ]: Stdio servers NEVER use `console.log()` to prevent JSON-RPC wire corruption. All debug messages are output on `console.error()`.
+- [ ]: Stdio servers NEVER use `console.log()` to prevent JSON-RPC wire corruption. All debug messages output on `console.error()`.
 - [ ]: Factory setups for HTTP endpoints instantiate fresh servers per-request without accumulating heavy persistent DB connections.
 
-> `inputSchema`/`outputSchema`/`argsSchema` accept any **Standard Schema** (Zod v4, ArkType, Valibot via `toStandardJsonSchema` from `@valibot/to-json-schema` (passed directly), raw JSON Schema via `fromJsonSchema`). For gateway/proxy and custom (vendor-prefixed) JSON-RPC methods, see [mcp-protocol].
+> `inputSchema`/`outputSchema`/`argsSchema` accept any **Standard Schema** (Zod v4, Arktype, Valibot via `toStandardJsonSchema` from `@valibot/to-json-schema` (passed directly), raw JSON Schema via `fromJsonSchema`). For gateway/proxy and custom (vendor-prefixed) JSON-RPC methods, see [mcp-protocol].
 
 ## Reference Guides & Adapters
 

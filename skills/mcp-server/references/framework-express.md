@@ -5,14 +5,13 @@ metadata:
   tags: [express, middleware, oauth, integration]
   source: internal
 ---
-
 # Express Integration
 
-The `@modelcontextprotocol/express` package provides middleware, routers, and application bootstrap helpers to run MCP servers over Express.
+`@modelcontextprotocol/express` provides middleware, routers, and bootstrap helpers to run MCP servers over Express.
 
 ## Installation
 
-Install dependencies: `npm install @modelcontextprotocol/server @modelcontextprotocol/express express @modelcontextprotocol/node`
+`npm install @modelcontextprotocol/server @modelcontextprotocol/express express @modelcontextprotocol/node`
 
 ## Security Concepts
 
@@ -20,23 +19,23 @@ MCP servers binding to localhost are vulnerable to DNS Rebinding and CSRF. Expre
 
 ### DNS Rebinding Protection
 
-All adapters check the incoming `Host` header against allowed hostnames (e.g. `localhost`, `127.0.0.1`, `[::1]`). Unlisted hosts are rejected with `400 Bad Request` or `403 Forbidden`.
+All adapters check incoming `Host` header against allowed hostnames (e.g. `localhost`, `127.0.0.1`, `[::1]`). Unlisted hosts rejected with `400 Bad Request` or `403 Forbidden`.
 
 ### Browser Origin Validation
 
-Adapters check the `Origin` header against an allowed origins list. Requests with no `Origin` pass (allowing local non-browser clients), while cross-origin browser requests are rejected with `403 Forbidden`.
+Adapters check `Origin` header against allowed origins list. Requests with no `Origin` pass (allowing local non-browser clients); cross-origin browser requests rejected with `403 Forbidden`.
 
 ## API Reference
 
 ### `createMcpExpressApp(options?)`
 
-Creates an Express app with pre-configured JSON body parsing and Host/Origin validation.
+Creates Express app with pre-configured JSON body parsing and Host/Origin validation.
 
 - **Options:**
-  - `host` (string): Hostname to bind to. Default is `'127.0.0.1'`.
+  - `host` (string): Hostname to bind to. Default `'127.0.0.1'`.
   - `allowedHosts` (string[]): Allowed hostnames for DNS-rebinding protection.
   - `allowedOrigins` (string[]): Allowed browser origin hostnames.
-  - `jsonLimit` (string): Max request body size. Default is `'100kb'`.
+  - `jsonLimit` (string): Max request body size. Default `'100kb'`.
 
 ### Middleware Helpers
 
@@ -44,7 +43,7 @@ Creates an Express app with pre-configured JSON body parsing and Host/Origin val
 - `localhostHostValidation(): RequestHandler` (limits to localhost, `127.0.0.1`, `[::1]`)
 - `originValidation(allowedOrigins: string[]): RequestHandler`
 - `localhostOriginValidation(): RequestHandler`
-- `requireBearerAuth(options: BearerAuthMiddlewareOptions): RequestHandler` (enforces bearer token and populates `req.auth`)
+- `requireBearerAuth(options: BearerAuthMiddlewareOptions): RequestHandler` (enforces bearer token, populates `req.auth`)
 
 ### OAuth Helpers
 

@@ -8,11 +8,11 @@ metadata:
 
 # Hono Integration
 
-The `@modelcontextprotocol/hono` package provides an adapter for Hono, suitable for Node.js, Bun, Deno, Deno Deploy, Cloudflare Workers, and other web-standard environments.
+`@modelcontextprotocol/hono` provides an adapter for Hono, suitable for Node.js, Bun, Deno, Deno Deploy, Cloudflare Workers, and other web-standard environments.
 
 ## Installation
 
-Install dependencies: `npm install @modelcontextprotocol/server @modelcontextprotocol/hono hono`
+`npm install @modelcontextprotocol/server @modelcontextprotocol/hono hono`
 
 ## Security Options
 
@@ -22,10 +22,10 @@ Hono app factories enable Host/Origin verification by default on localhost to pr
 
 ### `createMcpHonoApp(options?)`
 
-Creates a Hono application pre-configured with JSON body parsing and default DNS-rebinding/Origin validation protections.
+Creates a Hono app pre-configured with JSON body parsing and default DNS-rebinding/Origin validation protections.
 
 - **Options:**
-  - `host` (string): Hostname to bind to. Default is `'127.0.0.1'`.
+  - `host` (string): Hostname to bind to. Default: `'127.0.0.1'`.
   - `allowedHosts` (string[]): Allowed hostnames for DNS-rebinding protection.
   - `allowedOrigins` (string[]): Allowed browser origin hostnames.
 

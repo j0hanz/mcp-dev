@@ -20,7 +20,7 @@ const server = new McpServer(
 );
 ```
 
-> `capabilities: { logging: {} }` enables the **deprecated** MCP logging subsystem (SEP-2577); prefer `console.error` (stderr) or OpenTelemetry for new servers. `resources: { subscribe: true }` is not deprecated.
+> `capabilities: { logging: {} }` enables **deprecated** MCP logging subsystem (SEP-2577); prefer `console.error` (stderr) or OpenTelemetry for new servers. `resources: { subscribe: true }` not deprecated.
 
 ## Quick Start
 

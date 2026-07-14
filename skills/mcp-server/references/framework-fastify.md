@@ -8,31 +8,31 @@ metadata:
 
 # Fastify Integration
 
-The `@modelcontextprotocol/fastify` package provides Fastify plugins and hooks to run MCP servers.
+`@modelcontextprotocol/fastify` provides Fastify plugins and hooks for MCP servers.
 
 ## Installation
 
-Install dependencies: `npm install @modelcontextprotocol/server @modelcontextprotocol/fastify @modelcontextprotocol/node fastify`
+Install: `npm install @modelcontextprotocol/server @modelcontextprotocol/fastify @modelcontextprotocol/node fastify`
 
 ## Security Options
 
-Fastify app factories enable Host/Origin verification by default on localhost to prevent DNS-rebinding and CSRF attacks.
+Fastify app factories enable Host/Origin verification by default on localhost, preventing DNS-rebinding and CSRF attacks.
 
 ## API Reference
 
 ### `createMcpFastifyApp(options?)`
 
-Initializes a Fastify application with integrated DNS-rebinding protection and Origin validation hooks. Fastify parses JSON bodies by default.
+Initializes Fastify app with DNS-rebinding protection and Origin validation hooks. Fastify parses JSON bodies by default.
 
 - **Options:**
-  - `host` (string): Hostname to bind to. Default is `'127.0.0.1'`.
+  - `host` (string): Hostname to bind. Default: `'127.0.0.1'`.
   - `allowedHosts` (string[]): Allowed hostnames for DNS-rebinding protection.
   - `allowedOrigins` (string[]): Allowed browser origin hostnames.
 
 ### Hooks & Utility Middleware
 
 - `hostHeaderValidation(allowedHostnames: string[]): onRequestHook`
-- `localhostHostValidation(): onRequestHook` (restricts to localhost hostnames)
+- `localhostHostValidation(): onRequestHook` (restricts to localhost)
 - `originValidation(allowedOrigins: string[]): onRequestHook`
 - `localhostOriginValidation(): onRequestHook`
 
